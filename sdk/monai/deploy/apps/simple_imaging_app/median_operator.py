@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0,'../../../../')
 
-from monai.deploy.foundation.BaseOperator import BaseOperator
+from monai.deploy.foundation.base_operator import BaseOperator
 
 from skimage import data
 from skimage.morphology import disk

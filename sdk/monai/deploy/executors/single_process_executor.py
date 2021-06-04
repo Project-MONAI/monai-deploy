@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from monai.deploy.foundation.StateService import StateService
-from monai.deploy.executors.Executor import Executor
+from monai.deploy.foundation.state_service import StateService
+from monai.deploy.executors.executor import Executor
 from queue import Queue
 
 class SingleProcessExecutor(Executor):

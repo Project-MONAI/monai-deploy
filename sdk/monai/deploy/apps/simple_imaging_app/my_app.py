@@ -1,10 +1,10 @@
 import sys
 sys.path.insert(0,'../../../../')
-from monai.deploy.foundation.Application import Application
-from monai.deploy.apps.simple_imaging.SobelOperator import SobelOperator
-from monai.deploy.apps.simple_imaging.MedianOperator import MedianOperator
-from monai.deploy.apps.simple_imaging.GaussianOperator import GaussianOperator
-from monai.deploy.executors.SingleProcessExecutor import SingleProcessExecutor
+from monai.deploy.foundation.application import Application
+from monai.deploy.apps.simple_imaging_app.sobel_operator import SobelOperator
+from monai.deploy.apps.simple_imaging_app.median_operator import MedianOperator
+from monai.deploy.apps.simple_imaging_app.gaussian_operator import GaussianOperator
+from monai.deploy.executors.single_process_executor import SingleProcessExecutor
 
 from skimage import data, io, filters
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from monai.deploy.foundation.Application import Application
+from monai.deploy.foundation.application import Application
 
 class Executor(ABC):
 

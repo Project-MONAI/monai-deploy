@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import uuid
-from monai.deploy.foundation.StateService import StateService
+from monai.deploy.foundation.state_service import StateService
 
 
 class BaseOperator(ABC):
