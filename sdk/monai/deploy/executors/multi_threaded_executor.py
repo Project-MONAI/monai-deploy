@@ -2,9 +2,8 @@ from abc import ABC, abstractmethod
 from monai.deploy.foundation.data_store import DataStore
 from monai.deploy.executors.executor import Executor
 from queue import Queue
-from multiprocessing import Process
 
-class MultiProcessExecutor(Executor):
+class MultiThreadedExecutor(Executor):
 
     def __init__(self, app):
         super().__init__(app)
@@ -23,7 +22,7 @@ class MultiProcessExecutor(Executor):
             while(q.empty() == False):
                 n = q.get()
                 edges = g.out_edges(n)
-                self._launch_operator(n)
+                n.execute()
 
                 for e in edges:
 
@@ -36,9 +35,10 @@ class MultiProcessExecutor(Executor):
                     key2 = (e[1].get_uid(), 'input', edge_data['downstream_op_port'])
                     self._storage.store(key2, output)
 
-    
 
-    def _launch_operator(self, op):
-        p = Process(target=op.execute)
-        p.start()
-        p.join()
+
+
+
+
+
+        
