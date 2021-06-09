@@ -19,6 +19,7 @@ class GaussianOperator(BaseOperator):
     
 
     def execute(self):
+        super().execute()
         data_in = self.get_input(0)
         self.data_out = gaussian(data_in, sigma=0.4)
         imsave("final_output.png", self.data_out)

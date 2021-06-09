@@ -10,10 +10,11 @@ class SobelOperator(BaseOperator):
         self.data_out = None
     
 
-    def get_output(self, index):
+    def get_output(self, output_port_number):
         return self.data_out
     
 
     def execute(self):
+        super().execute()
         data_in = data.moon()
         self.data_out = filters.sobel(data_in)
