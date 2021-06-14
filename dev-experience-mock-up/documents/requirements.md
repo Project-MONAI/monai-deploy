@@ -15,10 +15,14 @@ Enable designing application workflows which can be represented by a Directed Cy
 
 > (@whoisj) If a MONAI Application Package [MAP] is a single container, and we're expecting developer to write the application to be containerized using Python w/ MONAI libaries, then does this need to stated? Isn't this a function of Python itself?
 
+>(@rahul-imaging) Refer to my previous comment
+
 ## Conditional Branching
 Support conditional and dynamic activation of an Operator in an Application at run-time
 
 > (@whoisj) If a MONAI Application Package [MAP] is a single container, and we're expecting developer to write the application to be containerized using Python w/ MONAI libaries, then does this need to stated? Isn't this a function of Python itself?
+
+> (@rahul-imaging) Here an Operator represents a logical "stage" in the application, not a container. Container is a deploy time concept. Refer to my previous comment
 
 ## Support for basic ML Inference Operations
 Support designing operators that perform common ML/DL tasks such as classification, segmentation, ROI detection in 2D and 3D
@@ -46,10 +50,14 @@ Enable app verification at two levels: operator, application
 
 > (@whoisj) Is an “operator” a “function” or a “container”? I was under the impression that operators were SDK provided objects / functions, not containers. If they are objects / functions, how does verification work? Or, maybe by “verification” you mean “test”? Sorry, rather confused.
 
+> (@rahul-imaging) An Operator a logical stage in a MONAI Application at design time. Whether a single design-time operator gets packaged into a single container or multiple operators get packaged into the same container is a deploy time concern. So far, the current thinking is that a logical Operator will be implemented as an instance of a Python class during application development. In addition, at least for the first release of MONAI Deploy, the entire application will be packaged into a single container.
+
 ## App Analytics
 Allow analyzing performance of the application at multiple levels: application, operator, kernel
 
 > (@whoisj) I think would be pertinent to include GPU/CUDA here as well.
+
+> (@rahul-imaging) The "kernel" level analysis would include profiling GPU based implementation.
 
 ## Visualization for the Purpose of Debugging App
 Enable 2D/3D/4D and time series-based visualization of input, intermediate artifacts, and output of an application during development
