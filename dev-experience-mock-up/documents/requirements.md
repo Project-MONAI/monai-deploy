@@ -1,4 +1,4 @@
-# High Level Requirements for MONAI Application Development SDK
+# High Level Requirements for MONAI Application SDK
 
 ## Designing Application
 Enable developing applications that can leverage ML/DL/Computer Vision models to perform inference
