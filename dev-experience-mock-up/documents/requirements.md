@@ -7,6 +7,7 @@ Enable developing applications that can leverage ML/DL/Computer Vision models to
 Enable designing application workflows which can be represented by a Directed Acyclic Graph (DAG)
 
 > (@whoisj) If a MONAI Application Package [MAP] is a single container, and we're expecting developer to write the application to be containerized using Python w/ MONAI libaries, then does this need to stated? Isn't this a function of Python itself?
+> (@rahul-imaging) Application Developers need help in structuring their healthcare applications that make use of ML/DL/CV models. This requirement is addresseing how during design time a workflow can be & should be represented. The fact that it will be exported in a single container for deployment has nothing to do with it. In future the MONAI App Package may support multiple containers at deploy-time. Our app developers would still need a way to structure their workflow in Python code
 
 ## DCG Based Representation
 Enable designing application workflows which can be represented by a Directed Cyclic Graph (DCG)
