@@ -66,27 +66,38 @@ Enable 2D/3D/4D and time series-based visualization of input, intermediate artif
 Enable developers to specify conditions so that the right input datasets can be routed to the correct app during execution
 
 > (@whoisj) While I appreciate the idea behind this, I’m not to which component or SDK provided tool this would apply. Please elaborate.
+> (@rahul-imaging) How this requirement will be addressed in the design space, should be elaborated in an architecture document. Our general thinking so far is during application development, the user will make use of the SDK to provide a ser of rules to specify what kind of data is approproate for the app. Such rules can be based on DICOM header or FHIR resources, or the can be used on an algorithm (that may or may not use AI). 
+
 
 ## Specifying Resources for Operators
-Allow developers to specify desired resource requirements (CPU, GPU, System Memory), for an operator during app development
+Allow developers to specify desired resource requirements (CPU, GPU, System Memory), for a application during app development
 
 > (@whoisj) If the MONAI Application Package is a single containerized application, does it make sense for individual operators (aka SDK functions) to have resource requirements?
+
+> (@rahul-imaging) Remember operator is a design-time concept. I made the requirement more generic none-the-less.
 
 ## Ability to Utilize an Existing Container
 Support use of an existing container image for designing an operator
 
 > (@whoisj) This needs more elaboration. Not sure I can accept this as a requirement when I do not even understand what it means. I thought “operators” were functions provided by the proposed MONAI SDK, here it sounds like an operator is a container unto itself.
 
+> (@rahul-imaging) Several institues such as MGB already have pre-packaged containers (treated as black boxes) that contain an application which can perform all necessary steps given a set of inputs and generate outputs. Inputs/Outputs are often managed via mounted volumes. MONAI Deploy developers would need a way to bring those containers into their application development. The MONAI App SDK should provide a mechanism so that developers can make use of an existing container from their application. How this would be done should be described in the Architecture document.
+
 ## Packaging an Application
 Allow packaging of the application in a standardized format so that it can be executed by a compliant runtime environment
 
-## Executing an Application
+## Executing an Application during development
 Allow execution of an application on developer’s workstation.
+
+## Executing an Application after deployment
+Allow execution of an application in a deployed environment without any necessary modification
 
 ## Development Console
 Provide a development console to track activities during designing of an application
 
 ### Comments & Questions
 
-(@whoisj) I do not see the ability to debug the application in this list, perhaps I missed it.
+> (@whoisj) I do not see the ability to debug the application in this list, perhaps I missed it.
 Additionally, I’d like to see the requirement that a MONAI Application Package MAP can be run via the Application Runner or Server without modification as a requirement.
+
+> (@rahul-imaging) Requirement for "Executing an Application during development" was already there. I added another one for "Executing an Application after deployment"
