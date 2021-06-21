@@ -12,7 +12,8 @@ This proposal documents the specification of the first version of the MONAI Appl
 
 ## Goal
 
-The goal of this proposal is to provide clarity on the purpose and structure of a MAP, how a MAP can be interacted with, and the required and optional components of a MAP.
+The goal of this proposal is to provide structure of a MAP, define the purpose of a MAP and how it can be
+interacted with, and the required and optional components of a MAP.
 
 
 ## Requirements
@@ -58,5 +59,5 @@ A MAP SHALL NOT be in a format which inhibits or hampers the ability to deploy i
 
 ### Facilitate GPU Acceleration
 
-A MAP SHALL NOT make GPU acceleration of its contained application impossible.
+A MAP SHALL enable applications to be developed with GPU acceleration.
 
