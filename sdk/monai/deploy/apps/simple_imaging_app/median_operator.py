@@ -21,4 +21,4 @@ class MedianOperator(BaseOperator):
     def execute(self):
         super().execute()
         data_in = self.get_input(0)
-        self.data_out = median(data_in, disk(5))
+        self.data_out = median(data_in)

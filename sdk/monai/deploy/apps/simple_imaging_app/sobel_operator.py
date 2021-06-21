@@ -16,5 +16,5 @@ class SobelOperator(BaseOperator):
 
     def execute(self):
         super().execute()
-        data_in = data.moon()
+        data_in = io.imread("./brain_mr_input.jpg")
         self.data_out = filters.sobel(data_in)

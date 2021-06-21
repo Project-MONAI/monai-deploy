@@ -19,9 +19,20 @@ class BaseOperator(ABC):
         return self._uid
    
 
+
+    def set_input(self, name, val):
+        pass
+    
+
+    def get_output(self, name, val):
+        pass
+
+   
+
     def get_input(self, input_port_number):
         return self._storage.retrieve((self.get_uid(), 'input', input_port_number))
     
+
 
     @abstractmethod
     def get_output(self, output_port_number):
