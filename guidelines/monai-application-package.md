@@ -7,7 +7,10 @@ This is a proposal for the MONAI Deploy Working Group.
 
 ## Overview
 
-This proposal documents the specification of the first version of the MONAI Application Package (MAP).
+This proposal documents the guidelines of the first version of the MONAI Application Package (MAP).
+
+> [Note]
+> These guidelines are non-optional. Non-conformance to guidelines will make a package incompatible with MAP.
 
 
 ## Goal
