@@ -63,7 +63,7 @@ MONAI Deploy App SDK 0.2.0
 
 ---
 
-### [REQ -1]  Support for Classification
+### [REQ]  Support for Classification
 The SDK shall support designing operator that perform classification with an ML/DL based model
 
 #### Background
