@@ -1,17 +1,25 @@
-### [REQ -1] Designing Application
+### Introduction
+In the medical domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development.
+
+The MONAI Application SDK provides a framework to design, integrate and develop medical AI applications. 
+
+---
+
+### [REQ] Designing Application
 The SDK shall enable developing applications that can leverage ML, DL & Computer Vision based models to perform inference
 
 #### Background
-In the medical informatics domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development.
+
 
 #### Verification Strategy
 
 #### Target Release
+MONAI Deploy App SDK 0.1.0
+
+---
 
 
-
-
-### [REQ -1] Representing Workflow With DAG
+### [REQ] Representing Workflow With DAG
 The SDK shall enable designing application workflows which can be represented by a Directed Acyclic Graph (DAG)
 
 #### Background
@@ -21,17 +29,36 @@ Application developers need a way to organize functional units of AI based infer
 Build an application with the SDK which has multiple operators. Verify that the SDK offers a mechanism to traverse through the underlying DAG.
 
 #### Target Release
-MONAI App SDK 0.1.0
+MONAI Deploy App SDK 0.1.0
 
-## [REQ -1] Representing Workflow with DCG
+---
+
+### [REQ] Representing Workflow with DCG
 The SDK shall enable designing application workflows which can be represented by a Directed Cyclic Graph (DCG)
 
+#### Verification Strategy
 
-## [REQ -1]  Conditional Branching in Workflow
+#### Target Release
+MONAI Deploy App SDK 0.2.0
+
+
+
+## [REQ]  Conditional Branching in Workflow
 The SDK shall support conditional & dynamic activation of an Operator in an Application at run-time
+
+#### Verification Strategy
+
+#### Target Release
+MONAI Deploy App SDK 0.2.0
 
 ## [REQ -1]  Support for Classification
 The SDK shall support designing operator that perform classification with an ML/DL based model
+
+#### Verification Strategy
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+
 
 ## [REQ -1]  Support for Segmentation
 The SDK shall support designing operator that perform segmentation with an ML/DL based model
