@@ -28,7 +28,7 @@ A MAP SHALL contain an executable application which supports the primary functio
 
 ### Minimal Number of Artifacts
 
-A MAP SHALL be comprised of a minimal number of artifacts. The ideal would be for a MAP to be single, self-describing artifact.
+A MAP SHALL be comprised of a single container which meets the minimum requirements set forth by this document.
 
 
 ### Describable
@@ -182,20 +182,6 @@ The Executor MUST detect `/var/run/monai/export/` is mounted. When detected, the
 
 When the Executor performs a manifest export, it SHALL NOT invoke the Application.
 
-The Executor MUST emit an error then terminate when both `/var/run/monai/export/` and `/var/run/monai/pipeline/` are mounted.
-
-
-### Pipelines
-
-The Executor MUST detect when `/var/run/monai/pipeline/` is mounted. When detected, the Executor SHALL function as a Pipeline.
-
-> [!IMPORTANT]
-> This functionality has yet to be full defined, and will be deferred until the MONAI Application Server project is further along.
->
-> The intention of the functionality to avoid the costs of starting a Kubernetes pod, and enable a single MAP deployment to handle multiple jobs serially. This functionality does not make any assumptions about parallel execution of jobs.
-
-The Executor MUST emit an error then terminate when both `/var/run/monai/export/` and `/var/run/monai/pipeline/` are mounted.
-
 
 ### Visualization
 
@@ -221,4 +207,4 @@ The Executor MUST emit an error then terminate when both `/var/run/monai/export/
 | `/opt/monai/executor/`     | Executor binaries.                                                                             |
 | `/var/opt/monai/models/`   | AI models. Each model should be in a separate sub-folder.                                      |
 | `/var/run/monai/export/`   | Special case folder which causes the Executor to copy all manifest to the folder when present. |
-| `/var/run/monai/pipeline/` | Special case folder which causes the Executor to go into pipeline mode.                        |
+
