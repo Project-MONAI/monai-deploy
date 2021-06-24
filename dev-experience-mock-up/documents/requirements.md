@@ -149,7 +149,8 @@ MONAI Deploy App SDK 0.1.0
 
 ---
 
-### [REQ] The SDK shall allow designing operators which can use Triton for inference
+### [REQ] Supporting Triton
+The SDK shall allow designing operators which can use Triton for inference
 DICOM Networking Protocol
 
 #### Background
@@ -162,7 +163,8 @@ TBD
 MONAI Deploy App SDK 0.1.0
 
 
-### [REQ]  The SDK shall enable applications to integrate with medical informatics data source using DICOM as a networking protocol
+### [REQ]  Supporting DICOM as a networking protocol
+The SDK shall enable applications to integrate with medical informatics data source & sinks using DICOM as a networking protocol.
 
 #### Background
 TBD
