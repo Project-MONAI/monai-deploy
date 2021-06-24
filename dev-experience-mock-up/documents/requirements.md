@@ -44,6 +44,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 ----
 
 
@@ -59,6 +60,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 ---
 
 ### [REQ -1]  Support for Classification
