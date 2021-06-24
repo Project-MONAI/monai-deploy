@@ -1,56 +1,60 @@
-## Designing Application
+### [REQ -1] Designing Application
 The SDK shall enable developing applications that can leverage ML, DL & Computer Vision based models to perform inference
 
-### Background
+#### Background
 In the medical informatics domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development.
 
-### Verification Strategy
+#### Verification Strategy
+
+#### Target Release
 
 
-## Representing Workflow With DAG
+
+
+### [REQ -1] Representing Workflow With DAG
 The SDK shall enable designing application workflows which can be represented by a Directed Acyclic Graph (DAG)
 
-### Background
+#### Background
 Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to say how they should run.
 
-### Verification Strategy
+#### Verification Strategy
 Build an application with the SDK which has multiple operators. Verify that the SDK offers a mechanism to traverse through the underlying DAG.
 
-### Target Release
+#### Target Release
 MONAI App SDK 0.1.0
 
-## Representing Workflow with DCG
+## [REQ -1] Representing Workflow with DCG
 The SDK shall enable designing application workflows which can be represented by a Directed Cyclic Graph (DCG)
 
 
-## Conditional Branching in Workflow
+## [REQ -1]  Conditional Branching in Workflow
 The SDK shall support conditional & dynamic activation of an Operator in an Application at run-time
 
-## Support for Classification
+## [REQ -1]  Support for Classification
 The SDK shall support designing operator that perform classification with an ML/DL based model
 
-## Support for Segmentation
+## [REQ -1]  Support for Segmentation
 The SDK shall support designing operator that perform segmentation with an ML/DL based model
 
-## Support for general purpose computation
+## [REQ -1]  Support for general purpose computation
 The SDK shall support developing operator that performs custom computation 
 
 
-## Supporting PyTorch as a DL Framework
+## [REQ -1]  Supporting PyTorch as a DL Framework
 The SDK shall enable incorporating model trained with PyTorch as an ingredient to be used for an Inference operator
 
-## Supporting TensorFlow as a DL Framework
+## [REQ -1] Supporting TensorFlow as a DL Framework
 The SDK shall enable incorporating model trained with Tensorflow as an ingredient to be used for an Inference operator
 
-## Supporting MMAR
+## [REQ -1] Supporting MMAR
 The SDK shall allow integration of a Clara Train (MONAI core) generated MMAR in an operator
 Usage of Triton
 
 
-## The SDK shall allow designing operators which can use Triton for inference
+## [REQ -1] The SDK shall allow designing operators which can use Triton for inference
 DICOM Networking Protocol
 
-## The SDK shall enable applications to integrate with medical informatics data source using DICOM as a networking protocol
+## [REQ -1]  The SDK shall enable applications to integrate with medical informatics data source using DICOM as a networking protocol
 
 ## Parsing a collection of DICOM series
 The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute
