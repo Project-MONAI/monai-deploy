@@ -73,6 +73,7 @@ TBD
 TBD
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ]  Support for Segmentation
@@ -87,6 +88,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ]  Support for general purpose computation
@@ -101,6 +103,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ]  Supporting PyTorch as a DL Framework
@@ -114,6 +117,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] Supporting TensorFlow as a DL Framework
@@ -127,6 +131,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] Supporting MMAR
@@ -141,6 +146,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] The SDK shall allow designing operators which can use Triton for inference
@@ -161,12 +167,12 @@ MONAI Deploy App SDK 0.1.0
 #### Background
 TBD
 
-
 #### Verification Strategy
 TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -182,6 +188,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -197,6 +204,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] Supporting DICOM Segmentation  Storage SOP
@@ -211,6 +219,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -226,6 +235,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] GPU Accelerated Primitives
@@ -240,6 +250,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -254,6 +265,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] App Analytics
@@ -267,6 +279,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 ---
 
 
@@ -281,6 +294,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 ---
 
 ### [REQ] Data Specification for App
@@ -294,6 +308,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -309,6 +324,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] Existing Containers
@@ -322,6 +338,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 ### [REQ] Packaging an Application
@@ -335,6 +352,7 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 
 
 ### [REQ]  Execution of Application
@@ -361,4 +379,5 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 
