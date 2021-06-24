@@ -11,8 +11,6 @@ class MultiProcessExecutor(Executor):
         self._storage = DataStore.get_instance()
 
 
-
-
     def execute(self):
         g = self._app.get_graph()
         for node in self._root_nodes:

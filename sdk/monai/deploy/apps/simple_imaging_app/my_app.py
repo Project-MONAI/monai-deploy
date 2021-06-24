@@ -11,10 +11,19 @@ from monai.deploy.executors.multi_process_executor import MultiProcessExecutor
 from skimage import data, io, filters
 
 class MyApp(Application):
+
+    """ This is a very basic application
+    that showcases the MONAI application framework
+    """
     def __init__(self):
         super().__init__()
         
     def compose(self):
+        """ This application has three operators
+        Each operator performes has a single input &
+        a single output port. Each operator performs
+        some kind of image processing function
+        """
         self.sobel_op = SobelOperator()
         self.median_op = MedianOperator()
         self.gaussian_op = GaussianOperator()
@@ -24,5 +33,4 @@ class MyApp(Application):
 
 app = MyApp()
 executor = SingleProcessExecutor(app)
-#executor = MultiProcessExecutor(app)
 executor.execute()

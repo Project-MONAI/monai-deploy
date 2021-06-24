@@ -9,6 +9,11 @@ from skimage.filters import median
 from skimage.io import imsave
 
 class MedianOperator(BaseOperator):
+
+    """ This Operator implements a noise reduction
+    algorithm based on median operator. It
+    ingest a single input and provides a single output
+    """
     def __init__(self):
         super().__init__()
         self.data_out = None
