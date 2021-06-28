@@ -58,7 +58,7 @@ A MAP MUST be in a format which support local execution in a development environ
 
 ### Containerization
 
-A MAP SHALL be, at least in part, a containerized application to maximize portability of its application.
+A MAP SHALL be a containerized application to maximize portability of its application.
 
 
 ### Compatible with Kubernetes
