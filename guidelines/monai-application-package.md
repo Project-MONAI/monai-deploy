@@ -4,19 +4,47 @@
 
 This is a proposal for the MONAI Deploy Working Group.
 
+- [Overview](#overview)
+  - [Goal](#goal)
+  - [Assumptions](#assumptions)
+- [Requirements](#requirements)
+  - [Contains an Application](#contains-an-application)
+  - [Single Artifact](#single-artifact)
+  - [Self-Describing](#self-describing)
+  - [Inputs/Output Specification](#inputsoutput-specification)
+  - [Local Execution](#local-execution)
+  - [Containerization](#containerization)
+  - [Compatible with Kubernetes](#compatible-with-kubernetes)
+  - [OCI Compliance](#oci-compliance)
+  - [Facilitate GPU Acceleration](#facilitate-gpu-acceleration)
+- [Architecture & Design](#architecture--design)
+- [Description](#description)
+- [Application](#application)
+- [Manifests](#manifests)
+  - [Application Manifest](#application-manifest)
+  - [Package Manifest](#package-manifest)
+- [Executor](#executor)
+  - [Initial Conditions](#initial-conditions)
+  - [Manifest Export](#manifest-export)
+  - [Layout Diagram](#layout-diagram)
+- [Special Folders](#special-folders)
 
 ## Overview
 
 This proposal documents the specification of the initial version of the MONAI Application Package (MAP).
 
 
-## Goal
+### Goal
 
 The goal of this proposal is to provide structure of a MAP, define the purpose of a MAP and how it can be
 interacted with, and the required and optional components of a MAP.
 
 
-## Requirements
+### Assumptions
+
+TBD: this section is a work-in-progress.
+
+##  Requirements
 
 The following are requirements which need to be met by the MAP specification to be considered complete and approved.
 
@@ -26,14 +54,20 @@ The following are requirements which need to be met by the MAP specification to 
 A MAP SHALL contain an executable application which supports the primary function of the MAP, and provide sufficient information to execute the application as intended.
 
 
-### Minimal Number of Artifacts
+### Single Artifact
 
 A MAP SHALL be comprised of a single container which meets the minimum requirements set forth by this document.
 
 
-### Describable
+### Self-Describing
 
-A MAP MUST be describable in a manner which facilitates deployment in a machine readable format.
+A MAP MUST be self-describing and provide a mechanism for extracting the its description.
+
+The method of description SHALL be a machine readable and writable format.
+
+The method of description SHALL be a human readable format.
+
+The method of description SHOULD be a human writable format.
 
 The method of description SHALL be declarative and immutable.
 
@@ -42,9 +76,11 @@ The method of description SHALL provide the following information about the MAP:
 - Execution requirements such as dependencies, restrictions, etc.
 - Resource requirements such as CPU cores, available system memory, GPU availability, etc.
 
-### Describe Inputs/Outputs
+### Inputs/Output Specification
 
 A MAP SHALL provide information about its expected inputs such that an external agent is able to determine if the MAP is capable of receiving a workload.
+
+A MAP SHALL provide information about the protocols and study types it supports such that an external agent is able to determine if the MAP is capable of receiving a workload.
 
 A MAP SHALL provide sufficient information about its outputs that an external agent is able to determine if it is capable of receiving the results.
 
@@ -78,7 +114,7 @@ A MAP SHALL enable applications to be developed with GPU acceleration.
 
 # Architecture & Design
 
-## Description
+##  Description
 
 The MONAI Application Package (MAP) is a functional package designed to perform an action on datasets of a prescribed format. A MAP is a container image which adheres the specification provided in this document.
 
@@ -102,7 +138,7 @@ A MAP SHALL contain two manifests: the application manifest and the package mani
 Provides information about the MAP's Application.
 
 > [!IMPORTANT]
-> The format and schema of the Application Manifest has not defined as part of this document.
+> The format and schema of the Application Manifest has not been defined as part of this document.
 > These items are suggested, but not part of any specification yet.
 
 - Application Manifest MUST define the command used to run the Application (`/etc/monai/app.json#command`).
@@ -120,7 +156,7 @@ Provides information about the MAP's Application.
 Provides information about the MAP's package layout. Not intended as a mechanism for controlling how the MAP is used or how the MAP's application is executed.
 
 > [!IMPORTANT]
-> The format and schema of the Package Manifest has not defined as part of this document.
+> The format and schema of the Package Manifest has not been defined as part of this document.
 > These items are suggested, but not part of any specification yet.
 
 - Package Manifest MUST be UTF-8 encoded and use the JavaScript Object Notation (JSON) format.
@@ -183,7 +219,7 @@ The Executor MUST detect `/var/run/monai/export/` is mounted. When detected, the
 When the Executor performs a manifest export, it SHALL NOT invoke the Application.
 
 
-### Visualization
+### Layout Diagram
 
 ```
                         ╔═══════════════════════════════╗
