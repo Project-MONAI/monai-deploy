@@ -150,7 +150,7 @@ MONAI Deploy App SDK 0.1.0
 
 ### [REQ] Supporting Triton
 The SDK shall allow designing operators which can use Triton for inference
-DICOM Networking Protocol
+~~DICOM~~ using its supported Networking Protocol, e.g. http and gPRC
 
 #### Background
 TBD
@@ -178,7 +178,7 @@ MONAI Deploy App SDK 0.1.0
 
 
 ### [REQ] Parsing a collection of DICOM series
-The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute
+The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute of the Series OID.
 
 #### Background
 TBD
@@ -208,8 +208,8 @@ MONAI Deploy App SDK 0.1.0
 
 ---
 
-### [REQ] Supporting DICOM Segmentation  Storage SOP
-The SDK shall provide an operator that supports exporting a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional.
+### [REQ] Supporting DICOM Segmentation Storage SOP
+The SDK shall provide an operator that supports exporting a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional, though only binary will be supported in the target release 
 
 #### Background
 TBD
@@ -224,7 +224,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ] Supporting DICOM RT Structure  Storage SOP Instance
+### [REQ] Supporting DICOM RT Structure Storage SOP Instance
 The SDK shall provide an operator that supports exporting a RT Structure Set Storage SOP Instance.
 
 #### Background
@@ -329,7 +329,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 ### [REQ] Existing Containers
-The SDK shall support use of an existing container image for designing an Operator
+The SDK shall support use of an existing container image as the base for designing an Operator
 
 #### Background
 TBD
@@ -380,5 +380,3 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
-
-
