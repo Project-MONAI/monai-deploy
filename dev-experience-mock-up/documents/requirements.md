@@ -92,8 +92,25 @@ MONAI Deploy App SDK 0.2.0
 ---
 
 
+### [REQ]  Supporting logging for an Operator
+The SDK shall support logging data from an Operator in a standardized way which can be parsed to aid in app debugging purpose
 
-### [REQ]  Support for Multi-Class Single-Outout Classification
+#### Background
+A significant portion of app development in the healthcare AI domain is spent in figuring out anomalies in the core business logic of the application. Having a standardized way to log data will make it easier to debug the application
+
+
+#### Verification Strategy
+Use the SDK to log data from an operator. Verify that the logged data is adhereing to the logging schema
+
+
+#### Target Release
+MONAI Deploy App SDK 0.2.0
+
+---
+
+
+
+### [REQ]  Support for Multi-Class Single-Output Classification
 The SDK shall support developing an application that performs Multi-Class Single-Outout Classification classification with a pre-trained AI model so that the app developer can incorporate necessary model inputs, transforms, inference and package output from inference in appropriate domain-specific manners.
 
 #### Background
@@ -307,23 +324,22 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ] Loading imaging dataset from DICOM Part 10 files or stored messages
-The SDK shall enable applications to load 2D/3D imaging dataset represented by a DICOM series as an input to an operator used by an application
+### [REQ] Loading an imaging dataset from DICOM Part 10 files or stored messages into a unified domain object
+The SDK shall enable applications to load a 2D/3D imaging dataset belonging to a single DICOM series into a unified "Image" domain object so that downstream operators can process this domain object based on application's needs such as transformation and inference.
 
 #### Background
-TBD
-
+DICOM as a protocol offers mechanism to represent 2D/3D imaging datasets and corresponding metadata. It is not trivial for application developers to load pixel data from DICOM Part 10 files or messages into a Tensor and associated attributes that qualify the tensor. Having such a mechanism will facilitate easy ingestion of DICOM data in a medical AI application.
 
 #### Verification Strategy
-TBD
+Load  DICOM series into the supported Domian Object using the App SDK. Write out the content of the domain object to disk. Compare that with gold input and verify it matches.
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
 
 ---
 
-### [REQ] Supporting DICOM Segmentation Storage SOP Class as Output
-The SDK shall provide an operator that supports generating and exporting a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional, though only binary will be supported in the target release 
+### [REQ] Supporting DICOM Segmentation Storage SOP Class as output
+The SDK shall provide a mechanism to generate a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional, though only binary will be supported in the target release 
 
 #### Background
 TBD
