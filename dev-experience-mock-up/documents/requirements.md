@@ -26,7 +26,7 @@ For each requirements, the following attributes have been spcified
 * Requirement Body: This is the text of the requirement which describes the goal and purpose behind the requirement
 * Background: Provides necessary background to understand the context of the requirements
 * Verficiation Strategy: A high level plan on how to test this requirement at a system level
-* Target Release: Specifies which release of the MONAI App SDK this requirement is targetted for
+* Target Release: Specifies which release of the MONAI App SDK this requirement is targeted for
 
 ---
 
