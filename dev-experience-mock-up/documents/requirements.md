@@ -1,7 +1,36 @@
 ### Introduction
-There is a large chasm between training an AI model and deploying it to a production environment. In the healthcare domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical imaging datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development. The MONAI Application SDK provides a framework to design, integrate and develop medical AI applications. 
+There is chasm between training an AI model and deploying it to a production environment. In the healthcare domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical imaging datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development. 
+
+The MONAI Application SDK provides a framework to develop, verify, analyze AI driven healthcare applications and integrate them with clinical information systems using industry standard protocols such as DICOM & FHIR. The scope of the 
+
+* Pythonic Framework for app development
+* A mechanism to locally run and test an app
+* A lightweight app analytics module
+* A lightweight 2D/3D visualization module
+* A developer console that provides a visual interface to all assets needed for developing apps
+* A set of sample applications
+* API documentation & User's Guide
 
 ---
+
+### Scope
+
+The scope of this document is limited to the MONAI Deploy App SDK. There are other subsystems of the MONAI Deploy platform such as MONAI App Server, MONAI App Informatics Gateway. However this requirements document does not address specifications belonging to those subsystems
+
+---
+
+
+### Attributes of a Requirement
+
+For each requirements, the following attributes have been spcified
+* Requirement Body: This is the text of the requirement which describes the what and why of the requirements
+* Background: Provides necessary background to understand the context of the requirements
+* Verficiation Strategy: A high level plan on how to test this requirement at a system level
+* Target Release: Specifies which release of the MONAI App SDK this requirement is targetted for
+
+---
+
+
 
 
 ### [REQ] Representing application specific tasks
@@ -152,7 +181,7 @@ MONAI Deploy App SDK 0.2.0
 ---
 
 
-### [REQ]  Supporting PyTorch as a DL Framework
+### [REQ]  Supporting models trained with PyTorch
 The SDK shall enable app developer to use model trained with PyTorch in an Application so that tasks like model loading, provisioning of input data, a mechanism to perform custom transforms are handled by the SDK
 
 #### Background
@@ -168,7 +197,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ]  Supporting TensorFlow as a DL Framework
+### [REQ]  Supporting models trained with TensorFlow
 The SDK shall enable app developer to use model trained with TensorFlow in an Application so that tasks like model loading, provisioning of input data, a mechanism to perform custom transforms are handled by the SDK
 
 #### Background
