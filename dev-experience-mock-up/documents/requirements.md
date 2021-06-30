@@ -5,10 +5,10 @@ There is a large chasm between training an AI model and deploying it to a produc
 
 
 ### [REQ] Representing application specific tasks
-The SDK shall enable representing a computational task in a healthcare application using an operator
+The SDK shall enable representing a computational task in a healthcare application using an operator so that each task can be modulrized, reused and dubugged in distinct contexts.
 
 #### Background
-Most healthcare application workflows involves multiple tasks. Each task is a basic unit of work. Having a programmatic way of representing such task is important as this promotes seperation of concern, reusability and debuggability. Example of tasks are: loading a DICOM Series into an in-memory volumetric representation, ability to rescale a volumetric etc.
+Most healthcare application workflows involves multiple tasks. Each task is a basic unit of work. Having a programmatic way of representing such task is important as this promotes separation of concern, reusability and debuggability. Example of tasks are: loading a DICOM Series into an in-memory volumetric representation, ability to rescale a volumetric etc.
 
 #### Verification Strategy
 Verify that common set of workflow tasks can be represented by built-in Operators
@@ -19,7 +19,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 ### [REQ] Representing Workflow With DAG
-The SDK shall enable designing application workflows by allowing upstream and downstream dependencies among multiple operators in an Applications
+The SDK shall enable dependencies among upstream and downstream operators in an application using a DAG so that app workflow can be modeled unambiguously.
 
 #### Background
 Most healthcare application workflows involves multiple stages. Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to specify how they should run.
@@ -33,7 +33,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 ### [REQ] Representing Workflow with DCG
-The SDK shall enable designing application workflows which can be represented by a Directed Cyclic Graph (DCG)
+The SDK shall enable representation of application workflows using a Directed Cyclic Graph (DCG) which requires cyclic dependencies
 
 #### Background
 Some applications require cycles to have dependencies among operators to represent application workflow.
@@ -49,7 +49,7 @@ MONAI Deploy App SDK 0.2.0
 
 
 ### [REQ]  Conditional Branching in Workflow
-The SDK shall support conditional & dynamic activation of an Operator in an Application
+The SDK shall support dynamic activation of an Operator in an application so that at run-time an Operator can be executed depending on application specific logic.
 
 #### Background
 Some applications require coniditional selection of an operator during run-time. Consider an application the following operators: (a) DICOM Data Loader (b) Rescale (c) Gaussin Blur (d) Classification Inference (e) DICOM Segmentation Writer. The app developer may select Rescale or Gaussian Blur operator depending on whether the input volumetric data requires rescaling or not.
@@ -65,7 +65,7 @@ MONAI Deploy App SDK 0.2.0
 
 
 ### [REQ]  Support for Multi-Class Single-Outout Classification
-The SDK shall support developing an application that performs Multi-Class Single-Outout Classification classification with a pre-trained AI model
+The SDK shall support developing an application that performs Multi-Class Single-Outout Classification classification with a pre-trained AI model so that the app developer can incorporate necessary model inputs, transforms, inference and package output from inference in appropriate domain-specific manners.
 
 #### Background
 Multiclass classification is a classification task with two or more classes. Each sample can only be labeled as one class. For example, classification using features extracted from a set of slices of different modalities, where each slice may either MR, CT or IVUS. Each image is one sample and is labeled as one of the 3 possible classes. Multiclass classification makes the assumption that each sample is assigned to one and only one label - one sample cannot, for example, be both a CT & MR.
@@ -83,7 +83,7 @@ MONAI Deploy App SDK 0.1.0
 
 
 ### [REQ]  Support for Multi-Class Multi-Output Classification
-The SDK shall support developing an application that performs Multi-Class Multi-Output classification with a pre-trained AI model
+The SDK shall support developing an application that performs Multi-Class Multi-Output classification with a pre-trained AI model so that the app developer can incorporate necessary model inputs, transforms, inference and package output from inference in appropriate domain-specific manners.
 
 #### Background
 Multiclass-multioutput classification (also known as multitask classification) is a classification task which labels each sample with a set of non-binary properties. Both the number of properties and the number of classes per property is greater than 2. An example would be classifying a Chest X-Ray image to have one or more labels from the following list: Atelectasis, Cardiomegaly, Effusion, Pneumothorax  
@@ -101,7 +101,7 @@ MONAI Deploy App SDK 0.1.0
 
 
 ### [REQ]  Support for Semantic Segmentation
-The SDK shall support developing an application that performs semantic segmentation with a pre-trained AI model
+The SDK shall support developing an application that performs semantic segmentation with a pre-trained AI model so that the app developer can incorporate necessary model inputs, transforms, inference and package output from inference in appropriate domain-specific manners.
 
 #### Background
 The aim of semantic segmentation is to label each voxel in an image with a class. An example would to be assign each voxel in a 3D CT dataset to background, kidney or tumor.
@@ -117,11 +117,11 @@ MONAI Deploy App SDK 0.1.0
 
 
 ### [REQ]  Support for Instance Segmentation
-The SDK shall support developing an application that performs semantic segmentation with a pre-trained AI model
+The SDK shall support developing an application that performs semantic segmentation with a pre-trained AI model so that the app developer can incorporate necessary model inputs, transforms, inference and package output from inference in appropriate domain-specific manners.
 
 
 #### Background
- In instance segmentation a model assigns an “individual object” label to each voxel in the image. An example would be where voxels for individual Lung nodues are labeled seperately. Let's say in a 3D dataset there are 20 lung nodules. Instead of having a generic "nodule" pixel class, we would have 20 classes for the 20 nodules: nodule-1, nodule-2, nodule-3,.., nodule-20.
+In instance segmentation a model assigns an “individual object” label to each voxel in the image. An example would be where voxels for individual Lung nodues are labeled seperately. Let's say in a 3D dataset there are 20 lung nodules. Instead of having a generic "nodule" pixel class, we would have 20 classes for the 20 nodules: nodule-1, nodule-2, nodule-3,.., nodule-20.
 
 
 #### Verification Strategy
@@ -135,7 +135,7 @@ MONAI Deploy App SDK 0.1.0
 
 
 ### [REQ]  Support for Object Detection
-The SDK shall support developing an application that performs object detection with a pre-trained AI model
+The SDK shall support developing an application that performs object detection with a pre-trained AI model so that the app developer can incorporate necessary model inputs, transforms, inference and package output from inference in appropriate domain-specific manners.
 
 
 #### Background
@@ -152,44 +152,47 @@ MONAI Deploy App SDK 0.2.0
 ---
 
 
-
 ### [REQ]  Supporting PyTorch as a DL Framework
-The SDK shall enable incorporating model trained with PyTorch as an ingredient to be used for an Inference operator inside an Application
+The SDK shall enable app developer to use model trained with PyTorch in an Application so that tasks like model loading, provisioning of input data, a mechanism to perform custom transforms are handled by the SDK
 
 #### Background
-TBD
+PyTorch is open source machine learning framework that accelerates the path from research prototyping to production deployment. It is very popular among healthcare researchers and cmmercial vendors
 
 #### Verification Strategy
-TBD
+Verify that a PyTorch based model can be used to build an application that performs classification, segmentation and object detetcion tasks
+
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
 
 ---
 
-### [REQ] Supporting TensorFlow as a DL Framework
-The SDK shall enable incorporating model trained with Tensorflow as an ingredient to be used for an Inference operator
+
+### [REQ]  Supporting TensorFlow as a DL Framework
+The SDK shall enable app developer to use model trained with TensorFlow in an Application so that tasks like model loading, provisioning of input data, a mechanism to perform custom transforms are handled by the SDK
 
 #### Background
-TBD
+TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.
 
 #### Verification Strategy
-TBD
+Verify that a TensforFlow based model can be used to build an application that performs classification, segmentation and object detetcion tasks
+
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
 
 ---
+
 
 ### [REQ] Supporting MMAR
-The SDK shall allow integration of a Clara Train (MONAI core) generated MMAR in an operator
-Usage of Triton
+The SDK shall allow integration of a Clara Train generated Medical Model ARchive (MMAR) for the purpose of Inference so that app developer can easily incorporate trained models into a functional application
+
 
 #### Background
-TBD
+MMAR defines the standard structure for storing artifacts (files) needed and produced by the model development workflow (training, validation, inference, etc.). The MMAR includes all the information about the model including configurations and scripts to provide a work space to perform different model development tasks. In the context of the MONAI App SDK, the relevant usage for the MMAR is for the purpose of inference
 
 #### Verification Strategy
-TBD
+Use an existing MMAR from the Clara Train Repository. Verify that the App SDK provides built-in mechanisms to incorporate the model inherent in the MMAR to perform inference
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
