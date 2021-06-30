@@ -1,7 +1,7 @@
 ### Introduction
-Productionizing an AI model is difficult as there is a chasm between training an AI model and deploying it to a production environment. In the healthcare domain, this chasm involves more than just performing inference with a model. Issues such as ingestion of medical imaging datasets, performing application specific pre and post processing operations,  packaging output from the application, integration with clinical informatics systems as well as ensuring right compue resources are available to the application at rune-time -  are all important aspects of app development. 
+Productionizing an AI model is difficult as there is a chasm between training an AI model and deploying it to a production environment. In the healthcare domain, this chasm involves more than just performing inference with a model. Issues such as ingestion of medical imaging datasets, performing application specific pre and post processing operations,  packaging output from the application, integration with clinical informatics systems as well as ensuring right compute resources are available to the application at run-time - are all important aspects of app development. 
 
-The MONAI Application SDK provides a framework to develop, verify, analyze AI driven healthcare applications and integrate them with clinical information systems using industry standard protocols such as DICOM & FHIR. The scope of the 
+The MONAI Application SDK provides a framework to develop, verify, analyze AI driven healthcare applications and integrate them with clinical information systems using industry standard protocols such as DICOM & FHIR. The SDK is aimed to support the following activities
 
 * Pythonic Framework for app development
 * A mechanism to locally run and test an app
