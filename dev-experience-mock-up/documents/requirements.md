@@ -208,13 +208,13 @@ Verify that a TensforFlow based model can be used to build an application that p
 
 
 #### Target Release
-MONAI Deploy App SDK 0.1.0
+MONAI Deploy App SDK 0.2.0
 
 ---
 
 
 ### [REQ] Supporting MMAR
-The SDK shall allow integration of a Clara Train generated Medical Model ARchive (MMAR) for the purpose of Inference so that app developer can easily incorporate trained models into a functional application
+The SDK shall allow integration of a Clara Train generated Medical Model ARchive (MMAR) for the purpose of inference so that app developers can easily incorporate trained models into a functional application
 
 
 #### Background
@@ -229,13 +229,13 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 ### [REQ] Supporting Triton
-The SDK shall allow designing operators which can use Triton for inference using its supported Networking Protocol, e.g. http and gRPC
+The SDK shall allow performing inference with a pre-trained AI model via Triton using its supported networking protocol so that app developers can leverage high performance and high utilization of CPU/GPU resources when deployed in a production environment
 
 #### Background
-TBD
+Triton Inference Server provides a cloud and edge inferencing solution optimized for both CPUs and GPUs. Triton supports an HTTP/REST and gRPC protocol that allows remote clients to request inferencing for any model being managed by the server. 
 
 #### Verification Strategy
-TBD
+Use a pre-trained model to develop an application using the App SDK. Verify that the application can be designed in such a way so that the app can leverage Triton at run-time without the app developer explicitly making use of Triton API
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
@@ -243,14 +243,17 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ]  Supporting DICOM as a networking protocol
-The SDK shall enable applications to integrate with medical informatics data source & sinks using DICOM as a networking protocol.
+### [REQ]  Developing custom Operator
+The SDK shall support developing custom Operators to perform task specific logic so that application developer is not limited by the built-in operators offered by the SDK itself
+
 
 #### Background
-TBD
+The SDK itself will provide a set of built-in operators which can be incorporated domain specific tasks such as loading medical images, performing inference etc. However in almost all non-trivial applications, there would be need of performing custom tasks.
+
 
 #### Verification Strategy
-TBD
+Write a custom operator to perform an image processing task and integrate that with an application using the App SDK.
+
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
@@ -258,7 +261,23 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ] Parsing a collection of DICOM series
+
+### [REQ]  Integration with DICOM aware systems via MONAI Medical Informatics Gateway
+The SDK shall enable applications to integrate with the MONAI Informatics Gateway so that medical informatics data can be ingested from and exported to clinical informatics system using DICOM as a protocol
+
+#### Background
+MONAI Informatics Gateway is a subsystem of the MONAI Deploy platform which facilitates integration with DICOM & FHIR compliant systems, enables ingestion of imaging data, helps triggering of jobs with configurable rules and offers pushing the output of jobs to PACS & EMR systems
+
+#### Verification Strategy
+Design an app which ingests DICOM SOP Instances as input and generates DICOM SOP Instances as output. Verify that the input can be provided from the MONAI Informatics Gateway and outputs can be pushed to the MONAI Informatics Gateway.
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+
+---
+
+
+### [REQ] Parsing one or more DICOM series
 The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute of the Series OID.
 
 #### Background
