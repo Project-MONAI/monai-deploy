@@ -67,7 +67,7 @@ connection.
 **Operating System:**  Typically a Linux environment, where data scientists and 
 developers are running their development tools, accessing local data.  
 
-**Hardware:**  Workstation with minimum of 8GB RAM, 8 logical core, 1 GPU in 
+**Hardware:**  Workstation or laptop with minimum of 8GB RAM, 8 logical core, 1 GPU in 
 the minimum environment. CUDA support. Larger HW configurations with different 
 sizing SHALL be required for demanding workloads.  
 
