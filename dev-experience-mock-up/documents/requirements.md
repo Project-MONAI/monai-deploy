@@ -63,16 +63,15 @@ MONAI Deploy App SDK 0.2.0
 
 
 
-
 ### [REQ]  Support for Multi-Class Single-Outout Classification
-The SDK shall support designing operator that perform classification with an ML/DL based model
+The SDK shall support developing an application that performs Multi-Class Single-Outout Classification classification with a pre-trained AI model
 
 #### Background
 Multiclass classification is a classification task with two or more classes. Each sample can only be labeled as one class. For example, classification using features extracted from a set of slices of different modalities, where each slice may either MR, CT or IVUS. Each image is one sample and is labeled as one of the 3 possible classes. Multiclass classification makes the assumption that each sample is assigned to one and only one label - one sample cannot, for example, be both a CT & MR.
 
 #### Verification Strategy
 
-Use a pre-trained model designed for multi-class classification. Verify that an SDK provides built-in operators using which an app can be built with that pre-trained model 
+Use a pre-trained model designed for multi-class classification. Verify that the SDK provides built-in operators using which an app can be built with that pre-trained model 
 
 
 #### Target Release
@@ -81,15 +80,15 @@ MONAI Deploy App SDK 0.1.0
 
 
 
-### [REQ]  Support for Multi-Class Multi-output Classification
-The SDK shall support designing operator that perform classification with an ML/DL based model
+### [REQ]  Support for Multi-Class Multi-Output Classification
+The SDK shall support developing an application that performs Multi-Class Multi-Output classification with a pre-trained AI model
 
 #### Background
 Multiclass-multioutput classification (also known as multitask classification) is a classification task which labels each sample with a set of non-binary properties. Both the number of properties and the number of classes per property is greater than 2. An example would be classifying a Chest X-Ray image to have one or more labels from the following list: Atelectasis, Cardiomegaly, Effusion, Pneumothorax  
 
 
 #### Verification Strategy
-Use a pre-trained model designed for multi-class multi-output classification. Verify that an SDK provides built-in operators using which an app can be built with that pre-trained model 
+Use a pre-trained model designed for multi-class multi-output classification. Verify that the SDK provides built-in operators using which an app can be built with that pre-trained model 
 
 
 #### Target Release
@@ -98,39 +97,58 @@ MONAI Deploy App SDK 0.1.0
 
 
 
-
-### [REQ]  Support for Segmentation
-The SDK shall support designing operator that perform segmentation with an ML/DL based model
+### [REQ]  Support for Semantic Segmentation
+The SDK shall support developing an application that performs semantic segmentation with a pre-trained AI model
 
 #### Background
-TBD
+The aim of semantic segmentation is to label each voxel in an image with a class. An example would to be assign each voxel in a 3D CT dataset to background, kidney or tumor.
+
+#### Verification Strategy
+Use a pre-trained model designed for semantic segmentation. Verify that the SDK provides built-in operators using which an app can be built with that pre-trained model 
+
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+---
+
+
+### [REQ]  Support for Instance Segmentation
+The SDK shall support developing an application that performs semantic segmentation with a pre-trained AI model
+
+
+#### Background
+ In instance segmentation a model assigns an “individual object” label to each voxel in the image. An example would be where voxels for individual Lung nodues are labeled seperately. Let's say in a 3D dataset there are 20 lung nodules. Instead of having a generic "nodule" pixel class, we would have 20 classes for the 20 nodules: nodule-1, nodule-2, nodule-3,.., nodule-20.
 
 
 #### Verification Strategy
-TBD
+Use a pre-trained model designed for Instance Segmentation. Verify that the SDK provides built-in operators using which an app can be built with that pre-trained model 
+
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
-
 ---
 
-### [REQ]  Support for general purpose computation
-The SDK shall support developing operator that performs custom computation 
+
+### [REQ]  Support for Object Detection
+The SDK shall support developing an application that performs object detection with a pre-trained AI model
+
 
 #### Background
-TBD
+The aim of object detection is to provide a 2D/3D bounding obox around an object of interest. An example is to generate a 3D region of interest for Lung given a  CT dataset.
 
 
 #### Verification Strategy
-TBD
+Use a pre-trained model designed for object detection. Verify that the SDK provides built-in operators using which an app can be built with that pre-trained model 
+
 
 #### Target Release
-MONAI Deploy App SDK 0.1.0
-
+MONAI Deploy App SDK 0.2.0
 ---
+
+
 
 ### [REQ]  Supporting PyTorch as a DL Framework
-The SDK shall enable incorporating model trained with PyTorch as an ingredient to be used for an Inference operator
+The SDK shall enable incorporating model trained with PyTorch as an ingredient to be used for an Inference operator inside an Application
 
 #### Background
 TBD
