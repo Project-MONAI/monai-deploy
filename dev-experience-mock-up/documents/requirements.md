@@ -150,7 +150,7 @@ MONAI Deploy App SDK 0.1.0
 
 ### [REQ] Supporting Triton
 The SDK shall allow designing operators which can use Triton for inference
-~~DICOM~~ using its supported Networking Protocol, e.g. http and gPRC
+~~DICOM~~ using its supported Networking Protocol, e.g. http and gRPC
 
 #### Background
 TBD
@@ -208,8 +208,8 @@ MONAI Deploy App SDK 0.1.0
 
 ---
 
-### [REQ] Supporting DICOM Segmentation Storage SOP
-The SDK shall provide an operator that supports exporting a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional, though only binary will be supported in the target release 
+### [REQ] Supporting DICOM Segmentation Storage SOP Class as Output
+The SDK shall provide an operator that supports generating and exporting a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional, though only binary will be supported in the target release 
 
 #### Background
 TBD
@@ -224,8 +224,8 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ] Supporting DICOM RT Structure Storage SOP Instance
-The SDK shall provide an operator that supports exporting a RT Structure Set Storage SOP Instance.
+### [REQ] Supporting DICOM RT Structure Storage SOP Class as Output
+The SDK shall provide an operator that supports generating and exporting a RT Structure Set Storage SOP Instance.
 
 #### Background
 TBD
