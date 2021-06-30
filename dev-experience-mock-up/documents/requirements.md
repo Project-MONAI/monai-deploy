@@ -59,6 +59,7 @@ Verify that operators can be dynamically selected for execution based on user sp
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 ---
 
 
@@ -76,6 +77,7 @@ Use a pre-trained model designed for multi-class classification. Verify that the
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -93,6 +95,7 @@ Use a pre-trained model designed for multi-class multi-output classification. Ve
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -109,6 +112,7 @@ Use a pre-trained model designed for semantic segmentation. Verify that the SDK 
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -126,6 +130,7 @@ Use a pre-trained model designed for Instance Segmentation. Verify that the SDK 
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
 ---
 
 
@@ -143,6 +148,7 @@ Use a pre-trained model designed for object detection. Verify that the SDK provi
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
+
 ---
 
 
@@ -191,8 +197,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 ### [REQ] Supporting Triton
-The SDK shall allow designing operators which can use Triton for inference
-~~DICOM~~ using its supported Networking Protocol, e.g. http and gRPC
+The SDK shall allow designing operators which can use Triton for inference using its supported Networking Protocol, e.g. http and gRPC
 
 #### Background
 TBD
@@ -202,6 +207,8 @@ TBD
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
+
+---
 
 
 ### [REQ]  Supporting DICOM as a networking protocol
