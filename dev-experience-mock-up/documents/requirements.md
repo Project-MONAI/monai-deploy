@@ -23,7 +23,7 @@ The scope of this document is limited to the MONAI Deploy App SDK. There are oth
 ### Attributes of a Requirement
 
 For each requirements, the following attributes have been spcified
-* Requirement Body: This is the text of the requirement which describes the what and why of the requirements
+* Requirement Body: This is the text of the requirement which describes the goal and purpose behind the requirement
 * Background: Provides necessary background to understand the context of the requirements
 * Verficiation Strategy: A high level plan on how to test this requirement at a system level
 * Target Release: Specifies which release of the MONAI App SDK this requirement is targetted for
