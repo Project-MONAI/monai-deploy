@@ -162,8 +162,7 @@ MAY have combined staging and production systems.
 system. CUDA support. Larger HW configurations (GPU, CPU and memory) compared to
 the Integration environment.
 
-**Orchestration:** Kubernetes based container
-orchestration.
+**Orchestration:** Kubernetes based container orchestration.
 
 **Applications:** Representative applications to what SHALL run
 on the production server. Applications limited to production and runtime
@@ -206,6 +205,8 @@ production clinical systems dealing with real patient data.
 system, depending on availability and performance requirements. CUDA support.
 Larger HW configurations (GPU, CPU and memory) compared to the Staging
 environment.
+
+**Orchestration:** Kubernetes based container orchestration.
 
 **Applications:** Production versions of applications, approved
 within the institution for clinical deployment.
