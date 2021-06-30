@@ -295,7 +295,7 @@ MONAI Deploy App SDK 0.1.0
 The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute so that at run-time appropriate inputs can be provided to the application.
 
 #### Background
-Given a collection of DICOM studies, often an app developer needs to figure out which studies and which series belonding to a study are relevant for a specific applications. DICOM SOP Instances have a collection of attributes embedded in them. These atributes can use used to parse through a collection of series.
+Given a collection of DICOM studies, often an app developer needs to figure out which studies and which series belonging to a study are relevant for a specific application. DICOM SOP Instances have a collection of attributes embedded in them. These atributes can use used to parse through a collection of series.
 
 
 #### Verification Strategy
