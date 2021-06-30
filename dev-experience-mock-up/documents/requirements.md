@@ -263,7 +263,7 @@ MONAI Deploy App SDK 0.1.0
 
 
 ### [REQ]  Integration with DICOM aware systems via MONAI Medical Informatics Gateway
-The SDK shall enable applications to integrate with the MONAI Informatics Gateway so that medical informatics data can be ingested from and exported to clinical informatics system using DICOM as a protocol
+The SDK shall enable applications to integrate with the MONAI Informatics Gateway so that imaging informatics data can be ingested from and exported to clinical informatics system using DICOM as a protocol
 
 #### Background
 MONAI Informatics Gateway is a subsystem of the MONAI Deploy platform which facilitates integration with DICOM & FHIR compliant systems, enables ingestion of imaging data, helps triggering of jobs with configurable rules and offers pushing the output of jobs to PACS & EMR systems
@@ -276,16 +276,30 @@ MONAI Deploy App SDK 0.1.0
 
 ---
 
-
-### [REQ] Parsing one or more DICOM series
-The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute of the Series OID.
+### [REQ]  Integration with FHIR aware systems via MONAI Medical Informatics Gateway
+The SDK shall enable applications to integrate with the MONAI Informatics Gateway so that healthcare records can be ingested from and exported to clinical informatics system using FHIR as a specification
 
 #### Background
-TBD
+MONAI Informatics Gateway is a subsystem of the MONAI Deploy platform which facilitates integration with DICOM & FHIR compliant systems, enables ingestion of imaging data, helps triggering of jobs with configurable rules and offers pushing the output of jobs to PACS & EMR systems
+
+#### Verification Strategy
+Design an app which ingests FHIR Records as input and generates FHIR Records as output. Verify that the input can be provided from the MONAI Informatics Gateway and outputs can be pushed to the MONAI Informatics Gateway.
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+
+---
+
+
+### [REQ] Parsing one or more DICOM series
+The SDK shall enable filtering a set of DICOM Series with user defined parsing criteria expressed in terms of a collection of keys-value pairs where each key represents a DICOM Attribute so that at run-time appropriate inputs can be provided to the application.
+
+#### Background
+Given a collection of DICOM studies, often an app developer needs to figure out which studies and which series belonding to a study are relevant for a specific applications. DICOM SOP Instances have a collection of attributes embedded in them. These atributes can use used to parse through a collection of series.
 
 
 #### Verification Strategy
-TBD
+Verify that the App SDK supports forming selection queries using a collection of rules based on DICOM Attributes. Use these rules to select a seof DICOM series.
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
