@@ -1,5 +1,5 @@
 ### Introduction
-Productionizing an AI model is difficult as there is a chasm between training an AI model and deploying it to a production environment. In the healthcare domain, this chasm involves more than just performing inference with a model. An App developer would need to address isuees such as: ingestion of medical imaging datasets, performing application specific pre and post processing operations,  packaging output from the application, integration with clinical informatics systems & ensuring right compute resources are specified and utilized by the application at run-time 
+Productionizing an AI model is difficult as there is a chasm between training an AI model and deploying it to a production environment. In the healthcare domain, this chasm involves more than just performing inference with a model. An App developer would need to address issues such as: ingestion of medical imaging datasets, performing application specific pre and post processing operations,  packaging output from the application, integration with clinical informatics systems & ensuring right compute resources are specified and utilized by the application at run-time 
 
 The MONAI Application SDK provides a framework to develop, verify, analyze AI driven healthcare applications and integrate them with clinical information systems using industry standard protocols such as DICOM & FHIR. The SDK is aimed to support the following activities
 
@@ -324,7 +324,7 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 
-### [REQ] Loading an imaging dataset from DICOM Part 10 files or stored messages into a unified domain object
+### [REQ] Loading a DICOM 2d/3d dataset into a unified domain object
 The SDK shall enable applications to load a 2D/3D imaging dataset belonging to a single DICOM series into a unified "Image" domain object so that downstream operators can process this domain object based on application's needs such as transformation and inference.
 
 #### Background
@@ -339,14 +339,13 @@ MONAI Deploy App SDK 0.1.0
 ---
 
 ### [REQ] Supporting DICOM Segmentation Storage SOP Class as output
-The SDK shall provide a mechanism to generate a Segmentation Storage SOP Instance. This operator shall be able to output a multi-frame image representing a classification of pixels in one or more referenced images. Segmentations are either binary or fractional, though only binary will be supported in the target release 
+The SDK shall provide a mechanism to generate a Segmentation Storage SOP Instance where each pixel/voxel can belong to a single category among multiple supported categories. This operator shall be able to output a multi-frame image representing a classification of pixels where each frame represents a 2D plane or a slice of a single segmentation category
 
 #### Background
-TBD
-
+Healthcare AI apps create segmentation instances during acquisition, post-processing, interpretation and treatment. DICOM Segmentation Storage SOP class provides a way to encode segmentation data. It is intended for composite data objects of any modality or clinical specialty. Segmentations are either binary or fractional.
 
 #### Verification Strategy
-TBD
+Make use of a segmentation model from MONAI core to develop an app. Verify that the output can be exported as a compliant Segmentation Storage SOP Instance
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
