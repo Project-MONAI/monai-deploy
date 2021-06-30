@@ -33,7 +33,7 @@ For each requirements, the following attributes have been spcified
 
 
 
-### [REQ] Representing application specific tasks
+### [REQ] Representing application specific tasks using Operators
 The SDK shall enable representing a computational task in a healthcare application using an operator so that each task can be modulrized, reused and dubugged in distinct contexts.
 
 #### Background
@@ -47,8 +47,47 @@ MONAI Deploy App SDK 0.1.0
 
 ---
 
+
+
+### [REQ] Inputs for Operators
+The SDK shall provide mechanisms so that each Operator can be designed to ingest one or more inputs. 
+
+
+#### Background
+Often an application task requires to input multiple inputs. Having built-in support to model this behavior makes app development easier.
+
+#### Verification Strategy
+Verify that there is built-in support for multiple inputs for designing an operator
+
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+
+---
+
+
+
+
+### [REQ] Outputs for Operators
+The SDK shall provide mechanisms so that each Operator can be designed to generate one or more outputs. 
+
+
+#### Background
+Often an application task requires to generate multiple outpus. Having built-in support to model this behavior makes app development easier.
+
+#### Verification Strategy
+Verify that there is built-in support for multiple outputs for designing an operator
+
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+
+---
+
+
+
 ### [REQ] Representing Workflow With DAG
-The SDK shall enable dependencies among upstream and downstream operators in an application using a DAG so that app workflow can be modeled unambiguously.
+The SDK shall enable dependencies among upstream and downstream operators in an application using a DAG so that app workflow can be modeled unambiguously. The SDK shall provide a mechanism to link an output port of an upstream operator to an input port of a downstream operator to form the DAG
 
 #### Background
 Most healthcare application workflows involves multiple stages. Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to specify how they should run.
@@ -108,6 +147,24 @@ MONAI Deploy App SDK 0.2.0
 
 ---
 
+
+
+### [REQ]  Developing custom Operator
+The SDK shall support developing custom Operators to perform task specific logic so that application developer is not limited by the built-in operators offered by the SDK itself
+
+
+#### Background
+The SDK itself will provide a set of built-in operators which can be incorporated domain specific tasks such as loading medical images, performing inference etc. However in almost all non-trivial applications, there would be need of performing custom tasks.
+
+
+#### Verification Strategy
+Write a custom operator to perform an image processing task and integrate that with an application using the App SDK.
+
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+
+---
 
 
 ### [REQ]  Support for Multi-Class Single-Output Classification
@@ -259,23 +316,6 @@ MONAI Deploy App SDK 0.1.0
 
 ---
 
-
-### [REQ]  Developing custom Operator
-The SDK shall support developing custom Operators to perform task specific logic so that application developer is not limited by the built-in operators offered by the SDK itself
-
-
-#### Background
-The SDK itself will provide a set of built-in operators which can be incorporated domain specific tasks such as loading medical images, performing inference etc. However in almost all non-trivial applications, there would be need of performing custom tasks.
-
-
-#### Verification Strategy
-Write a custom operator to perform an image processing task and integrate that with an application using the App SDK.
-
-
-#### Target Release
-MONAI Deploy App SDK 0.1.0
-
----
 
 
 
