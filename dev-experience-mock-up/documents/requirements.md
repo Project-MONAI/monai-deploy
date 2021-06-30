@@ -1,32 +1,31 @@
 ### Introduction
-In the medical domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development.
-
-The MONAI Application SDK provides a framework to design, integrate and develop medical AI applications. 
+There is a large chasm between training an AI model and deploying it to a production environment. In the healthcare domain, productization of an AI model involves more than just performing inference with a model. Issues such as ingestion of medical imaging datasets, performing application specific pre and post processing operations, as well as packaging output from the application so that it can be effectively pushed to the right informatics data sink - are all important aspects of app development. The MONAI Application SDK provides a framework to design, integrate and develop medical AI applications. 
 
 ---
 
-### [REQ] Designing Application
-The SDK shall enable developing applications that can leverage ML, DL & Computer Vision based models to perform inference
+
+### [REQ] Representing application specific tasks
+The SDK shall enable representing a computational task in a healthcare application using an operator
 
 #### Background
-
+Most healthcare application workflows involves multiple tasks. Each task is a basic unit of work. Having a programmatic way of representing such task is important as this promotes seperation of concern, reusability and debuggability. Example of tasks are: loading a DICOM Series into an in-memory volumetric representation, ability to rescale a volumetric etc.
 
 #### Verification Strategy
+Verify that common set of workflow tasks can be represented by built-in Operators
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
 
 ---
 
-
 ### [REQ] Representing Workflow With DAG
-The SDK shall enable designing application workflows which can be represented by a Directed Acyclic Graph (DAG)
+The SDK shall enable designing application workflows by allowing upstream and downstream dependencies among multiple operators in an Applications
 
 #### Background
-Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to say how they should run.
+Most healthcare application workflows involves multiple stages. Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to say how they should run.
 
 #### Verification Strategy
-Build an application with the SDK which has multiple operators. Verify that the SDK offers a mechanism to traverse through the underlying DAG.
+Build an application with the SDK which has multiple operators. Verify that the SDK offers a mechanism to represent the underlying worklfow using a DAG and enables traversal of the DAG
 
 #### Target Release
 MONAI Deploy App SDK 0.1.0
