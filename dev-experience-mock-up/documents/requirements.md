@@ -22,7 +22,7 @@ MONAI Deploy App SDK 0.1.0
 The SDK shall enable designing application workflows by allowing upstream and downstream dependencies among multiple operators in an Applications
 
 #### Background
-Most healthcare application workflows involves multiple stages. Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to say how they should run.
+Most healthcare application workflows involves multiple stages. Application developers need a way to organize functional units of AI based inference apps. A DAG (Directed Acyclic Graph) is the core concept of MONAI App SDK, collecting Operators together, organized with dependencies and relationships to specify how they should run.
 
 #### Verification Strategy
 Build an application with the SDK which has multiple operators. Verify that the SDK offers a mechanism to represent the underlying worklfow using a DAG and enables traversal of the DAG
@@ -36,10 +36,10 @@ MONAI Deploy App SDK 0.1.0
 The SDK shall enable designing application workflows which can be represented by a Directed Cyclic Graph (DCG)
 
 #### Background
-TBD
+Some applications require cycles to have dependencies among operators to represent application workflow.
 
 #### Verification Strategy
-TBD
+Pick an application workflow from Genomics type which requires cyclic dependencies among operators. Verify that the App SDK supports such need.
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
@@ -49,31 +49,55 @@ MONAI Deploy App SDK 0.2.0
 
 
 ### [REQ]  Conditional Branching in Workflow
-The SDK shall support conditional & dynamic activation of an Operator in an Application at run-time
+The SDK shall support conditional & dynamic activation of an Operator in an Application
 
 #### Background
-TBD
+Some applications require coniditional selection of an operator during run-time. Consider an application the following operators: (a) DICOM Data Loader (b) Rescale (c) Gaussin Blur (d) Classification Inference (e) DICOM Segmentation Writer. The app developer may select Rescale or Gaussian Blur operator depending on whether the input volumetric data requires rescaling or not.
 
 #### Verification Strategy
-TBD
+Verify that operators can be dynamically selected for execution based on user specified logic
 
 #### Target Release
 MONAI Deploy App SDK 0.2.0
-
 ---
 
-### [REQ]  Support for Classification
+
+
+
+### [REQ]  Support for Multi-Class Single-Outout Classification
 The SDK shall support designing operator that perform classification with an ML/DL based model
 
 #### Background
-TBD
+Multiclass classification is a classification task with two or more classes. Each sample can only be labeled as one class. For example, classification using features extracted from a set of slices of different modalities, where each slice may either MR, CT or IVUS. Each image is one sample and is labeled as one of the 3 possible classes. Multiclass classification makes the assumption that each sample is assigned to one and only one label - one sample cannot, for example, be both a CT & MR.
 
 #### Verification Strategy
-TBD
+
+Use a pre-trained model designed for multi-class classification. Verify that an SDK provides built-in operators using which an app can be built with that pre-trained model 
+
+
 #### Target Release
 MONAI Deploy App SDK 0.1.0
-
 ---
+
+
+
+### [REQ]  Support for Multi-Class Multi-output Classification
+The SDK shall support designing operator that perform classification with an ML/DL based model
+
+#### Background
+Multiclass-multioutput classification (also known as multitask classification) is a classification task which labels each sample with a set of non-binary properties. Both the number of properties and the number of classes per property is greater than 2. An example would be classifying a Chest X-Ray image to have one or more labels from the following list: Atelectasis, Cardiomegaly, Effusion, Pneumothorax  
+
+
+#### Verification Strategy
+Use a pre-trained model designed for multi-class multi-output classification. Verify that an SDK provides built-in operators using which an app can be built with that pre-trained model 
+
+
+#### Target Release
+MONAI Deploy App SDK 0.1.0
+---
+
+
+
 
 ### [REQ]  Support for Segmentation
 The SDK shall support designing operator that perform segmentation with an ML/DL based model
