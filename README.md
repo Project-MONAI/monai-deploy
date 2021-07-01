@@ -17,7 +17,7 @@ applications to bring AI applications to production across healthcare use cases.
 
 Currently the work underway includes:
 - MONAI Application Package (MAP) - defines how applications can be packaged
-    and distributed amonths MONAI Working Group member organizations.
+    and distributed amongst MONAI Working Group member organizations.
 - MONAI App Server - Server environment which can serve MONAI Applications.
 - MONAI App SDK - set of development tools to create MAPs out of MONAI / Pytorch models.
 
