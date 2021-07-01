@@ -18,18 +18,19 @@ Welcome to MONAI Deploy! This documentation is intended for individuals and inst
   
 2. Categorise an issue
 
+ * The issue creator should add initial issue labels, if they can.
  * MONAI Deploy release manager for that release will categorize the issue or correct it.
  * If an issue has overlap between multiple categories [Guideline, Feature, Community], the issue needs to be broken down into smaller issues
 
 3. Gain approval to develop large proposals
 
-  * For larger ideas of improvement for MONAI Deploy, the release manager will bring it up for discussion at the weekly wg meeting.
+  * For larger ideas of improvement for MONAI Deploy, the release manager will bring it up for discussion at the weekly working group meeting.
   * Small issues, bug fixes and non-controversial features get picked up and prioritized for implementation
 
 4. Develop proposal/feature
 
-  * If successful consensus is found, create a written proposal and pull request. 
-  * Any written markdown documents in proposals should follow rfc 2119.
+  * If successful consensus is found, develop the work and open a pull request. 
+  * Any written markdown documents should follow [rfc 2119](https://datatracker.ietf.org/doc/html/rfc2119).
   * For **Feature** development, please follow the main MONAI contributing [guidelines](https://github.com/Project-MONAI/MONAI/blob/dev/CONTRIBUTING.md)
 
 5. Feedback and approval
