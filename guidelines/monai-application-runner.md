@@ -31,6 +31,8 @@ MAR SHALL execute a single MAP at a time.
 ### Monitor application progress, completion and failures
 MAR SHALL track MONAI application execution progress, completion, and failures.
 
+MAR SHALL provide an option to export the stdout and stderr from a running MONAI application.
+
 ### Resource provisioning
 MAR SHALL NOT manage resources (CPU, GPU, and memory) for MONAI Applications.
 
