@@ -11,7 +11,7 @@ This is a proposal for the MONAI Deploy Working Group.
   - [Contains an Application](#contains-an-application)
   - [Single Artifact](#single-artifact)
   - [Self-Describing](#self-describing)
-  - [Inputs/Output Specification](#inputsoutput-specification)
+  - [IO Specification](#io-specification)
   - [Local Execution](#local-execution)
   - [Containerization](#containerization)
   - [Compatible with Kubernetes](#compatible-with-kubernetes)
@@ -28,6 +28,7 @@ This is a proposal for the MONAI Deploy Working Group.
   - [Manifest Export](#manifest-export)
   - [Layout Diagram](#layout-diagram)
 - [Special Folders](#special-folders)
+
 
 ## Overview
 
@@ -77,13 +78,15 @@ The method of description SHALL provide the following information about the MAP:
 
 - Resource requirements such as CPU cores, available system memory, GPU availability, etc.
 
-### Inputs/Output Specification
+
+### IO Specification
 
 A MAP SHALL provide information about its expected inputs such that an external agent is able to determine if the MAP is capable of receiving a workload.
 
 A MAP SHALL provide information about the protocols and study types it supports such that an external agent is able to determine if the MAP is capable of receiving a workload.
 
 A MAP SHALL provide sufficient information about its outputs that an external agent is able to determine if it is capable of receiving the results.
+
 
 ### Local Execution
 
@@ -247,10 +250,58 @@ The Executor SHOULD provide a customized set of environment variables and comman
 
 - The Executor MUST provide the command line options specified by `/etc/monai/app.json#command`.
 
+- The Executor MUST provide the following environment variables to the Application:
+
+  - `MONAI_APPLICATION`: The path to the root of the Application.
+
+    - The value is read from the Application Manifest (`/etc/monai/pkg.json#application.location`) by default.
+
+  - `MONAI_HOSTNAME`: The name of the host running the MAP (default: `"none"`)
+
+    - The value is expected to be a string.
+
+    - Common values are `MONAI Application Runner` and `MONAI Application Server`.
+
+  - `MONAI_HOSTVERSION`: The version of the host running the map (default: `"0.0.0"`).
+
+    - The value is expected to be a [semantic 2.0 formatted](https://semver.org) string.
+
+  - `MONAI_INPUTPATH`: The path to the folder where inputs can be expected to be read from (default: `"/var/monai/input/"`).
+
+    - The value is expected to be a file-system path to a readable folder.
+
+  - `MONAI_JOBID`: The unique identity of the job the MAP is being executed by (default: `"00000000000000000000000000000000"`).
+
+    - The value is expected to be a string matching `/[A-F0-9a-f]{32}/`.
+
+  - `MONAI_OUTPUTPATH`: The path to the folder where outputs are expected to written to (default: `"/var/monai/output/"`).
+
+    - The value is expected to be a file-system path to a writable folder.
+
+  - `MONAI_TIMEOUT`: The timeout, in seconds, being applied to the MAP (default: `"0"`).
+
+    - The value is expected to an integer number in the range of [`0`, `65536`].
+
+    - A value of `0` indicates that no timeout is being applied to the MAP.
+
+
+#### Environment Variables
+
+| Variable            | Default                                    | Format              | Description                                      |
+| ------------------- | ------------------------------------------ | ------------------- | ------------------------------------------------ |
+| `MONAI_APPLICATION` | `/etc/monai/pkg.json#application.location` | Folder Path         | Path to the Application.                         |
+| `MONAI_HOSTNAME`    | `None`                                     | String              | Name of the host running the MAP.                |
+| `MONAI_HOSTVERSION` | `0.0.0`                                    | Semantic Version    | Version of the host running the MAP.             |
+| `MONAI_INPUTPATH`   | `/var/monai/input/`                        | Folder Path         | Path to the input folder for the Application.    |
+| `MONAI_JOBID`       | `00000000000000000000000000000000`         | `/[A-F0-9a-f]{32}/` | Unique identity of the job the MAP is executing. |
+| `MONAI_OUTPUTPATH`  | `/var/monai/output/`                       | Folder Path         | Path to the output folder for the Application.   |
+| `MONAI_TIMEOUT`     | `0`                                        | Integer             | Timeout, in seconds, applied to the Application. |
+
 
 ### Manifest Export
 
-The Executor is able to function in a special mode in which it will export the MAP's manifest files to a mounted folder. This enables external tooling and services to read the manifest without any special tooling beyond the ability to run the MAP correctly.
+The Executor is able to function in a special mode in which it will export the MAP's manifest files to a mounted folder.
+This enables external tooling and services to read the manifest without any special tooling beyond the ability to run the MAP correctly.
 
 The Executor MUST detect when the following folders have been mounted.
 
@@ -260,18 +311,18 @@ The Executor MUST detect when the following folders have been mounted.
 
 - `/var/run/monai/export/models/`: when detected, the Executor will copy the contents of `/opt/monai/models/` to the folder.
 
-- `/var/run/monai/export/`: when detected without any of the above being detected, the Executor will
+- `/var/run/monai/export/`: when detected without any of the above being detected, the Executor will:
 
-  - copy the contents of `/opt/monai/app/` to `/var/run/monai/export/app/`
+  - copy the contents of `/opt/monai/app/` to `/var/run/monai/export/app/`.
 
-  - copy `/etc/monai/app.json` and `/etc/monai/pkg.json` to `/var/run/monai/export/config/`
+  - copy `/etc/monai/app.json` and `/etc/monai/pkg.json` to `/var/run/monai/export/config/`.
 
-  - copy `/opt/monai/models/` to `/var/run/monai/export/models/`
+  - copy `/opt/monai/models/` to `/var/run/monai/export/models/`.
 
 When the Executor performs a manifest export, it SHALL NOT invoke the Application.
 
 
-### Layout Diagram
+## Layout Diagram
 
 ```
                         ╔═══════════════════════════════╗
@@ -286,16 +337,16 @@ When the Executor performs a manifest export, it SHALL NOT invoke the Applicatio
 
 ## Special Folders
 
-| Path                            | Purpose                                                                                                                |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `/etc/monai/`                   | MAP manifests and immutable configuration files.                                                                       |
-| `/etc/monai/app.json`           | Application Manifest file.                                                                                             |
-| `/etc/monai/pkg.json`           | Package Manifest file.                                                                                                 |
-| `/opt/monai/app/`               | Application code, scripts, and other files.                                                                            |
-| `/opt/monai/executor/`          | Executor binaries.                                                                                                     |
-| `/opt/monai/models`             | AI models. Each model should be in a separate sub-folder.                                                              |
-| `/var/run/monai/export/`        | Special case folder which causes the Executor to export contents related to the app. (see: [export](#manifest-export)) |
-| `/var/run/monai/export/app/`    | Special case folder which causes the Executor to export the contents of `/opt/monai/app/` to the folder.               |
-| `/var/run/monai/export/config/` | Special case folder which causes the Executor to export `/etc/monai/app.json` and `/etc/monai/pkg.json` to the folder. |
-| `/var/run/monai/export/models/` | Special case folder which caused the Executor to export the contents of `/opt/monai/models/` to the folder.            |
+| Path                            | Purpose                                                                                                           |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `/etc/monai/`                   | MAP manifests and immutable configuration files.                                                                  |
+| `/etc/monai/app.json`           | Application Manifest file.                                                                                        |
+| `/etc/monai/pkg.json`           | Package Manifest file.                                                                                            |
+| `/opt/monai/app/`               | Application code, scripts, and other files.                                                                       |
+| `/opt/monai/executor/`          | Executor binaries.                                                                                                |
+| `/opt/monai/models`             | AI models. Each model should be in a separate sub-folder.                                                         |
+| `/var/run/monai/export/`        | Special case folder, causes the Executor to export contents related to the app. (see: [export](#manifest-export)) |
+| `/var/run/monai/export/app/`    | Special case folder, causes the Executor to export the contents of `/opt/monai/app/` to the folder.               |
+| `/var/run/monai/export/config/` | Special case folder, causes the Executor to export `/etc/monai/app.json` and `/etc/monai/pkg.json` to the folder. |
+| `/var/run/monai/export/models/` | Special case folder, causes the Executor to export the contents of `/opt/monai/models/` to the folder.            |
 
