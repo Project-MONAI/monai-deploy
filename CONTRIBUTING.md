@@ -7,8 +7,8 @@
 Welcome to MONAI Deploy! This documentation is intended for individuals and institutions interested in contributing to the MONAI Deploy project. We expect contributions in three main areas:
 
 1. **Guideline**: Guideline and Design proposals
-1. **Feature**: Code and Implementation
-1. **Community**: Improving community processes and procedures
+2. **Feature**: Code and Implementation
+3. **Community**: Improving community processes and procedures
 
 ## Process Overview
 
@@ -35,7 +35,7 @@ Welcome to MONAI Deploy! This documentation is intended for individuals and inst
 
 5. Feedback and approval
 
-  * There will be a feedback period to allow offfline review. The default period is 2 weeks, however shorter or longer periods can be granted at the discretion of the working group.
+  * There will be a feedback period to allow offline review. The default period is 2 weeks, however shorter or longer periods can be granted at the discretion of the working group.
   * The proposal gets reviewed offline, comments and decisions get documented as part of the pull request, so the community can read and understand key decisions.
   * Once a proposal is mature enough, it is presented again at the working group meeting.
   * Once working group approves the proposal, the Pull Request is merged into the main branch
