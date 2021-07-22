@@ -149,19 +149,53 @@ Provides information about the MAP's Application.
 
 - Application Manifest MUST define the command used to run the Application (`/etc/monai/app.json#command`).
 
+  - When not provided the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner and Server.
+
 - Application Manifest SHOULD define the version of the manifest file schema (`/etc/monai/app.json#api-version`).
 
-- Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the application (`/etc/monai/app.json#sdk-version`).
+  - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- Application Manifest SHOULD define input path used by the Application (`/etc/monai/app.json#input.path`).
+- Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/monai/app.json#sdk-version`).
+
+  - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
+
+- Application Manifest SHOULD define the version of the Application itself (`/etc/monai/app.json#version`).
+
+  - Application version SHALL be provided as a [semantic version](https://semver.org/) string.
+
+- Application Manifest SHOULD define the Application's working directory (`/etc/monai/app.json#working-directory`).
+
+  - The value provided must be an absolute path (first character is `/`).
+
+  - When not provided the default path `/var/monai/` will be assumed.
+
+- Application Manifest SHOULD define input path, relative to the working directory, used by the Application (`/etc/monai/app.json#input.path`).
+
+  - The input path SHOULD be a relative file-system path to a directory or folder.
+
+    - When the value is a relative file-system path (first character is not `/`), it is relative to the Application's working directory.
+
+    - When the value is an absolute file-system path (first character is `/`), the file-system path is used as-is.
+
+  - When not provided the default value `input/` will be used.
 
 - Application Manifest SHOULD define input data formats supported by the Application (`/etc/monai/app.json#input.formats`).
 
-- Application Manifest SHOULD define output path used by the Application (`/etc/monai/app.json#output.path`).
+- Application Manifest SHOULD define output path, relative to the working directory used by the Application (`/etc/monai/app.json#output.path`).
+
+  - The input path SHOULD be a relative file-system path to a directory or folder.
+
+    - When the value is a relative file-system path (first character is not `/`), it is relative to the Application's working directory.
+
+    - When the value is an absolute file-system path (first character is `/`), the file-system path is used as-is.
+
+  - When not provided the default value `output/` will be used.
 
 - Application Manifest SHOULD define output data format produces by the Application (`/etc/monai/app.json#output.format`).
 
 - Application Manifest SHOULD define any timeout applied to the Application (`/etc/monai/app.json#timeout`).
+
+  - When not provided the default value `90` will be used.
 
 - Application Manifest MUST enable the specification of environment variables for the Application (`/etc/monai/app.json#environment`)
 
@@ -176,21 +210,35 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
 - Package Manifest MUST be UTF-8 encoded and use the JavaScript Object Notation (JSON) format.
 
+- Package Manifest SHOULD support either CRLF and LF style line endings.
+
 - Package Manifest SHOULD specify the folder which contains the Application (`/etc/monai/pkg.json#app`).
 
   - When not provided the default path `/opt/monai/app/` will be assumed.
 
-- Package Manifest SHOULD provide the version of the package file manifest (`/etc/monai/pkg.json#api-version`).
+- Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/monai/pkg.json#api-version`).
+
+  - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
 - Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/monai/pkg.json#sdk-version`).
 
-- Package Manifest SHOULD support either CRLF and LF style line endings.
+  - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
+
+- Package Manifest SHOULD provide the version of the package itself (`/etc/monai/pkg.json#version`).
+
+  - Package version SHALL be provided as a [semantic version](https://semver.org/) string.
 
 - Package Manifest SHOULD list the models used by the application (`/etc/monai/pkg.json#models`).
 
-  - Models SHALL be defined by name.
+  - Models SHALL be defined by name (`/etc/monai/pkg.json#models[*].name`).
 
-  - Models SHOULD have a local path if they're included in the MAP itself.
+  - Models SHOULD provide a file-system path if they're included in the MAP itself (`/etc/monai/pkg.json#models[*].path`).
+
+    - Model path SHOULD be relative to the folder containing the model.
+
+    - When the model path is a relative file-system path (first character is not `/`), it is relative to the `/etc/monai/models/` folder.
+
+    - When the model path is an absolute file-system path (first character is `/`), the file-system path is used as-is.
 
   - Models SHOULD be in sub-folders of the `/etc/monai/models/` folder.
 
@@ -262,27 +310,27 @@ The Executor SHOULD provide a customized set of environment variables and comman
 
     - Common values are `MONAI Application Runner` and `MONAI Application Server`.
 
-  - `MONAI_HOSTVERSION`: The version of the host running the map (default: `"0.0.0"`).
+  - `MONAI_HOSTVERSION`: The version of the host running the map (default: `0.0.`).
 
-    - The value is expected to be a [semantic 2.0 formatted](https://semver.org) string.
+    - Host version SHALL be a [semantic 2.0 formatted](https://semver.org) string.
 
-  - `MONAI_INPUTPATH`: The path to the folder where inputs can be expected to be read from (default: `"/var/monai/input/"`).
+  - `MONAI_INPUTPATH`: The path to the folder where inputs can be expected to be read from (default: `/var/monai/input/`).
 
-    - The value is expected to be a file-system path to a readable folder.
+    - Input path SHALL be an absolute file-system path to a readable folder.
 
-  - `MONAI_JOBID`: The unique identity of the job the MAP is being executed by (default: `"00000000000000000000000000000000"`).
+  - `MONAI_JOBID`: The unique identity of the job the MAP is being executed by (default: `"00000000000000000000000000000000`).
 
-    - The value is expected to be a string matching `/[A-F0-9a-f]{32}/`.
+    - Job identifier SHALL be a string matching `/[A-F0-9a-f]{32}/`.
 
-  - `MONAI_OUTPUTPATH`: The path to the folder where outputs are expected to written to (default: `"/var/monai/output/"`).
+  - `MONAI_OUTPUTPATH`: The path to the folder where outputs are expected to written to (default: `/var/monai/output/`).
 
-    - The value is expected to be a file-system path to a writable folder.
+    - Output path SHALL be an absolute file-system path to a writable folder.
 
-  - `MONAI_TIMEOUT`: The timeout, in seconds, being applied to the MAP (default: `"0"`).
+  - `MONAI_TIMEOUT`: The timeout, in seconds, being applied to the MAP (default: `0`).
 
-    - The value is expected to an integer number in the range of [`0`, `65536`].
+    - Timeout SHALL be an integer number in the range of [`0`, `65536`].
 
-    - A value of `0` indicates that no timeout is being applied to the MAP.
+    - A value of `0` SHALL indicate that no timeout is being applied to the Application.
 
 
 #### Environment Variables
@@ -295,7 +343,7 @@ The Executor SHOULD provide a customized set of environment variables and comman
 | `MONAI_INPUTPATH`   | `/var/monai/input/`                        | Folder Path         | Path to the input folder for the Application.    |
 | `MONAI_JOBID`       | `00000000000000000000000000000000`         | `/[A-F0-9a-f]{32}/` | Unique identity of the job the MAP is executing. |
 | `MONAI_OUTPUTPATH`  | `/var/monai/output/`                       | Folder Path         | Path to the output folder for the Application.   |
-| `MONAI_TIMEOUT`     | `0`                                        | Integer             | Timeout, in seconds, applied to the Application. |
+| `MONAI_TIMEOUT`     | `/etc/monai/app.json#timeout`              | Integer             | Timeout, in seconds, applied to the Application. |
 
 
 ### Manifest Export
@@ -319,7 +367,7 @@ The Executor MUST detect when the following folders have been mounted.
 
   - copy `/opt/monai/models/` to `/var/run/monai/export/models/`.
 
-When the Executor performs a manifest export, it SHALL NOT invoke the Application.
+When the Executor performs an export operation, it SHALL NOT invoke the Application.
 
 
 ## Layout Diagram
@@ -345,6 +393,9 @@ When the Executor performs a manifest export, it SHALL NOT invoke the Applicatio
 | `/opt/monai/app/`               | Application code, scripts, and other files.                                                                       |
 | `/opt/monai/executor/`          | Executor binaries.                                                                                                |
 | `/opt/monai/models`             | AI models. Each model should be in a separate sub-folder.                                                         |
+| `/var/monai/`                   | Default working directory.                                                                                        |
+| `/var/monai/input/`             | Default input directory.                                                                                          |
+| `/var/monai/output/`            | Default output directory.                                                                                         |
 | `/var/run/monai/export/`        | Special case folder, causes the Executor to export contents related to the app. (see: [export](#manifest-export)) |
 | `/var/run/monai/export/app/`    | Special case folder, causes the Executor to export the contents of `/opt/monai/app/` to the folder.               |
 | `/var/run/monai/export/config/` | Special case folder, causes the Executor to export `/etc/monai/app.json` and `/etc/monai/pkg.json` to the folder. |
