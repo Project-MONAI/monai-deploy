@@ -43,7 +43,27 @@ interacted with, and the required and optional components of a MAP.
 
 ### Assumptions
 
-TBD: this section is a work-in-progress.
+The following are a set of assumptions related to MAP execution, inspection, and general usage.
+
+- Containerized applications will be based on Linux x86_64 (AMD64).
+
+- Containerized application's host environment will be based on Linux x86_64 (AMD64) with container support.
+
+- Developers expect local execution of their applications to behave identically to execution of the containerized version.
+
+- Developers expect local execution of their containerized applications to behave identically to execution in deployment.
+
+- Developers and operations engineers want the application packages to be self-describing.
+
+- Application packages might not be developed using the MONAI Application SDK.
+
+- Pre-existing, containerized applications will need to be "converted" into MONAI Application Packages.
+
+- Application packages will be deployed in a variety of environments.
+
+  > [Note]
+  > See [MONAI Operating Environments](monai-operating-environments.md) for additional information about supported environments.
+
 
 ##  Requirements
 
