@@ -24,7 +24,7 @@ This is a proposal for the MONAI Deploy Working Group.
   - [Application Manifest](#application-manifest)
   - [Package Manifest](#package-manifest)
 - [Executor](#executor)
-  - [Initial Conditions](#initial-conditions)
+  - [Initial Conditions / Environment Variables](#initial-conditions)
   - [Manifest Export](#manifest-export)
   - [Layout Diagram](#layout-diagram)
 - [Special Folders](#special-folders)
@@ -361,13 +361,13 @@ The Executor MUST detect when the following folders have been mounted.
 
 - `/var/run/monai/export/models/`: when detected, the Executor will copy the contents of `/opt/monai/models/` to the folder.
 
-- `/var/run/monai/export/`: when detected without any of the above being detected, the Executor will:
+- `/var/run/monai/export/`: when detected without any of the above being detected, the Executor SHALL:
 
   - copy the contents of `/opt/monai/app/` to `/var/run/monai/export/app/`.
 
   - copy `/etc/monai/app.json` and `/etc/monai/pkg.json` to `/var/run/monai/export/config/`.
 
-  - copy `/opt/monai/models/` to `/var/run/monai/export/models/`.
+  - copy the contents of `/opt/monai/models/` to `/var/run/monai/export/models/`.
 
 When the Executor performs an export operation, it SHALL NOT invoke the Application.
 
