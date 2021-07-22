@@ -195,7 +195,9 @@ Provides information about the MAP's Application.
 
 - Application Manifest SHOULD define any timeout applied to the Application (`/etc/monai/app.json#timeout`).
 
-  - When not provided the default value `90` will be used.
+  - When not provided the default value `0` SHALL be assumed.
+
+  - This value can be overridden by the top level executor, such as Application Server.
 
 - Application Manifest MUST enable the specification of environment variables for the Application (`/etc/monai/app.json#environment`)
 
@@ -392,7 +394,7 @@ When the Executor performs an export operation, it SHALL NOT invoke the Applicat
 | `/etc/monai/pkg.json`           | Package Manifest file.                                                                                            |
 | `/opt/monai/app/`               | Application code, scripts, and other files.                                                                       |
 | `/opt/monai/executor/`          | Executor binaries.                                                                                                |
-| `/opt/monai/models`             | AI models. Each model should be in a separate sub-folder.                                                         |
+| `/opt/monai/models/`            | AI models. Each model should be in a separate sub-folder.                                                         |
 | `/var/monai/`                   | Default working directory.                                                                                        |
 | `/var/monai/input/`             | Default input directory.                                                                                          |
 | `/var/monai/output/`            | Default output directory.                                                                                         |
