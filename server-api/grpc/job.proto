@@ -1,0 +1,379 @@
+syntax = "proto3";
+
+package monai.deploy.server;
+
+option csharp_namespace = "Monai.Deploy.Server.Grpc";
+option go_package = "apis";
+option java_package = "com.monai.deploy.server.grpc";
+
+import public "common.proto";
+
+// Service for managing jobs.
+service Job {
+  // Requests the cancellation of a job.
+  // Job cancellation takes place asynchronously after the request-response has completed.
+  // Attempting to cancel a completed, cancelled, or deleted job will result in an error.
+  rpc Cancel(JobCancelRequest) returns (JobCancelResponse);
+
+  // Requests creation of a new job using a specified MAP and payload.
+  // Attempting to create a job with a deleted or error-state MAP will result in an error.
+  // Attempting to create a job with a deleted payload will result in an error.
+  rpc Create(JobCreateRequest) returns (JobCreateResponse);
+
+  // Requests deletion of a job.
+  // Deleted jobs are finalized, if not already finalized, and not returned by Job::List by default.
+  rpc Delete(JobDeleteRequest) returns (JobDeleteResponse);
+
+  // Requests the finalization of a job, signaling that any associated payloads are available for garbage collection.
+  // Requesting to finalize a pending or running job will result in an error.
+  // Requesting to finalize an already finalized job will result in an error.
+  rpc Finalize(JobFinalizeRequest) returns (JobFinalizeResponse);
+
+  // Requests a filtered list of known jobs.
+  // When no filter is provided, the default filter will be used.
+  // Deleted jobs are not returned unless requested.
+  rpc List(JobListRequest) returns (stream JobListResponse);
+
+  // Requests the status of a known job.
+  rpc Status(JobDetailsRequest) returns (JobDetailsResponse);
+}
+
+// The relative priority of a job.
+// Jobs with normal, lower, or higher priorites are queued and run as soon as resources are available.
+// Jobs with immediate priority are started immediately, if resources are available.
+enum JobPriority {
+  // The job priority is unknown.
+  JOB_PRIORITY_UNKNOWN = 0;
+
+/** Feature Not Available in Current Version
+ * The job prioritization feature, which requires that the server support queuing and scheduling
+ * will not be available in version 0.
+ *
+ * // The job priority is lower than normal.
+ * // Lower priority jobs are queued like higher priority jobs.
+ * // Lower priority jobs are scheduled for execution less frequently than higher priority jobs.
+ * JOB_PRIORITY_LOWER = 1;
+ *
+ * // The job priority is normal, the default priority for new jobs.
+ * JOB_PRIORITY_NORMAL = 2;
+ *
+ * // The job priority is higher than normal.
+ * // Higher priority jobs are queued like lower priority jobs.
+ * // Higher priority jobs are scheduled for execution more frequently than lower priority jobs.
+ * JOB_PRIORITY_HIGHER = 3;
+**/
+
+  // Immediate priority jobs are started immediately, if resources are available.
+  // When a job cannot be started immediately, an error code will be returned.
+  JOB_PRIORITY_IMMEDIATE = 4;
+}
+
+// The state of a job.
+enum JobState {
+  // The job is unknown or in an unknown state.
+  JOB_STATE_UNKNOWN = 0;
+
+  // The job has been created, but not yet started.
+  // Healthy state progression is from created to pending.
+  JOB_STATE_CREATED = 1;
+
+  // The job has been 'started' and queued waiting for resources.
+  // Healthy state progression is from pending to starting.
+  JOB_STATE_PENDING = 2;
+
+  // The job is starting.
+  // Starting includes resource allocation and container/pod scheduling.
+  // Healthy state progression is from starting to running.
+  JOB_STATE_STARTING = 3;
+
+  // The job is currently running.
+  // Healthy state progression is from running to success.
+  JOB_STATE_RUNNING = 4;
+
+  // The job completed successfully.
+  JOB_STATE_SUCCESS = 5;
+
+  // The job encountered a terminal error.
+  JOB_STATE_FAILURE = 6;
+
+  // The job was stopped, before it could complete, by user/external request.
+  JOB_STATE_CANCELED = 7;
+
+  // The job cannot be scheduled due to insufficient resources.
+  JOB_STATE_STARVED = 8;
+
+  // The job was evicted, before it could complete, by the server.
+  JOB_STATE_EVICTED = 9;
+
+  // The job timed out before it could complete.
+  JOB_STATE_TIMEOUT = 11;
+
+  // The job cannot be scheduled due the requried MAP being unavailable.
+  JOB_STATE_NOTREADY = 12;
+
+  // The job faulted due to an out of memory condition.
+  // This generally happens when requested memory is insufficient for the application.
+  JOB_STATE_EXCEEDED = 13;
+}
+
+// Request for Job::Cancel rpc.
+message JobCancelRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Unique identifier of the job.
+  Identifier job_id = 2;
+}
+
+// Response from Job::Cancel rpc.
+message JobCancelResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the job.
+  Identifier job_id = 2;
+}
+
+// Request for Job::Create rpc.
+message JobCreateRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // MAP to be used by the job.
+  oneof map {
+    // Unique identifier of the MAP.
+    Identifier map_id = 2;
+
+    // Unique reference name of the MAP.
+    // Reference name are compared using case insentitive comparator functions.
+    // The maximum allowed size for a reference name is 128 bytes.
+    string map_name = 3;
+  }
+
+  // Priority to be assigned to the job.
+  JobPriority priority = 4;
+
+  // Unique identifier of the payload to use as input for the job.
+  Identifier payload_id = 5;
+
+  // URI of the service the server should notify when the job completes.
+  // The maximum allowed size is 2048 bytes.
+  string completion_uri = 6;
+}
+
+// Response from Job::Create rpc.
+message JobCreateResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the newly created job.
+  Identifier job_id = 2;
+
+  // Unique identifier of the MAP to be used by the job.
+  Identifier map_id = 3;
+
+  // Priority of the job.
+  JobPriority priority = 4;
+
+  // Currrent state of the job.
+  JobState state = 5;
+
+  // Unique identifier of the user account used to create the job.
+  // Represents an actual user account, and not a service account.
+  // User accounts are identified by the `RequestHeader.Authorization` message.
+  Identifier creator_id = 6;
+
+  // Unique identifier of the user account used to request the job creation.
+  // When `creator_id` and `requestor_id` differ, this value often represents a service account.
+  // User accounts are identified by the `RequestHeader.Authorization` message.
+  Identifier requestor_id = 7;
+}
+
+// Request for Job::Delete rpc.
+message JobDeleteRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Unique identifer of the job to delete.
+  Identifier job_id = 2;
+}
+
+message JobDeleteResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the job.
+  Identifier job_id = 2;
+}
+
+// Request for Jobs::List rpc.
+message JobListRequest {
+  message Filter {
+    // When provided, only jobs completed after the supplied timestamp will be returned.
+    Timestamp completed_after = 1;
+
+    // When provided, only jobs completed before the supplied timestamp will be returned.
+    Timestamp completed_before = 2;
+
+    // When provided, only jobs created after the supplied timestamp will be returned.
+    Timestamp created_after = 3;
+
+    // When provided, only jobs created before the supplied timestamp will be returned.
+    Timestamp created_before = 4;
+
+    // When provided, only jobs which used the specified MAP will be returned.
+    oneof map {
+      // Unique identifier of the map.
+      Identifier map_id = 5;
+
+      // Unique reference name of the MAP.
+      // Only provided when the MAP has a reference name.
+      // Reference name are compared using case insentitive comparator functions.
+      // The maximum allowed size for a reference name is 128 bytes.
+      string map_name = 6;
+    }
+
+    // When true, finalized jobs will not be returned; otherwise finalized jobs will be returned.
+    bool exclude_finalized = 7;
+
+    // When true, deleted jobs will be returned; otherwise deleted jobs will not be returned.
+    bool include_deleted = 8;
+
+    // When provided, only jobs matching these state(s) will not be returned.
+    repeated JobState excluded_states = 9;
+
+    // When provided, only jobs matching these state(s) will be returned.
+    repeated JobState included_states = 10;
+
+    // Unique identifier of the user account used to create the job.
+    // Represents an actual user account, and not a service account.
+    Identifier creator_id = 11;
+
+    // Unique identifier of the user account used to request the job creation.
+    // When `creator_id` and `requestor_id` differ, this value often represents a service account.
+    Identifier requestor_id = 12;
+  }
+
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Filters applied the possible list of jobs returned.
+  Filter filter = 2;
+}
+
+// Result from Job::List rpc.
+message JobListResponse {
+  message JobInfo {
+    // Unique identifier of the job.
+    Identifier job_id = 1;
+
+    // Unique identifier of the MAP used by the job.
+    Identifier map_id = 2;
+
+    // Current state of the job.
+    JobState state = 3;
+
+    // Priority of the job.
+    JobPriority priority = 4;
+
+    // True if the job has been finalized; otherwise false.
+    bool is_finalized = 5;
+
+    // True if the job record has been deleted; otherwise false.
+    bool is_deleted = 6;
+
+    // Timestamp describing when the job was created.
+    Timestamp created = 7;
+
+    // Unique identifier of the user account used to create the job.
+    // Represents an actual user account, and not a service account.
+    Identifier creator_id = 8;
+
+    // Unique identifier of the user account used to request the job creation.
+    // When `creator_id` and `requestor_id` differ, this value often represents a service account.
+    Identifier requestor_id = 9;
+  }
+
+  // Standard RPC response header (only included with first response in stream).
+  ResponseHeader header = 1;
+
+  // List of jobs.
+  // Note that this response is streamed, with a separate response per job being listed.
+  repeated JobInfo jobs = 2;
+}
+
+// Request for Job::Status rpc.
+message JobStatusRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Unique identifier of the job status is requested for.
+  Identifier job_id = 2;
+
+  // When true, job logs are returned; otherwise logs are not returned.
+  bool include_logs = 4;
+
+  // When true, the history of the job is returned; otherwise history is not returned.
+  bool include_history = 4;
+}
+
+// Response from Job::Status rpc.
+message JobStatusResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the job status is being reported on.
+  Identifier job_id = 2;
+
+  // Unique identifier of the MAP to be used by the job.
+  Identifier map_id = 3;
+
+  // Priority of the job.
+  JobPriority priority = 4;
+
+  // Unique identifier of the user account used to create the job.
+  // Represents an actual user account, and not a service account.
+  Identifier creator_id = 8;
+
+  // Unique identifier of the user account used to request the job creation.
+  // When `creator_id` and `requestor_id` differ, this value often represents a service account.
+  Identifier requestor_id = 9;
+
+  // Current state of the job.
+  JobState state = 12;
+
+  // True if the job has been removed; otherwise false.
+  bool is_finalized = 13;
+
+  // True if the job record has been deleted; otherwise false.
+  bool is_deleted = 14;
+
+  // Timestamp describing when the job was created.
+  Timestamp created = 16;
+
+  // Timestamp describing when the job started.
+  // Value will not be provided if the job has not yet started.
+  Timestamp started = 17;
+
+  // Timestamp describing when the job was stopped.
+  // Value will not be provided if the job has not yet stopped.
+  Timestamp stopped = 18;
+
+  // Timestamp describing when a job was marked as finalized.
+  // Value will not be provided if the job has not yet been finalized.
+  Timestamp finalized = 19;
+
+  // Timestamp when the job was deleted.
+  // No value will be provided if the job has not yet been deleted.
+  Timestamp deleted = 20;
+
+  // History of the job.
+  // Only provided when include_history = true.
+  repeated HistoricalEvent history = 24;
+
+  // Job logs.
+  // Logs are returned as a series of log lines.
+  // Maximum size is 65536 bytes (64 KiB) per entry.
+  // Only provided when include_logs = true
+  repeated string logs = 25;
+}

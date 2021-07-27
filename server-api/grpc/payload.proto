@@ -1,0 +1,547 @@
+syntax = "proto3";
+
+package monai.deploy.server;
+
+option csharp_namespace = "Monai.Deploy.Server.Grpc";
+option go_package = "apis";
+option java_package = "com.monai.deploy.server";
+
+import public "common.proto";
+
+// Service for managing payloads.
+service Payload {
+/** Feature Not Available in Current Version
+ * // Request content from one payload to be copied to another payload.
+ * // The source and target payloads will be considered busy during the copy operation; busy payloads cannot be deleted or modified.
+ * // Results of this RPC are streamed while file copies are happening.
+ * // Requesting copy from or to a deleted payload will result in an error.
+ * // Requesting copy to a payload associated with a pending or running job will result in an error.
+ * rpc Copy(stream PayloadCopyRequest) returns (stream PayloadCopyResponse);
+**/
+
+  // Requests the creation of a new payload.
+  // New payloads can be created using the contents of existing payload(s).
+  // Results of this RPC are streamed when file copies are happening.
+  rpc Create(stream PayloadCreateRequest) returns (stream PayloadCreateResponse);
+
+  // Requests the deletion of a known payload.
+  // Requesting deletion of a payload associated with a pending or running job will result in an error.
+  // Requesting deletion of a referenced payload will result in an error.
+  // Deleted payloads are not returned by List by default.
+  rpc Delete(PayloadDeleteRequest) returns (PayloadDeleteResponse);
+
+  // Requests the download of a blob (file) from a known payload.
+  // Requesting the download a blob from a deleted payload will result in an error.
+  rpc FileDownload(PayloadFileDownloadRequest) returns (stream PayloadFileDownloadResponse);
+
+  // Requests the removal, or deletion, of a blob (file) from a known payload.
+  // Requesting  removal of a blob from a payload associated with a pending, running, or completed job will result in an error.
+  rpc FileRemove(PayloadRemoveRequest) returns (PayloadRemoveResponse);
+
+  // Requests the upload of a blob (file) to a known payload.
+  // Requesting to upload a blob to a payload associated with a pending, running, or complete job will result in an error.
+  // Requesting to upload a blob which will result in a name collision will result in an error.
+  rpc FileUpload(stream PayloadFileUploadRequest) returns (PayloadFileUploadResponse);
+
+  // Requests a filtered list of payloads known payloads.
+  // When no filter is provided, the default filter will be used.
+  rpc List(PayloadListRequest) return (stream PayloadListResponse);
+
+  // Requests the deletion of a payload reference name.
+  // Requesting deletion of an unknown reference name will result in an error.
+  rpc ReferenceDelete(PayloadReferenceDeleteRequest) return (PayloadReferenceDeleteResponse);
+
+  // Requests for a reference name to refer to known payload.
+  // Requesting to reference a deleted payload will result in an error.
+  // Requesting to assign more than one reference name to a payload will result in an error.
+  rpc ReferenceUpdate(PayloadReferenceUpdateRequest) returns (PayloadReferenceUpdateResponse);
+
+  // Requests the status of a known payload.
+  // Payload status includes the list of files contained by the payload.
+  rpc Status(PayloadStatusRequest) returns (stream PayloadStatusResponse);
+}
+
+// Information about a file contained in a payload.
+message PayloadFileDetails {
+  // 8-bit "mode" of the file.
+  uint32 mode = 1;
+
+  // Size, in bytes, of the file.
+  uint64 size = 2;
+
+  // Unique (within a payload) name of the file; in path format.
+  // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+  // File names are case-sensitive.
+  // Maximum allowed size for a file name is 4096 bytes.
+  string path = 3;
+}
+
+/** Feature Not Available in Current Version
+ * // Request for Payload::Copy rpc.
+ * message PayloadCopyRequest {
+ *   message FileCopy {
+ *     // Name of the file in the source payload to copy.
+ *     // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+ *     // File names are case-sensitive.
+ *     // Maximum allowed size for a file name is 4096 bytes.
+ *     string source_path = 1;
+ *
+ *     // Name of the file in the target payload to create.
+ *     // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+ *     // File names are case-sensitive.
+ *     // Maximum allowed size for a file name is 4096 bytes.
+ *     string target_path = 2;
+ *   }
+ *   // Standard RPC request header.
+ *   RequestHeader header = 1;
+ *
+ *   // Identifier of the payload to copy from.
+ *   oneof source {
+ *     // Unique identifier of the payload to copy from.
+ *     // Providing the identifier for a payload which is writable will result in an error.
+ *     // Payloads are writable from creation until they're assigned to a job.
+ *     Identifier source_payload_id = 2;
+ *
+ *     // Unique identifier of the pjob to copy from.
+ *     // Providing an identifier of a not completed job will result in an error.
+ *     Identifier source_job_id = 3;
+ *
+ *     // Reference name which refers to the payload to copy from.
+ *     // Reference name are compared using case insentitive comparator functions.
+ *     // The maximum allowed size for a reference name is 128 bytes.
+ *     string source_payload_name = 4;
+ *   }
+ *
+ *   // Identifier of the payload to copy to.
+ *   oneof target {
+ *     // Unique identifier of the payload to copy to.
+ *     Identifier target_id = 5;
+ *
+ *     // Reference name which refers to the payload to copy to.
+ *     // Reference name are compared using case insentitive comparator functions.
+ *     // The maximum allowed size for a reference name is 128 bytes.
+ *     string target_name = 6;
+ *   }
+ *
+ *   // Set of files to be copied from the source to the target payload.
+ *   // File names must be unique; if a file already exists in the target payload an error will be returned.
+ *   // Folders cannot be copied; if a folder name is provided an error will be returned.
+ *   repeated FileCopy files = 7;
+ * }
+ *
+ * // Response for Payload::Copy rpc.
+ * message PayloadCopyResponse {
+ *   // Standard RPC response header.
+ *   ResponseHeader header = 1;
+ *
+ *   // List of files, in the target payload, which have been successfully copied.
+ *   // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+ *   // File names are case-sensitive.
+ *   // Maximum allowed size for a file name is 4096 bytes.
+ *   repeated string copied_files = 2;
+ * }
+**/
+
+// Request for Payload::Create rpc.
+message PayloadCreateRequest {
+  message Source {
+    // Unique (within a payload) name of the folder to where source payload content will be placed; in path format.
+    // This value can be empty (or not provided) when only a single source payload is used to create a new payload.
+    // When this value is not empty, resulting file names will have this value and a path separator character prepended to them.
+    // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+    // File names are case sensitive.
+    // Maximum allowed size for a file name is 4096 bytes.
+    string path = 1;
+
+/** Feature Not Available in Current Version
+ *   // Identifier of the source payload to clone.
+ *   oneof identifier {
+ *     // Unique identifier of the source payload.
+ *     Identifier payload_id = 2;
+ *
+ *     // Unique identifier of the source job.
+ *     // Job identifier content is from the job's result payload.
+ *     Identifier job_id = 3;
+ *
+ *     // Reference name which refers to the source payload.
+ *     // Reference name are compared using case insentitive comparator functions.
+ *     // The maximum allowed size for a reference name is 128 bytes.
+ *     string payload_name = 4;
+ *   }
+**/
+  }
+
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Reference name to assign to the payload.
+  // Duplicate reference names are not allowed, and will cause payload creation to fail.
+  // Reference Names can be updated to refer to a different payload in the future.
+  // Reference Names are compared using case insentitive comparator functions.
+  // The maximum allowed size for a reference name is 128 bytes.
+  string payload_name = 2;
+
+  // When true, an existing reference name can be updated; otherwise an error will be returned.
+  bool take_reference_name = 3;
+
+  // When provided, list of source payloads from which content will be copied into the new payload.
+  // Each source payload will have its contents mapped to a path relative to the root of the new payload.
+  // Each source payload must have a unique path; otherwise an error will be returned.
+  repeated Source sources = 4;
+}
+
+// Response from Payload::Create rpc.
+message PayloadCreateResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the new payload.
+  Identifier payload_id = 2;
+
+  // Reference name assigned to the payload at creation.
+  // Not provided if the request did not include a reference name assignment.
+  string payload_name = 3;
+
+  // List of files, in the new payload, copied into the new payload from source payloads.
+  // Not provided if no source payloads were provided.
+  // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+  // File names are case sensitive.
+  // Maximum allowed size for a file name is 4096 bytes.
+  repeated string file_name = 4;
+}
+
+// Request for Payload::Delete rpc.
+message PayloadDeleteRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Identifier of the payload to delete.
+  oneof identifier {
+    // Unique identifier of the payload to delete.
+    Identifier payload_id = 2;
+
+    // Reference name which refers to the payload to delete.
+    // Reference name are compared using case insentitive comparator functions.
+    // The maximum allowed size for a reference name is 128 bytes.
+    string payload_name = 3;
+
+    // Unique identifier of the job associated with the payload.
+    // Files downloaded using the job identifier downloads from the job's result payload.
+    Identifier job_id = 4;
+  }
+
+  // When true all reference names which refer to payload to be deleted, will also be deleted; otherwise a payload with reference names cannot be deleted.
+  bool force = 5;
+}
+
+// Response from Payload::Delete rpc.
+message PayloadDeleteResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the deleted payload.
+  Identifier payload_id = 2;
+}
+
+
+// Request for Payload::FileDownload rpc.
+message PayloadFileDownloadRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  oneof identifier {
+    // Unique identifier of the payload.
+    Identifier payload_id = 2;
+
+    // Reference name which refers to the payload.
+    // Reference name are compared using case insentitive comparator functions.
+    // The maximum allowed size for a reference name is 128 bytes.
+    string payload_name = 3;
+
+    // Unique identifier of the job associated with the payload.
+    // Files downloaded using the job identifier downloads from the job's result payload.
+    Identifier job_id = 4;
+  }
+
+  // Unique (within a payload) path of a file; in path format.
+  // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+  // File names are case-sensitive.
+  string path = 5;
+}
+
+// Response from Payload::FileDownload rpc.
+message PayloadFileDownloadResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the payload.
+  Identifier payload_id = 2;
+
+  // Details of the file being downloaded.
+  PayloadFileDetails details = 3;
+
+  // Bytes of the file being downloaded.
+  bytes data = 4;
+}
+
+// Request for Payload::FileRemove rpc.
+message PayloadFileRemoveRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  oneof identifier {
+    // Unique identifier of the payload.
+    Identifier payload_id = 2;
+
+    // Reference name which refers to the payload.
+    // Reference name are compared using case insentitive comparator functions.
+    // The maximum allowed size for a reference name is 128 bytes.
+    string payload_name = 3;
+  }
+
+  // Unique (within a payload) path of a file; in path format.
+  // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+  // File names are case-sensitive.
+  string path = 4;
+}
+
+// Response from Payload::Remove rpc.
+message PayloadFileRemoveResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the payload.
+  Identifier payload_id = 2;
+
+  // Unique (within a payload) path of a file; in path format.
+  // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+  // File names are case-sensitive.
+  string path = 3;
+}
+
+// Request for Payload::FileUpload rpc.
+message PayloadFileUploadRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Identifier of the payload.
+  oneof identifier {
+    // Unique identifier of the payload.
+    Identifier payload_id = 2;
+
+    // Reference name which refers to the payload.
+    // Reference name are compared using case insentitive comparator functions.
+    // The maximum allowed size for a reference name is 128 bytes.
+    string payload_name = 3;
+  }
+
+  // The payload root relative path where the file is to be stored in the payload.
+  string path = 4;
+
+  // Raw content of the file being uploaded.
+  bytes data = 5;
+}
+
+// Response from Payload::FileUpload rpc.
+message PayloadFileUploadResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the payload.
+  Identifier payload_id = 2;
+
+  // Details about the uploaded file.
+  PayloadFileDetails = 3;
+}
+
+// Request for Payload::List rpc.
+message PayloadListRequest {
+  message Filter {
+    // When provided, only payloads created after the supplied timestamp will be returned.
+    Timestamp created_after = 1;
+
+    // When provided, only payloads created before the supplied timestamp will be returned.
+    Timestamp created_before = 2;
+
+    // When provided, only payloads assocated with the job identifier will be returned.
+    Identifier job_id = 3;
+
+    // When true, unnamed payloads will be included in the set returned; otherwise unnamed payloads are not returned.
+    bool include_unnamed = 4;
+
+    // When true, deleted payloads will be included in the set returned; otherwise deleted payloads are not returned.
+    bool include_deleted = 5;
+
+    // When provided, only payloads created by the supplied user will be returned.
+    Identifier user_id = 6;
+  }
+
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // List filter.
+  Filter filter = 2;
+}
+
+// Response from Payload::List rpc.
+message PayloadListResponse {
+  message PayloadInfo {
+    // Unique identifier of the payload.
+    Identifier payload_id = 1;
+
+    // Unique identifier of the job which created the payload.
+    // No value will be provided when the payload was not created by a job.
+    // Each job creation creates a new results payload with the same identifier as the job.
+    Identifier job_id = 2;
+
+    // Reference name(s) which refer to the payload.
+    // Only provided when the payload has a reference name.
+    // Reference name are compared using case insentitive comparator functions.
+    // The maximum allowed size for a reference name is 128 bytes.
+    repeated string payload_names = 3;
+
+    // Timestamp when the payload was created.
+    Timestamp created = 4;
+
+    // True if the payload has been deleted; otherwise false.
+    bool is_deleted = 5;
+
+    // True if the payload is writable; otherwise false.
+    // Payloads which have been associated with jobs are not writable.
+    bool is_writable = 6;
+  }
+
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // List of payloads returned by the server.
+  repeated PayloadInfo payloads = 2;
+}
+
+// Request for Payload::ReferenceDelete rpc.
+message PayloadReferenceDeleteRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Reference name to delete.
+  // Reference name are compared using case insentitive comparator functions.
+  // The maximum allowed size for a reference name is 128 bytes.
+  string payload_name = 2;
+}
+
+// Response from Payload::ReferenceDelete rpc.
+message PayloadReferenceDeleteResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Reference name which was just deleted.
+  string payload_name = 2;
+}
+
+// Request for Payload::ReferenceUpdate rpc.
+message PayloadReferenceUpdateRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Unique identifier of the payload the reference name.
+  Identifier payload_id = 2;
+
+  // Reference name to update.
+  // If the reference name does not already exist, it will be created.
+  // Reference name are compared using case insentitive comparator functions.
+  // The maximum allowed size for a reference name is 128 bytes.
+  string payload_name = 3;
+
+  // When true, an existing reference name can be updated; otherwise an error will be returned.
+  bool take_reference_name = 4;
+}
+
+// Response from Payload::UpdateResponse rpc.
+message PayloadReferenceUpdateResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the payload the reference name refers to.
+  Identifier payload_id = 2;
+
+  // Updated reference name.
+  // Reference name are compared using case insentitive comparator functions.
+  // The maximum allowed size for a reference name is 128 bytes.
+  string payload_name = 3;
+}
+
+// Request for Payload::Status rpc.
+message PayloadStatusRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Identifier of the payload to query.
+  oneof identifier {
+    // Unique identifier of the payload to query.
+    Identifier payload_id = 2;
+
+    // Reference name of the payload to query.
+    string payload_name = 3;
+
+    // Unique identifier of the job to query.
+    // Only job results payloads can be queried this way.
+    Identifier job_id = 4;
+  }
+
+  // When true, the history of the payload is returned; otherwise history is not returned.
+  bool include_history = 5;
+}
+
+// Response from Payload::Status rpc.
+message PayloadStatusResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the payload.
+  Identifier payload_id = 2;
+
+  // Reference name(s) which refer to the payload.
+  // Only provided when the payload has a reference name.
+  // Reference name are compared using case insentitive comparator functions.
+  // The maximum allowed size for a reference name is 128 bytes.
+  repeated string payload_name = 4;
+
+  // Unique identifier of the user account used to create the payload.
+  // Represents an actual user account, and not a service account.
+  Identifier creator_id = 8;
+
+  // Unique identifier of the user account used to request the payload creation.
+  // When `creator_id` and `requestor_id` differ, this value often represents a service account.
+  Identifier requestor_id = 9;
+
+  // List of unique identifiers of jobs the payload has been associated with.
+  // No value will be provided when the payload has not yet been associated with any jobs.
+  repeated Identifier job_ids = 10;
+
+  // True when the payload is deleted; otherwise false.
+  bool is_deleted = 12;
+
+  // True when the payload is sealed; otherwise false.
+  bool is_sealed = 13;
+
+  // True if the payload is writable; otherwise false.
+  // Payloads which have been associated with jobs are no longer writable.
+  bool is_writable = 14;
+
+  // Timestamp of when the payload was created.
+  Timestamp created = 15;
+
+  // Timestamp of when the payload was deleted.
+  // No value will be provided if the payload has not yet been deleted.
+  Timestamp deleted = 16;
+
+  // Unique Identifier of the job(s) associated with the payload.
+  repeated Identifier job_ids = 17;
+
+  // Details of a file contained in the payload. Note that this response is streamed, with a separate response for each file in the payload.
+  repeated PayloadFileDetails files = 18;
+
+  // History of the payload.
+  // Only provided when include_history = true.
+  repeated HistoricalEvent history = 24;
+}

@@ -1,0 +1,88 @@
+syntax  = "proto3";
+
+package monai.platform;
+
+option csharp_namespace = "Monai.Deploy.Server.Grpc";
+option go_package = "apis";
+option java_package = "com.monai.depoly.server.grpc";
+
+import public "response-code.proto";
+
+// 128-bit unique identifier (UUID).
+message Identifier {
+  // Expected to be an array of 16 bytes.
+  bytes data = 1;
+}
+
+message HistoricalEvent {
+  // Timestamp of when the event occurred.
+  Timestamp timestamp = 1;
+
+  // Unique identifier of the user who caused the event.
+  // No value is provided when the event was the result of a non-user action.
+  Identifier user_id = 2;
+
+  // Description of the event.
+  // Maximum allowed size for an event description is 4096 bytes (4 KiB).
+  string description = 3;
+}
+
+// Version information structure.
+message Version {
+  // Version for incompatible API changes.
+  int32 major = 1;
+
+  // Version for added functionality in a backwards compatible manner.
+  int32 minor = 2;
+
+  // Version for backwards compatible bug fixes.
+  int32 patch = 3;
+
+  // Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
+  // Maximum allowed size of a version label is 128 bytes.
+  string label = 4;
+}
+
+// Standard header expected to be attached to all requests.
+message RequestHeader {
+  // Version of the API expected to handle the request.
+  Version api_version = 1;
+
+  // Name of the agent interacting with the server.
+  // Maxium allowed size for a user-agent is 512 bytes.
+  string user_agent = 2;
+
+  // Authentication header for the request.
+  // Maximum allowed size is 14360576 bytes (1 MiB).
+  string authentication = 3;
+}
+
+// Return value of most API calls, specifies success or failure.
+message ResponseHeader {
+  // Version of the API which handled the request.
+  Version api_version = 1;
+
+  // The name / identifier of the server.
+  // Maximum allowed size of the server identier is 512 bytes.
+  string server = 2;
+
+  // The response or "error" code of the request.
+  // Zero (0) indicates the request was successful.
+  ErrorCode code = 3;
+
+  // When returned, URI the client can use to authenticate itself.
+  string authenticateUri = 4;
+
+  // When returned, URI the client can use to get more information.
+  string redirectUri = 5;
+
+  // Optional message(s) returned with the result.
+  // Maximum allowed size is 262144 bytes (256 KiB) per message, and 2097152 bytes (2 MiB) total.
+  repeated string messages = 6;
+}
+
+// Timestamp type
+message Timestamp {
+  // The number of milliseconds before or after 0001-01-01 00:00:00.000Z.
+  sint64 value = 1;
+}
