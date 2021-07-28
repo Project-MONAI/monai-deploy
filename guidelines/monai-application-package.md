@@ -26,8 +26,8 @@ This is a proposal for the MONAI Deploy Working Group.
 - [Executor](#executor)
   - [Initial Conditions / Environment Variables](#initial-conditions)
   - [Manifest Export](#manifest-export)
-  - [Layout Diagram](#layout-diagram)
-- [Special Folders](#special-folders)
+  - [Table of Important Paths](#table-of-important-paths)
+- [Package Layout Diagram](#layout-diagram)
 
 
 ## Overview
@@ -175,19 +175,27 @@ Provides information about the MAP's Application.
 
   - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
+  - When not provided the default value `0.0.0` SHALL be assumed.
+
 - Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/monai/app.json#sdk-version`).
 
   - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
+
+  - When not provided the default value `0.0.0` SHALL be assumed.
 
 - Application Manifest SHOULD define the version of the Application itself (`/etc/monai/app.json#version`).
 
   - Application version SHALL be provided as a [semantic version](https://semver.org/) string.
 
+  - When not provided the default value `0.0.0` SHALL be assumed.
+
 - Application Manifest SHOULD define the Application's working directory (`/etc/monai/app.json#working-directory`).
+
+  - The Application will execute with its current directory set to this value.
 
   - The value provided must be an absolute path (first character is `/`).
 
-  - When not provided the default path `/var/monai/` will be assumed.
+  - When not provided the default path `/var/monai/` SHALL be assumed.
 
 - Application Manifest SHOULD define input path, relative to the working directory, used by the Application (`/etc/monai/app.json#input.path`).
 
@@ -197,7 +205,7 @@ Provides information about the MAP's Application.
 
     - When the value is an absolute file-system path (first character is `/`), the file-system path is used as-is.
 
-  - When not provided the default value `input/` will be used.
+  - When not provided the default value `input/` SHALL be assumed.
 
 - Application Manifest SHOULD define input data formats supported by the Application (`/etc/monai/app.json#input.formats`).
 
@@ -209,7 +217,7 @@ Provides information about the MAP's Application.
 
     - When the value is an absolute file-system path (first character is `/`), the file-system path is used as-is.
 
-  - When not provided the default value `output/` will be used.
+  - When not provided the default value `output/` SHALL be assumed.
 
 - Application Manifest SHOULD define output data format produces by the Application (`/etc/monai/app.json#output.format`).
 
@@ -217,9 +225,34 @@ Provides information about the MAP's Application.
 
   - When not provided the default value `0` SHALL be assumed.
 
-  - This value can be overridden by the top level executor, such as Application Server.
+  - This value can be overridden by the top level executor, such as MONAI Deploy Application Server.
 
 - Application Manifest MUST enable the specification of environment variables for the Application (`/etc/monai/app.json#environment`)
+
+  - The structure of the data is expected to be in `"name": "value"` members of the object.
+
+  - The name of the field will be the name of the environment variable verbatim, and must conform all requirements for environment variables and JSON field names.
+
+  - The value of the field will be the value of the environment variable and must confirm to all requirements for environment variables.
+
+
+#### Table of Application Manifest Fields
+
+| Name                | Required | Default     | Type    | Format                     | Description                                                                                             |
+| ------------------- | -------- | ----------- | ------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `api-version`       | No       | 0.0.0       | string  | semantic version           | Version of the manifest file schema.                                                                    |
+| `command`           | **Yes**  | N/A         | string  | shell command              | Shell command used to run the Application.                                                              |
+| `environment`       | No       | N/A         | object  | object w/ name-value pairs | An object of name-value pairs which will be passed to the Application during execution.                 |
+| `input`             | **Yes**  | N/A         | object  | object                     | Data structure which provides information about Application inputs.                                     |
+| `input.formats`     | No       | N/A         | array   | array of objects           | List of input data formats accepted by the Application.                                                 |
+| `input.path`        | **Yes**  | input/      | string  | relative file-system path  | Folder path relative to the working directory from which application will read inputs.                  |
+| `output`            | **Yes**  | N/A         | object  | object                     | Data structure which provides information about Application output.                                     |
+| `output.format`     | No       | N/A         | object  | object                     | Details about the format of the outputs produced by the Application.                                    |
+| `output.path`       | **Yes**  | output/     | string  | relative file-system path  | Folder path relative to the working directory to which application will write outputs.                  |
+| `sdk-version`       | No       | 0.0.0       | string  | semantic version           | Version of the SDK used to generate the manifest.                                                       |
+| `timeout`           | No       | 0           | integer | number                     | The maximum number of seconds the Application should execute for before being timed out and terminated. |
+| `version`           | No       | 0.0.0       | string  | semantic version           | Version of the Application.                                                                             |
+| `working-directory` | No       | /var/monai/ | string  | absolute file-system path  | Folder, or directory, in which the Application wil be executed from.                                    |
 
 
 ### Package Manifest
@@ -234,7 +267,7 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
 - Package Manifest SHOULD support either CRLF and LF style line endings.
 
-- Package Manifest SHOULD specify the folder which contains the Application (`/etc/monai/pkg.json#app`).
+- Package Manifest SHOULD specify the folder which contains the Application (`/etc/monai/pkg.json#application-root`).
 
   - When not provided the default path `/opt/monai/app/` will be assumed.
 
@@ -253,6 +286,10 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 - Package Manifest SHOULD list the models used by the application (`/etc/monai/pkg.json#models`).
 
   - Models SHALL be defined by name (`/etc/monai/pkg.json#models[*].name`).
+
+    - Model names SHALL NOT contain any Unicode whitespace or control characters.
+
+    - Model names SHALL NOT exceed 128 bytes in length.
 
   - Models SHOULD provide a file-system path if they're included in the MAP itself (`/etc/monai/pkg.json#models[*].path`).
 
@@ -291,6 +328,23 @@ Provides information about the MAP's package layout. Not intended as a mechanism
     - Example illegal values: `1,024`, `-1.0`, `3.14`
 
   - When not provided the default values of `cpu=1`, `gpu=0`, and `memory=1Gi` will be assumed.
+
+
+#### Table of Package Manifest Fields
+
+| Name               | Required | Default | Type    | Format                    | Description                                                                  |
+| ------------------ | -------- | ------- | ------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `api-version`      | No       | 0.0.0   | string  | semantic version          | Version of the manifest file schema.                                         |
+| `application-root` | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder older which contains the Application |
+| `models`           | No       | N/A     | array   | array of objects          | Array of objects which describe models in the package.                       |
+| `models[*].name`   | No       | N/A     | string  | map reference name        | Name of the map which conforms to the map naming rules.                      |
+| `models[*].path`   | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder which contains the model.            |
+| `resources`        | No       | N/A     | object  | object                    | Object describing resource requirements for the Application.                 |
+| `resources.cpu`    | No       | 1       | integer | number                    | Number of CPU cores required by the Application.                             |
+| `resources.gpu`    | No       | 0       | integer | number                    | Number of GPU devices required by the Application.                           |
+| `resource.memory`  | No       | 1Gi     | string  | memory size               | The maximum memory required by the Application.                              |
+| `sdk-version`      | No       | 0.0.0   | string  | semantic version          | Version of the SDK used to generate the manifest.                            |
+| `version`          | No       | 0.0.0   | string  | semantic version          | Version of the package.                                                      |
 
 
 ## Executor
@@ -355,7 +409,7 @@ The Executor SHOULD provide a customized set of environment variables and comman
     - A value of `0` SHALL indicate that no timeout is being applied to the Application.
 
 
-#### Environment Variables
+#### Table of Environment Variables
 
 | Variable            | Default                                    | Format              | Description                                      |
 | ------------------- | ------------------------------------------ | ------------------- | ------------------------------------------------ |
@@ -392,20 +446,7 @@ The Executor MUST detect when the following folders have been mounted.
 When the Executor performs an export operation, it SHALL NOT invoke the Application.
 
 
-## Layout Diagram
-
-```
-                        ╔═══════════════════════════════╗
-  Added by Builder ---> ║ Executor │                    ║ <-- Developer code,
-                        ╟──────────┤    Application     ║     probably Python,
-  Created by Builder -> ║ Manifest │                    ║     using MONAI API.
-                        ╟──────────┴────────────────────╢
-                        ║            Model(s)           ║ <-- Optional pre-trained models.
-                        ╚═══════════════════════════════╝
-```
-
-
-## Special Folders
+### Table of Important Paths
 
 | Path                            | Purpose                                                                                                           |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -423,3 +464,15 @@ When the Executor performs an export operation, it SHALL NOT invoke the Applicat
 | `/var/run/monai/export/config/` | Special case folder, causes the Executor to export `/etc/monai/app.json` and `/etc/monai/pkg.json` to the folder. |
 | `/var/run/monai/export/models/` | Special case folder, causes the Executor to export the contents of `/opt/monai/models/` to the folder.            |
 
+
+## Package Layout Diagram
+
+```
+                        ╔═══════════════════════════════╗
+  Added by Builder ---> ║ Executor │                    ║ <-- Developer code,
+                        ╟──────────┤    Application     ║     probably Python,
+  Created by Builder -> ║ Manifest │                    ║     using MONAI API.
+                        ╟──────────┴────────────────────╢
+                        ║            Model(s)           ║ <-- Optional pre-trained models.
+                        ╚═══════════════════════════════╝
+```
