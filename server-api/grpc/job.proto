@@ -35,7 +35,7 @@ service Job {
   rpc List(JobListRequest) returns (stream JobListResponse);
 
   // Requests the status of a known job.
-  rpc Status(JobDetailsRequest) returns (JobDetailsResponse);
+  rpc Status(JobStatusRequest) returns (JobStatusResponse);
 }
 
 // The relative priority of a job.
