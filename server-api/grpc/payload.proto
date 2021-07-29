@@ -144,16 +144,16 @@ message PayloadFileDetails {
 
 // Request for Payload::Create rpc.
 message PayloadCreateRequest {
-  message Source {
-    // Unique (within a payload) name of the folder to where source payload content will be placed; in path format.
-    // This value can be empty (or not provided) when only a single source payload is used to create a new payload.
-    // When this value is not empty, resulting file names will have this value and a path separator character prepended to them.
-    // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
-    // File names are case sensitive.
-    // Maximum allowed size for a file name is 4096 bytes.
-    string path = 1;
-
 /** Feature Not Available in Current Version
+ * message Source {
+ *   // Unique (within a payload) name of the folder to where source payload content will be placed; in path format.
+ *   // This value can be empty (or not provided) when only a single source payload is used to create a new payload.
+ *   // When this value is not empty, resulting file names will have this value and a path separator character prepended to them.
+ *   // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+ *   // File names are case sensitive.
+ *   // Maximum allowed size for a file name is 4096 bytes.
+ *   string path = 1;
+ *
  *   // Identifier of the source payload to clone.
  *   oneof identifier {
  *     // Unique identifier of the source payload.
@@ -168,8 +168,8 @@ message PayloadCreateRequest {
  *     // The maximum allowed size for a reference name is 128 bytes.
  *     string payload_name = 4;
  *   }
+ * }
 **/
-  }
 
   // Standard RPC request header.
   RequestHeader header = 1;
@@ -184,10 +184,12 @@ message PayloadCreateRequest {
   // When true, an existing reference name can be updated; otherwise an error will be returned.
   bool take_reference_name = 3;
 
-  // When provided, list of source payloads from which content will be copied into the new payload.
-  // Each source payload will have its contents mapped to a path relative to the root of the new payload.
-  // Each source payload must have a unique path; otherwise an error will be returned.
-  repeated Source sources = 4;
+/** Feature Not Available in Current Version
+ * // When provided, list of source payloads from which content will be copied into the new payload.
+ * // Each source payload will have its contents mapped to a path relative to the root of the new payload.
+ * // Each source payload must have a unique path; otherwise an error will be returned.
+ * repeated Source sources = 4;
+**/
 }
 
 // Response from Payload::Create rpc.
