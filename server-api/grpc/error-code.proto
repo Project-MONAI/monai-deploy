@@ -63,8 +63,10 @@ enum ErrorCode {
     ERROR_JOB_STATE_INVALID = 4008;
     // Requested job has already stopped and cannot be cancelled.
     ERROR_JOB_STOPPED = 4009;
+    // Unable to create job due to insufficient available resources.
+    ERROR_JOB_UNSCHEDULABLE = 4010;
     // Requested job is unavailable.
-    ERROR_JOB_UNAVAILABLE = 4010;
+    ERROR_JOB_UNAVAILABLE = 4011;
 
     // Generic MAP error occurred.
     ERROR_MAP = 5001;
