@@ -1,12 +1,12 @@
 syntax  = "proto3";
 
-package monai.platform;
+package monai.deploy.platform;
 
-option csharp_namespace = "Monai.Deploy.Server.Grpc";
-option go_package = "apis";
-option java_package = "com.monai.depoly.server.grpc";
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.depoly.platform.grpc";
 
-import public "response-code.proto";
+import public "error-code.proto";
 
 // 128-bit unique identifier (UUID).
 message Identifier {

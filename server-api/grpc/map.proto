@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package monai.deploy.server;
+package monai.deploy.platform;
 
-option csharp_namespace = "Monai.Deploy.Server.Grpc";
-option go_package = "apis";
-option java_package = "com.monai.deploy.server.grpc";
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.deploy.platform.grpc";
 
 import public "common.proto";
 
@@ -18,7 +18,7 @@ service Map {
   // Identifying the MAP registration to delete by reference name will also delete the reference name.
   // Attempting to delete a MAP registration with reference names will result in an error.
   // Attempting to delete an unknown or already deleted MAP registation will result in an error.
-  rpc Delete(MapRemoveRequest) returns (MapRemoveResponse);
+  rpc Delete(MapDeleteRequest) returns (MapDeleteResponse);
 
   // Requests a filtered list of know MAP records.
   // When no filter is provided, the default filter will be used.
@@ -35,7 +35,7 @@ service Map {
   // Restoring a MAP registration does restore any deleted reference names.
   // Attempting to restore a MAP registration which is not deleted with result in an error.
   // Attempting to restore an unknown MAP registration will result in an error.
-  rpc Restore(MapRestorRequest) return (MapRestoreResponse);
+  rpc Restore(MapRestorRequest) returns (MapRestoreResponse);
 
   // Requests the status of a known map.
   rpc Status(MapStatusRequest) returns (stream MapStatusResponse);
@@ -81,10 +81,10 @@ message MapCreateRequest {
   // Reference Names can be updated to refer to a different MAP in the future.
   // Reference Names are compared using case insentitive comparator functions.
   // The maximum allowed size for a reference name is 128 bytes.
-  string map_name = 2;
+  string map_name = 3;
 
   // When true, an existing reference name can be updated; otherwise an error will be returned.
-  bool take_reference_name = 3;
+  bool take_reference_name = 4;
 }
 
 // Response from Map::Create rpc.

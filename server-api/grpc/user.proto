@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package monai.deploy.server;
+package monai.deploy.platform;
 
-option csharp_namespace = "Monai.Deploy.Server.Grpc";
-option go_package = "apis";
-option java_package = "com.monai.deploy.server.grpc";
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.deploy.platform.grpc";
 
 import public "common.proto";
 

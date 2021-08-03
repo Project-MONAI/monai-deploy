@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package monai.deploy.server;
+package monai.deploy.platform;
 
-option csharp_namespace = "Monai.Deploy.Server.Grpc";
-option go_package = "apis";
-option java_package = "com.monai.deploy.server";
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.deploy.platform";
 
 import public "common.proto";
 
@@ -36,7 +36,7 @@ service Payload {
 
   // Requests the removal, or deletion, of a blob (file) from a known payload.
   // Requesting  removal of a blob from a payload associated with a pending, running, or completed job will result in an error.
-  rpc FileRemove(PayloadRemoveRequest) returns (PayloadRemoveResponse);
+  rpc FileRemove(PayloadFileRemoveRequest) returns (PayloadFileRemoveResponse);
 
   // Requests the upload of a blob (file) to a known payload.
   // Requesting to upload a blob to a payload associated with a pending, running, or complete job will result in an error.
@@ -45,11 +45,11 @@ service Payload {
 
   // Requests a filtered list of payloads known payloads.
   // When no filter is provided, the default filter will be used.
-  rpc List(PayloadListRequest) return (stream PayloadListResponse);
+  rpc List(PayloadListRequest) returns (stream PayloadListResponse);
 
   // Requests the deletion of a payload reference name.
   // Requesting deletion of an unknown reference name will result in an error.
-  rpc ReferenceDelete(PayloadReferenceDeleteRequest) return (PayloadReferenceDeleteResponse);
+  rpc ReferenceDelete(PayloadReferenceDeleteRequest) returns (PayloadReferenceDeleteResponse);
 
   // Requests for a reference name to refer to known payload.
   // Requesting to reference a deleted payload will result in an error.
@@ -63,8 +63,8 @@ service Payload {
 
 // Information about a file contained in a payload.
 message PayloadFileDetails {
-  // 8-bit "mode" of the file.
-  uint32 mode = 1;
+  // True when the file is to be considered executable; otherwise false.
+  bool is_executable = 1;
 
   // Size, in bytes, of the file.
   uint64 size = 2;
@@ -353,7 +353,7 @@ message PayloadFileUploadResponse {
   Identifier payload_id = 2;
 
   // Details about the uploaded file.
-  PayloadFileDetails = 3;
+  PayloadFileDetails details = 3;
 }
 
 // Request for Payload::List rpc.
@@ -537,11 +537,8 @@ message PayloadStatusResponse {
   // No value will be provided if the payload has not yet been deleted.
   Timestamp deleted = 16;
 
-  // Unique Identifier of the job(s) associated with the payload.
-  repeated Identifier job_ids = 17;
-
   // Details of a file contained in the payload. Note that this response is streamed, with a separate response for each file in the payload.
-  repeated PayloadFileDetails files = 18;
+  repeated PayloadFileDetails files = 17;
 
   // History of the payload.
   // Only provided when include_history = true.

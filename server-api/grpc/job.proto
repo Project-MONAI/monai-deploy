@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package monai.deploy.server;
+package monai.deploy.platform;
 
-option csharp_namespace = "Monai.Deploy.Server.Grpc";
-option go_package = "apis";
-option java_package = "com.monai.deploy.server.grpc";
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.deploy.platform.grpc";
 
 import public "common.proto";
 
@@ -93,7 +93,7 @@ enum JobState {
   // The job completed successfully.
   JOB_STATE_SUCCESS = 5;
 
-  // The job encountered a terminal error.
+  // The job encountered a terminal error, and is no longer running.
   JOB_STATE_FAILURE = 6;
 
   // The job was stopped, before it could complete, by user/external request.
@@ -109,7 +109,7 @@ enum JobState {
   JOB_STATE_TIMEOUT = 11;
 
   // The job cannot be scheduled due the requried MAP being unavailable.
-  JOB_STATE_NOTREADY = 12;
+  JOB_STATE_NOT_READY = 12;
 
   // The job faulted due to an out of memory condition.
   // This generally happens when requested memory is insufficient for the application.
@@ -198,7 +198,26 @@ message JobDeleteRequest {
   Identifier job_id = 2;
 }
 
+// Response from Job::Delete rpc.
 message JobDeleteResponse {
+  // Standard RPC response header.
+  ResponseHeader header = 1;
+
+  // Unique identifier of the job.
+  Identifier job_id = 2;
+}
+
+// Request for Job::Finalize rpc.
+message JobFinalizeRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+
+  // Unique identifer of the job to delete.
+  Identifier job_id = 2;
+}
+
+// Response from Job::Finalize rpc.
+message JobFinalizeResponse {
   // Standard RPC response header.
   ResponseHeader header = 1;
 
@@ -314,7 +333,7 @@ message JobStatusRequest {
   bool include_logs = 4;
 
   // When true, the history of the job is returned; otherwise history is not returned.
-  bool include_history = 4;
+  bool include_history = 5;
 }
 
 // Response from Job::Status rpc.
