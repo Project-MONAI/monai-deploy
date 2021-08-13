@@ -33,11 +33,14 @@ message UserListRequest {
 message UserListResponse {
   message UserInfo {
     // Unique identifier of the user.
-    Identifier user_id = 2;
+    Identifier user_id = 1;
 
     // Display name of the user.
     // Maximum size for a user display name is 1024 bytes.
-    string display_name = 4;
+    string display_name = 2;
+
+    // Timestamp when the user-account was created.
+    Timestamp created = 8;
   }
 
   // Standard RPC response header.

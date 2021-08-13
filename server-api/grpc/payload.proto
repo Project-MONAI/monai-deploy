@@ -203,13 +203,14 @@ message PayloadCreateResponse {
   // Reference name assigned to the payload at creation.
   // Not provided if the request did not include a reference name assignment.
   string payload_name = 3;
-
-  // List of files, in the new payload, copied into the new payload from source payloads.
-  // Not provided if no source payloads were provided.
-  // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
-  // File names are case sensitive.
-  // Maximum allowed size for a file name is 4096 bytes.
-  repeated string file_name = 4;
+/** Feature Not Available in Current Version
+ * // List of files, in the new payload, copied into the new payload from source payloads.
+ * // Not provided if no source payloads were provided.
+ * // File names are relative to the root of the payload, and should not be rooted paths (prefixed with a '/' character).
+ * // File names are case sensitive.
+ * // Maximum allowed size for a file name is 4096 bytes.
+ * repeated string file_name = 4;
+**/
 }
 
 // Request for Payload::Delete rpc.
@@ -375,6 +376,7 @@ message PayloadListRequest {
     bool include_deleted = 5;
 
     // When provided, only payloads created by the supplied user will be returned.
+    // User accounts are identified by the `RequestHeader.Authorization` message.
     Identifier user_id = 6;
   }
 
@@ -508,37 +510,26 @@ message PayloadStatusResponse {
   // The maximum allowed size for a reference name is 128 bytes.
   repeated string payload_name = 4;
 
-  // Unique identifier of the user account used to create the payload.
-  // Represents an actual user account, and not a service account.
-  Identifier creator_id = 8;
-
   // Unique identifier of the user account used to request the payload creation.
-  // When `creator_id` and `requestor_id` differ, this value often represents a service account.
-  Identifier requestor_id = 9;
-
-  // List of unique identifiers of jobs the payload has been associated with.
-  // No value will be provided when the payload has not yet been associated with any jobs.
-  repeated Identifier job_ids = 10;
+  // User accounts are identified by the `RequestHeader.Authorization` message.
+  Identifier user_id = 8;
 
   // True when the payload is deleted; otherwise false.
   bool is_deleted = 12;
 
-  // True when the payload is sealed; otherwise false.
-  bool is_sealed = 13;
-
   // True if the payload is writable; otherwise false.
   // Payloads which have been associated with jobs are no longer writable.
-  bool is_writable = 14;
+  bool is_writable = 13;
 
   // Timestamp of when the payload was created.
-  Timestamp created = 15;
+  Timestamp created = 14;
 
   // Timestamp of when the payload was deleted.
   // No value will be provided if the payload has not yet been deleted.
-  Timestamp deleted = 16;
+  Timestamp deleted = 15;
 
   // Details of a file contained in the payload. Note that this response is streamed, with a separate response for each file in the payload.
-  repeated PayloadFileDetails files = 17;
+  repeated PayloadFileDetails files = 16;
 
   // History of the payload.
   // Only provided when include_history = true.

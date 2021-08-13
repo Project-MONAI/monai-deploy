@@ -35,7 +35,7 @@ service Map {
   // Restoring a MAP registration does restore any deleted reference names.
   // Attempting to restore a MAP registration which is not deleted with result in an error.
   // Attempting to restore an unknown MAP registration will result in an error.
-  rpc Restore(MapRestorRequest) returns (MapRestoreResponse);
+  rpc Restore(MapRestoreRequest) returns (MapRestoreResponse);
 
   // Requests the status of a known map.
   rpc Status(MapStatusRequest) returns (stream MapStatusResponse);
@@ -263,7 +263,7 @@ message MapReferenceUpdateResponse {
 }
 
 // Request for Map::Restore rpc.
-message MapRestorRequest {
+message MapRestoreRequest {
   // Standard RPC request header.
   RequestHeader header = 1;
 
@@ -328,7 +328,8 @@ message MapStatusResponse {
   // Current state of the MAP registation.
   MapState state = 4;
 
-  // Unique identifier of the user that created the MAP registation.
+  // Unique identifier of the user account used to create the MAP registration.
+  // User accounts are identified by the `RequestHeader.Authorization` message.
   string user_id = 5;
 
   // Timestamp of when the MAP registation was created.

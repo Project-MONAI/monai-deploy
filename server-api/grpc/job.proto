@@ -179,14 +179,8 @@ message JobCreateResponse {
   JobState state = 5;
 
   // Unique identifier of the user account used to create the job.
-  // Represents an actual user account, and not a service account.
   // User accounts are identified by the `RequestHeader.Authorization` message.
-  Identifier creator_id = 6;
-
-  // Unique identifier of the user account used to request the job creation.
-  // When `creator_id` and `requestor_id` differ, this value often represents a service account.
-  // User accounts are identified by the `RequestHeader.Authorization` message.
-  Identifier requestor_id = 7;
+  Identifier user_id = 6;
 }
 
 // Request for Job::Delete rpc.
@@ -265,12 +259,7 @@ message JobListRequest {
     repeated JobState included_states = 10;
 
     // Unique identifier of the user account used to create the job.
-    // Represents an actual user account, and not a service account.
-    Identifier creator_id = 11;
-
-    // Unique identifier of the user account used to request the job creation.
-    // When `creator_id` and `requestor_id` differ, this value often represents a service account.
-    Identifier requestor_id = 12;
+    Identifier user_id = 11;
   }
 
   // Standard RPC request header.
@@ -305,12 +294,8 @@ message JobListResponse {
     Timestamp created = 7;
 
     // Unique identifier of the user account used to create the job.
-    // Represents an actual user account, and not a service account.
-    Identifier creator_id = 8;
-
-    // Unique identifier of the user account used to request the job creation.
-    // When `creator_id` and `requestor_id` differ, this value often represents a service account.
-    Identifier requestor_id = 9;
+    // User accounts are identified by the `RequestHeader.Authorization` message.
+    Identifier user_id = 8;
   }
 
   // Standard RPC response header (only included with first response in stream).
@@ -351,12 +336,8 @@ message JobStatusResponse {
   JobPriority priority = 4;
 
   // Unique identifier of the user account used to create the job.
-  // Represents an actual user account, and not a service account.
-  Identifier creator_id = 8;
-
-  // Unique identifier of the user account used to request the job creation.
-  // When `creator_id` and `requestor_id` differ, this value often represents a service account.
-  Identifier requestor_id = 9;
+  // User accounts are identified by the `RequestHeader.Authorization` message.
+  Identifier user_id = 8;
 
   // Current state of the job.
   JobState state = 12;

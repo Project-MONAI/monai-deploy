@@ -32,7 +32,7 @@ enum ErrorCode {
     ERROR_AUTHORITY_UNAVAILABLE = 2001;
     // Kubernetes is unvailable.
     ERROR_CLUSTER_UNAVAILABLE = 2002;
-    // Database is unavailable.
+    // Database is unavailble.
     ERROR_DATABASE_UNAVAILABLE = 2003;
     // Network is unavailable.
     ERROR_NETWORK_UNAVAILABLE = 2004;
@@ -56,7 +56,7 @@ enum ErrorCode {
     // Provided job identifier is not associated with any known job.
     ERROR_JOB_ID_UNKNOWN = 4005;
     // Request job logs are currently unavailable.
-    ERROR_JOB_LOGS_UNAVAILABLE = 4006;
+    ERROR_JOB_LOGS_UNAVAILBLE = 4006;
     // Provided job-priority is invalid.
     ERROR_JOB_PRIORITY_INVALID = 4007;
     // Provided job-state is invalid.
@@ -120,7 +120,7 @@ enum ErrorCode {
     // Provided payload reference name is not associated with any known payload.
     ERROR_PAYLOAD_NAME_UNKNOWN = 6013;
     // Requested payload is unavailable.
-    ERROR_PAYLOAD_UNAVAILABLE = 6014;
+    ERROR_PAYLOAD_UNAVAILBLE = 6014;
 
     // Generic user error occurred.
     ERROR_USER = 7001;
