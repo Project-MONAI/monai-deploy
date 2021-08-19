@@ -13,20 +13,34 @@ guidance of rfc 2119 for terminology.
 ## Definitions:
 
 - **Job:** when you request the computing resources to accomplish a specific
-task, that is called a “job”.
+task, that task SHALL be called a "job".
 
-- **Synchronous jobs:** this is a job that MUST run immediately. It MAY
-interact with humans or peripherals as needed.  Asynchronous jobs:
-these are jobs SHALL be scheduled to be run when resources are
-available.
+  - **Immediate job:** this is a job that MUST run immediately. It MAY
+ interact with humans or peripherals as needed. It MUST be
+ synchronously scheduled and completes asynchronously. Results will be
+ available in the future.
 
-- **Timeout:** asynchronous jobs MAY be submitted with a timeout specified
-such that they MUST be scheduled within the timeout or they will be
-marked as failed. This is another way of representing a required
-service-level-agreement (SLA) necessary for the workload.
+  - **Scheduled job:** this is a job that SHALL be scheduled
+ immediately to be run when resources are available. Work will happen
+ in the future, with results available in the future after it
+ completes.
 
-- **Throughput:** This is the measure of the number of jobs that can be
-processed by specified hardware/software configuration over a specific
+  - **Query job:** this is a job that SHALL be scheduled immediately
+      and SHALL complete syncronously with the response providing
+      results.
+
+- **Timeout:** jobs MAY be submitted with a timeout specified. This is
+another way of representing a required service-level-agreement (SLA)
+necessary for the workload. Jobs with a timeout specified:
+
+  - they MUST be scheduled within the timeout or they will be marked
+    as failed.
+
+  - they MUST complete within the timeout value or they will be
+    stopped and marked as failed.
+
+- **Throughput:** This is the measure of the number of jobs, executing a similar workload type,
+that can be processed by specified hardware/software configuration over or within a specific
 period of time.
 
 - **Deterministic service requirements:** this is where the
@@ -41,8 +55,10 @@ cycle or manner where they are re-entrant for the job.
 and services required to complete the job are not known before the job
 is scheduled and are determined during the execution of the job.
 
+- **Partial Results:** the job, as its executing, can produce results completed to the time of the request. This is a partial result.
+
 - **Latency:** is the measurement of time between the job being requested
-and initial results returned.
+and initial results, which may be partial or full, of the job being returned. 
 
 ## Workloads Considered
 
@@ -58,7 +74,11 @@ diagnostics. Seconds count for some emergency diagnostics situations
 500 slices / series; 512 x 512 / slice; 16 bits / pixel, Today, the
 typical response time is less than 10 minutes.
   - This is a case where you have a workload that typically could be done
-asynchronously but now MUST be executed synchronously.
+asynchronously but now MAY be executed synchronously.
+  - The job MUST be immediately scheduled. This MAY be accomplished either by:
+    - scheduling the job on unused available resources OR
+    - scheduling the job on reserved resources OR 
+    - pre-empting running jobs of lower priority to provide those resources and schedule the job on those resources.
 
 ### Scheduled Radiology Workflows
 
@@ -72,11 +92,18 @@ workload can be forecasted.
 slices in a series; 512 x 512 / slice; 16 bits / pixel. Today, the
 typical response time is greater than 30 minutes.
 - Example: Retrospective analysis over multiple and related data sets
-- Example: existing CT scans could be analyzed when new applications,
+- Example: existing CT scans MAY be analyzed when new applications,
 algorithms, or models are available. This would repeat the previous
 example over many patients (100s to 1000s).
-  - This is an example of an asynchronous job that may have a timeout
+  - This is an example of an asynchronous job that MAY have a timeout
 measured in tens of minutes.
+
+All these examples suggest that this this workflow:
+ - MAY be schedule asynchronously
+ - MAY be executed asynchronously
+ - is a scheduled job that
+ - has a deterministic service requirements
+ - which is latency insensitive.
 
 
 ### Quality Verification
@@ -94,7 +121,11 @@ one direction but the image suggests another.
 the scan was being made?
 
 ### Image Enhancement:
-Using computation and AI techniques, clarify the image for human and machine analysis.
+Using computation and AI techniques, clarify the image for human and machine analysis. This workload:
+- MUST be immediately scheduled
+- MUST execute syncronously
+- has high latency sensitivity
+- has a deterministic service requirements
 
 ### Medical Text Analysis:
 
