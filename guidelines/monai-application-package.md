@@ -315,6 +315,12 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
     - Example: `1.5Gi`, `2048Mi`
 
+  - Shared memory requirements SHALL be denoted using decimal values followed by units (`/etc/monai/pkg.json#resources.shared-memory`).
+
+    - Supported units SHALL be megabytes (`Mi`) and gigabytes (`Gi`).
+
+    - Example: `1.5Gi`, `2048Mi`
+
   - Integer values MUST be positive and not contain any position separators.
 
     - Example legal values: `1`, `42`, `2048`
@@ -327,24 +333,25 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
     - Example illegal values: `1,024`, `-1.0`, `3.14`
 
-  - When not provided the default values of `cpu=1`, `gpu=0`, and `memory=1Gi` will be assumed.
+  - When not provided the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `shared-memory="64Mi"` will be assumed.
 
 
 #### Table of Package Manifest Fields
 
-| Name               | Required | Default | Type    | Format                    | Description                                                                  |
-| ------------------ | -------- | ------- | ------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `api-version`      | No       | 0.0.0   | string  | semantic version          | Version of the manifest file schema.                                         |
-| `application-root` | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder older which contains the Application |
-| `models`           | No       | N/A     | array   | array of objects          | Array of objects which describe models in the package.                       |
-| `models[*].name`   | No       | N/A     | string  | map reference name        | Name of the map which conforms to the map naming rules.                      |
-| `models[*].path`   | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder which contains the model.            |
-| `resources`        | No       | N/A     | object  | object                    | Object describing resource requirements for the Application.                 |
-| `resources.cpu`    | No       | 1       | integer | number                    | Number of CPU cores required by the Application.                             |
-| `resources.gpu`    | No       | 0       | integer | number                    | Number of GPU devices required by the Application.                           |
-| `resource.memory`  | No       | 1Gi     | string  | memory size               | The maximum memory required by the Application.                              |
-| `sdk-version`      | No       | 0.0.0   | string  | semantic version          | Version of the SDK used to generate the manifest.                            |
-| `version`          | No       | 0.0.0   | string  | semantic version          | Version of the package.                                                      |
+| Name                     | Required | Default | Type    | Format                    | Description                                                                  |
+| ------------------------ | -------- | ------- | ------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `api-version`            | No       | 0.0.0   | string  | semantic version          | Version of the manifest file schema.                                         |
+| `application-root`       | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder older which contains the Application |
+| `models`                 | No       | N/A     | array   | array of objects          | Array of objects which describe models in the package.                       |
+| `models[*].name`         | No       | N/A     | string  | map reference name        | Name of the map which conforms to the map naming rules.                      |
+| `models[*].path`         | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder which contains the model.            |
+| `resources`              | No       | N/A     | object  | object                    | Object describing resource requirements for the Application.                 |
+| `resources.cpu`          | No       | 1       | integer | number                    | Number of CPU cores required by the Application.                             |
+| `resources.gpu`          | No       | 0       | integer | number                    | Number of GPU devices required by the Application.                           |
+| `resource.memory`        | No       | 1Gi     | string  | memory size               | The maximum memory required by the Application.                              |
+| `resource.shared-memory` | No       | 64Mi    | string  | memory size               | The maximum shared memory required by the Application.                       |
+| `sdk-version`            | No       | 0.0.0   | string  | semantic version          | Version of the SDK used to generate the manifest.                            |
+| `version`                | No       | 0.0.0   | string  | semantic version          | Version of the package.                                                      |
 
 
 ## Executor
