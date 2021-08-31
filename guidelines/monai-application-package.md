@@ -151,7 +151,7 @@ The primary component of a MAP is the Application. The Application is provided b
 
 All application code and binaries SHALL be in the `/opt/monai/app/` folder, with the exception of any dependencies which are installed by the MONAI Application Package Builder during the creation of the MAP.
 
-All AI models (PyTorch, TensorFlow, TensorRT, etc.) should be SHOULD be in separate sub-folders of the `/var/opt/monai/models/` folder.
+All AI models (PyTorch, TensorFlow, TensorRT, etc.) should be SHOULD be in separate sub-folders of the `/opt/monai/models/` folder.
 
 
 ## Manifests
@@ -295,11 +295,11 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
     - Model path SHOULD be relative to the folder containing the model.
 
-    - When the model path is a relative file-system path (first character is not `/`), it is relative to the `/etc/monai/models/` folder.
+    - When the model path is a relative file-system path (first character is not `/`), it is relative to the `/opt/monai/models/` folder.
 
     - When the model path is an absolute file-system path (first character is `/`), the file-system path is used as-is.
 
-  - Models SHOULD be in sub-folders of the `/etc/monai/models/` folder.
+  - Models SHOULD be in sub-folders of the `/opt/monai/models/` folder.
 
 - Package Manifest SHOULD specify the resources required to execute the application.
 
@@ -408,6 +408,11 @@ The Executor SHOULD provide a customized set of environment variables and comman
 
     - A value of `0` SHALL indicate that no timeout is being applied to the Application.
 
+  - `MONAI_WORKDIR`: The Application's working directory (default: `/var/monai/`).
+
+    - The value provided must be an absolute path (first character is `/`).
+
+    - When not provided the default path `/var/monai/` SHALL be assumed.
 
 #### Table of Environment Variables
 
@@ -420,6 +425,7 @@ The Executor SHOULD provide a customized set of environment variables and comman
 | `MONAI_JOBID`       | `00000000000000000000000000000000`         | `/[A-F0-9a-f]{32}/` | Unique identity of the job the MAP is executing. |
 | `MONAI_OUTPUTPATH`  | `/var/monai/output/`                       | Folder Path         | Path to the output folder for the Application.   |
 | `MONAI_TIMEOUT`     | `/etc/monai/app.json#timeout`              | Integer             | Timeout, in seconds, applied to the Application. |
+| `MONAI_WORKDIR`     | `/var/monai/`                              | Folder Path         | Path to the Application's working directory.     |
 
 
 ### Manifest Export
