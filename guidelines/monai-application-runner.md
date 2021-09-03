@@ -1,8 +1,6 @@
-# MONAI Appication Runner (MAR)
+# MONAI Application Runner (MAR)
 
 ## Description
-
-This is a proposal for the MONAI Deploy Working Group.
 
 - [Overview](#overview)
   - [Goal](#goal)
@@ -22,6 +20,7 @@ This is a proposal for the MONAI Deploy Working Group.
 As data scientists & application developers build AI models and create [MONAI Application Packages (MAPs)](./monai-application-package.md) to deploy these applications in production, they SHALL need a way to test their MAP locally without having to setup [MONAI Deploy Application Server](./application-server.md) and deploy MAPs in the server. MONAI Application Runner (MAR) will be used to run and test MAPs, one at a time, in the supported operating environment. This proposal documents the specifications for MAR.
 
 ### Goal
+
 The goal for this proposal is to enlist and provide clarity on the specifications for MAR. Developers working on different software modules in MAR SHALL use this specification as a guideline when designing and implementing the MAR.
 
 ## Requirements
