@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/Project-MONAI/MONAI/dev/docs/images/MONAI-logo-color.png" width="50%" alt='project-monai'>
 </p>
 
-# MONAI Deploy Working Group
+# MONAI Deploy Working Group test
 
 MONAI Deploy Working Group defines a set of open standards and develops tools for 
 developing, deploying and integrating Medical AI Applications with production systems.
