@@ -125,7 +125,7 @@ Using computation and AI techniques, clarify the image for human and machine ana
 - MUST be immediately scheduled
 - MUST execute syncronously
 - has high latency sensitivity
-- has a deterministic service requirements
+- has deterministic service requirements
 
 ### Medical Text Analysis:
 
