@@ -65,10 +65,12 @@ and initial results, which may be partial or full, of the job being returned.
 ### Trauma / Emergency Case
 
 Immediate diagnostics required for emergency care: immediate
-processing is required for a clinical diagnosis of the trauma. These
+processing is required for a clinical diagnosis or triaging of the trauma. These
 workloads have the patient either awaiting further imaging or
-diagnostics. Seconds count for some emergency diagnostics situations
-(such as stroke).
+diagnostics. Alternatively, the model may be used for worklist
+prioritization, i.e. prioritizing which scans should be read first by
+radiologists. Seconds count for some emergency diagnostics
+situations (such as stroke).
 
 - Example: Evaluation of Brain Injury in MR/ The typical data size: is
 500 slices / series; 512 x 512 / slice; 16 bits / pixel, Today, the
