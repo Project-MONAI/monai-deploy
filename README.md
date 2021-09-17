@@ -31,7 +31,7 @@ Future versions will include:
 
 ## Status
 
-MONAI Deploy will be released at **MICCAI 2021** and will be part of the **MONAI Bootcamp**. Sign up to know more! 
+MONAI Deploy will be released at **MICCAI 2021** and will be part of the [**MONAI Bootcamp**](https://www.gpuhackathons.org/event/monai-miccai-bootcamp-2021). Sign up [HERE](https://www.gpuhackathons.org/form/gpu-event-registration) to know more! 
 
 ## Community
 
