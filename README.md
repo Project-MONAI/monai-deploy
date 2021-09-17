@@ -4,7 +4,7 @@
 
 # MONAI Deploy Working Group test
 
-MONAI Deploy aims to become the de-facto standard for developing, testing, deploying and running medical AI applications in clinical production.
+MONAI Deploy aims to become the de-facto standard for developing, packaging, testing, deploying and running medical AI applications in clinical production.
 
 If you want to know more about its purpose and vision, please review the <https://github.com/Project-MONAI/MONAI/wiki/Deploy-Working-Group>.
 
