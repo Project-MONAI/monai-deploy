@@ -2,33 +2,49 @@
   <img src="https://raw.githubusercontent.com/Project-MONAI/MONAI/dev/docs/images/MONAI-logo-color.png" width="50%" alt='project-monai'>
 </p>
 
-# MONAI Deploy Working Group
+# MONAI Deploy Working Group test
 
-MONAI Deploy Working Group defines a set of open standards and develops tools for 
-developing, deploying and integrating Medical AI Applications with production systems.
+MONAI Deploy aims to become the de-facto standard for developing, packaging, testing, deploying and running medical AI applications in clinical production.
+
+If you want to know more about its purpose and vision, please review the <https://github.com/Project-MONAI/MONAI/wiki/Deploy-Working-Group>.
 
 ## Focus
 
-MONAI Deploy builds on the foundation set by
-[MONAI](https://github.com/Project-MONAI/MONAI/).  Where **MONAI** is focused
-on training and creating models, MONAI Deploy is focused on defining Open
-Standards for defining deployable Medical AI Applications and creating tools and
-applications to bring AI applications to production across healthcare use cases.
+MONAI Deploy builds on the foundation set by [MONAI](https://github.com/Project-MONAI/MONAI/).  
 
-Currently the work underway includes:
-- MONAI Application Package (MAP) - defines how applications can be packaged
+Where **MONAI** is focused on training and creating models, **MONAI Deploy** is focused on defining the journey from research innovation to clinical production environments in hospitals. Our guiding principles are:
+- Implementation mindset. Create tangible assets: tools, applications and demos/prototypes.
+- Radiology first, then other modalities like Pathology.
+- Interoperability with clinical systems. Starting with DICOM, then EHR.
+- Central repository to facilitate collaboration among institutions.
+
+## Sub-systems
+First version, **v0.1.0** includes:
+- **MONAI Application Package (MAP)** - defines how applications can be packaged.
     and distributed amongst MONAI Working Group member organizations.
-- MONAI App Server - Server environment which can serve MONAI Applications.
-- MONAI App SDK - set of development tools to create MAPs out of MONAI / Pytorch models.
+- [**MONAI Deploy App SDK**](https://github.com/Project-MONAI/monai-deploy-app-sdk) - set of development tools to create MAPs out of MONAI / Pytorch models.
+
+Future versions will include:
+- **MONAI Deploy Informatics Gateway** - I/0 for DICOM and FHIR.
+- **MONAI Deploy Workload Manager** - Orchestrates what has to be executed based on incoming patient requests.
+- **MONAI Deploy Server** - Server environment which can run MONAI Applications (MAPs).
 
 ## Status
 
-MONAI Deploy is currently in early development.
+MONAI Deploy will be released at **MICCAI 2021** and will be part of the [**MONAI 2021 Bootcamp**](https://www.gpuhackathons.org/event/monai-miccai-bootcamp-2021). Sign up [HERE](https://www.gpuhackathons.org/form/gpu-event-registration) to know more, no later than **September 21st, 2021**! 
 
 ## Community
 
-The MONAI Deploy runs a weekly working group meeting, if you're interested in
-joining, please get in touch with the [Working Group 
-organizers](https://docs.google.com/document/d/1fzG3z7TxB9SzWdfqsApAMFrM91nHfYiISnSz4QHJHrM/)
+To participate in the MONAI Deploy WG, please review the [MONAI Deploy WG Wiki page](https://github.com/Project-MONAI/MONAI/wiki/Deploy-Working-Group).
+All the recordings and meeting notes since day zero can be found at [MONAI Deploy WG master doc](https://docs.google.com/document/d/1fzG3z7TxB9SzWdfqsApAMFrM91nHfYiISnSz4QHJHrM/)
 
-Ask and answer questions over on [MONAI's GitHub Discussions tab](https://github.com/Project-MONAI/MONAI/discussions).
+Join our [Slack channel](https://forms.gle/QTxJq3hFictp31UM9) or join the conversation on Twitter [@ProjectMONAI](https://twitter.com/ProjectMONAI).
+
+Ask and answer questions over on [MONAI Deploy's GitHub Discussions tab](https://github.com/Project-MONAI/monai-deploy/discussions) or [MONAI's GitHub Discussions tab](https://github.com/Project-MONAI/MONAI/discussions).
+
+## Links
+
+- Website: <https://monai.io>
+- Guidelines: <https://docs.monai.io/projects/monai-deploy/guidelines>
+- Roadmap tracker: <https://github.com/Project-MONAI/monai-deploy/projects>
+- Issue tracker: <https://github.com/Project-MONAI/monai-deploy/issues>
