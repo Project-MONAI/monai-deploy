@@ -15,7 +15,7 @@ MONAI Deploy builds on the foundation set by [MONAI](https://github.com/Project-
 Where **MONAI** is focused on training and creating models, **MONAI Deploy** is focused on defining the journey from research innovation to clinical production environments in hospitals. Our guiding principles are:
 - Implementation mindset. Create tangible assets: tools, applications and demos/prototypes.
 - Radiology first, then other modalities like Pathology.
-- Interoperability with clinical systems. Starting with DICOM, then EHR.
+- Interoperability with clinical systems. Starting with DICOM, then FHIR.
 - Central repository to facilitate collaboration among institutions.
 
 ## Sub-systems
