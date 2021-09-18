@@ -24,12 +24,11 @@ Welcome to MONAI Deploy! This documentation is intended for individuals and inst
 
 3. Gain approval to develop large proposals
 
-  * For larger ideas of improvement for MONAI Deploy, the release manager will bring it up for discussion at the weekly working group meeting.
+  * For larger ideas of improvement for MONAI Deploy, proposers need to convene a group of at least two other institutions members to act as a mini-committee.
   * Small issues, bug fixes and non-controversial features get picked up and prioritized for implementation
 
-4. Develop proposal/feature
+4. Co develop work and create pull request
 
-  * If successful consensus is found, develop the work and open a pull request. 
   * Any written markdown documents should follow [rfc 2119](https://datatracker.ietf.org/doc/html/rfc2119).
   * For **Feature** development, please follow the main MONAI contributing [guidelines](https://github.com/Project-MONAI/MONAI/blob/dev/CONTRIBUTING.md)
 
