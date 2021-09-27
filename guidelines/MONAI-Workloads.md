@@ -3,24 +3,17 @@
 
 This is a proposal for the MONAI Deploy Working Group.
 
-
 ## Overview
 
 This proposal documents the different clinical use cases and workloads that are relevant and can benefit from the use of AI.  This proposal further maps the clinical workflows and workloads  to computational workloads that generalize the requirements, so that they can be processed and implemented on system and software level.
 
-
 [TOC]
-
-
 
 ### Goal {#goal}
 
 The goal of this proposal is to provide clarity and introduce terminology, so that clinicians and data scientists working as part of AI deployment projects, can present their problem space on the correct level of abstraction. Software developers working on solutions for AI deployment should understand from this proposal the computational problems and map those to requirements that will drive their software development.
 
-
 ### Definitions {#definitions}
-
-
 
 * **Clinical Use Case:** Defines the high level clinical use case where AI could be helpful.  _Example: Emergency brain hemorrhage diagnosis_
 * **Clinical Workflow:** Defines the clinical workflow including the systems, data types and response times that describe the next level of detail for each clinical use case. 
@@ -31,24 +24,19 @@ The goal of this proposal is to provide clarity and introduce terminology, so th
     * [Streaming Computational Workload](#streaming-computational-workload)
     * [Synchronous Computational Workload](#synchronous-computational-workload)
 
-
 ## Clinical Use Cases {#clinical-use-cases}
 
-The clinical use cases introduced in this section are intended to be a non-exhaustive set of examples to provide enough clarity to help define scenarios where a MONAI Deploy application is used and a way to map those scenarios to workloads and components that developers use to understand compute needs and end to end performance constraints.  
+The clinical use cases introduced in this section are intended to be a non-exhaustive set of examples to provide enough clarity to help define scenarios where a MONAI Deploy application is used and a way to map those scenarios to workloads and components that developers use to understand compute needs and end to end performance constraints.  Each figure in this section is a sequence diagram described by the use case steps in the same section.
 
-The clinical workflow is defined above. _Example: Incoming Images sent from the instrument via DICOM Router or PACS get sent to be diagnosed.  AI algorithms help with Segmentation & Classification algorithms and create a new DICOM object including the results, so they can be uploaded to PACS.  Incoming study size: 500MB, response time requirement from imaging to result being available for radiologists 20 minutes._
-
+The clinical workflow is defined above. _Example: Incoming Images sent from the instrument via DICOM Router or PACS get sent to be diagnosed.  AI algorithms help with Segmentation & Classification algorithms and create a new DICOM object including the results, so they can be uploaded to PACS.  Incoming study size: 500MB, response time requirement from imaging to result being available for radiologists 20 minutes.
 
 ### Quality Assurance {#quality-assurance}
-
 
 #### Metadata Quality Assurance {#metadata-quality-assurance}
 
 While studies are routed through the hospital DICOM routing infrastructure, images are validated with classification algorithms. Validating the usability of an image or data. Does the metadata associated with an image match the image? For instance, is this a left or right femur? The label states one direction but the image suggests another. These workloads allow for image corrections or create implied routing paths for further AI processing.
 
 **Clinical Workflow**
-
-
 
 1. Studies get routed in a large hospital DICOM routing system, at peak hour, the hospital is seeing about 300 studies per hour.
 2. As series arrive to DICOM router, DICOM router sends selected slices out of the series an AI processing system
@@ -59,39 +47,29 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 
 **Clinical Workflow (without DICOM Router)**
 
-
-
 1. Studies are initiated on a modality and the DICOM is sent directly to a generalized application that ingests raw DICOM files.
 2. The application will read the DICOM metadata and select a single image or slice from the series and send a significantly reduced dataset to the AI platform and algorithm specific for the QA study associated with the dataset. Note: in this example the reduction is in some aspect of the overall data set to simplify the AI processing complexity in proportion to the algorithm accuracy.   In some variations, the application will send several image metadata and pixel sets in parallel to an AI platform and parse the results collectively.
 3. The AI platform will evaluate the image metadata and pixels to validate the pair. In this example a classification solution is used and the results are sent back to the application.
 4. After classification results are sent back to the application it adds metadata to the DICOM images that can be used later to filter the correct series of images for radiology studies. These DICOMs are added to the PACs along with the original data and made available to QA technicians.
 5. Optionally and in addition to the previous action, the application can directly send corrected DICOM studies or augmented DICOMs to additional AI processing pipelines with different algorithms. 
 
-**Clinical Use Case: **Study Metadata QA
+**Clinical Use Case:** Study Metadata QA
 
-**Computational Workload: **[Synchronous](#synchronous-computational-workload)
+**Computational Workload:**[Synchronous](#synchronous-computational-workload)
 
-**Clinical workload:** 400 studies per hour, 1,200 series per hour, 1 slice per series, response time requirement of &lt; 500 milliseconds per slice.
+**Clinical Workload:** 400 studies per hour, 1,200 series per hour, 1 slice per series, response time requirement of less than 500 milliseconds per slice.
 
-**Importance to Clinical AI Deployment: **critical, this type of inference is expected to be the most common across imaging, as it can drive a lot of other use cases downstream 
-
-
-
+**Importance to Clinical AI Deployment:** critical, this type of inference is expected to be the most common across imaging, as it can drive a lot of other use cases downstream.
 
 **Figure:** Study Metadata QA without DICOM Router
 
 ![MONAI_Metadata Quality Assurance](assets/MONAI_Metadata_Quality_Assurance.jpg)
 
-
-#### Image Quality Verification during Image Acquisition {#image-quality-verification-during-image-acquisition}
+#### Image Quality Verification During Image Acquisition {#image-quality-verification-during-image-acquisition}
 
 Help the radiology technician improve their results.  During an image acquisition a QA score is provided to the radiology technician to help validate if the image quality is sufficient and if imaging needs to be re-taken.  Typically seconds or 10’s of seconds matter for efficient, high quality imaging.
 
 **Clinical Workflow**
-
- 
-
-
 
 1. A patient gets scheduled for a routine imaging for a CT imaging.
 2. During Image acquisition time, the radiology technician is watching the imaging proceed and parts of the study be completed from his computer.
@@ -114,9 +92,7 @@ The implementation of AI as part of image quality will not directly impact patie
 
 ![MONAI_Image QA at Acquistion](assets/MONAI_Image_QA_Acquistion.jpg)
 
-
 ### AI Diagnostics {#ai-diagnostics}
-
 
 #### Emergency DiagnosticsDiagnosis {#emergency-diagnosticsdiagnosis}
 
@@ -125,8 +101,6 @@ Immediate diagnostics required for emergency care: immediate processing is requi
 **Clinical Workflow**
 
 A patient has been in a car accident and gets into the emergency room. 
-
-
 
 1. The hospital orders an emergency CT imaging to be done on the patient's head to detect possible brain hemorrhage. Patient gets imaged with an emergency protocol.
 2. The modality is connected to the hospital network on 1gbps connection and the CT study (512x512x600) gets sent to 2 different systems in parallel: 
@@ -146,13 +120,11 @@ A patient has been in a car accident and gets into the emergency room.
 
 **Clinical workload:** 10-20 studies per day, study size 512x512x600
 
-**Importance to Clinical AI Deployment:** high, the implementation of AI as part of emergency diagnosis will have a significant impact on emergency patient care, response requirement of 600 seconds
-
+**Importance to Clinical AI Deployment:** high, the implementation of AI as part of emergency diagnosis will have a significant impact on emergency patient care, response requirement of 600 seconds.
 
 **Figure:** Emergency Diagnosis Sequence
 
 ![MONAI_Emergency Diagnosis](assets/MONAI_Emergency_Diagnosis.jpg) 
-
 
 #### Scheduled Radiology Diagnostics {#scheduled-radiology-diagnostics}
 
@@ -161,8 +133,6 @@ Imaging studies get scheduled and analyzed by AI algorithms as part of the radio
 **Clinical Workflow**
 
 A patient has been scheduled for a radiology exam. 
-
-
 
 1. The clinician orders CT imaging to be done on the patient's chest to detect issues with the lungs.
 2. Study gets sent from the modality to the DICOM router.  The modality is connected to the hospital network on 1gbps connection and the CT study (512x512xnnn) gets sent to the DICOM router.  The data transfer requirement for this connection is best effort from image completion to when the study needs to be routed.  
@@ -181,11 +151,9 @@ A patient has been scheduled for a radiology exam.
 
 **Importance to Clinical AI Deployment:** high, the implementation of AI as part of scheduled radiology diagnosis will have a significant impact on patient care
 
-
 **Figure:** Scheduled Radiology Sequence
 
 ![MONAI_Scheduled Radiology](assets/MONAI_Scheduled_Radiology.jpg)
-
 
 #### Interactive Diagnostics During Image Reading  {#interactive-diagnostics-during-image-reading}
 
@@ -197,9 +165,7 @@ A time delay of 10 secs might be acceptable in _edge cases_, where the radiologi
 
 Imagine a 3D image where a radiologist only wants to get an inference on a small section of an image. The small section may be free hand drawn by the radiologist a selected 3D cube (or a 2D rectangular region). An inference will be done only in the selected region. Annotating this region will generate a DICOM SR object and only the SR object will be sent to the inference engine. The inference will be computed and a SR object will be sent back.   
 
-**<span style="text-decoration:underline;">Inference on only a single series in a 4D image</span>**
-
-
+**Inference on only a single series in a 4D image**
 
 Consider a scenario where AI segmentation is done only on the Left Ventricular Myocardium (LVM) only on the systolic and diastolic phases of the cardiac cycle.  The problem here is both image segmentation and potentially using AI to select the ROI and the correct sub-images to process. 
 
@@ -209,7 +175,7 @@ In the both the above mentioned cases, we are assuming that DICOM adapter in the
 
 **Computational Workload Type:** [Streaming](#streaming-computational-workload)
 
-**Clinical Workload:** response time &lt;1 second
+**Clinical Workload:** response time less than 1 second
 
 **Importance to Clinical AI Deployment:** medium
 
@@ -217,17 +183,13 @@ In the both the above mentioned cases, we are assuming that DICOM adapter in the
 
 ![MONAI_Interactive Image Reading](assets/MONAI_Interactive_Image_Reading.jpg)
 
-
 ### Research and Development {#research-and-development}
-
 
 #### Retrospective Study {#retrospective-study}
 
 As part of AI model development, single AI algorithms are evaluated against existing studies stored in the PACS. In other cases, new datasets are made available and researchers look to gain new insights or data from an AI model to form a prospective diagnosis.  These studies will have on average greater than 10K units to be processed to satisfy statistical variety constraints and pool diversity requirements.  
 
 **Clinical Workflow**
-
-
 
 1. A researcher or model developer orders a selective batch of radiology exams to be processed with a specific AI model. 
 1. Clinicians and researchers working on the algorithm AI model defines a cohort selection criteria and gathers a selection of patient and study IDs.
@@ -250,230 +212,25 @@ As part of AI model development, single AI algorithms are evaluated against exis
 
 ![MONAI_Retrospective Study](assets/MONAI_Retrospective_Study.jpg)
 
-
 ### Clinical Workloads Summary {#clinical-workloads-summary}
 
-
-<table>
-  <tr>
-   <td><strong>Workload</strong>
-   </td>
-   <td><p style="text-align: right">
-<strong>Payload</strong></p>
-
-   </td>
-   <td><p style="text-align: right">
-<strong>Pixels / Slice</strong></p>
-
-   </td>
-   <td><p style="text-align: right">
-<strong>bpp</strong></p>
-
-   </td>
-   <td><strong>Response Time</strong>
-   </td>
-   <td><p style="text-align: right">
-<strong>Data Size</strong></p>
-
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Emergency Diagnostics</strong>
-   </td>
-   <td><p style="text-align: right">
-1 study / 1  series</p>
-
-   </td>
-   <td><p style="text-align: right">
-512 x 512 x 100</p>
-
-   </td>
-   <td><p style="text-align: right">
-16</p>
-
-   </td>
-   <td>&lt; 10 minutes
-   </td>
-   <td><p style="text-align: right">
-~260MB</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Scheduled Radiology</strong>
-   </td>
-   <td><p style="text-align: right">
-1 Study</p>
-
-   </td>
-   <td><p style="text-align: right">
-512 x 512x2000</p>
-
-   </td>
-   <td><p style="text-align: right">
-16</p>
-
-   </td>
-   <td>> 30 minutes
-   </td>
-   <td><p style="text-align: right">
-~780MB</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Interactive Diagnosis during Image Reading</strong>
-   </td>
-   <td><p style="text-align: right">
-1 Study or 1 Series</p>
-
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Image QA @ Acquisition</strong>
-   </td>
-   <td><p style="text-align: right">
-1 Series</p>
-
-   </td>
-   <td><p style="text-align: right">
-2048 x 2028</p>
-
-   </td>
-   <td><p style="text-align: right">
-12</p>
-
-   </td>
-   <td>> 30 minutes
-   </td>
-   <td><p style="text-align: right">
-~8MB</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Metadata QA</strong>
-   </td>
-   <td><p style="text-align: right">
-1 series or 1 slice</p>
-
-   </td>
-   <td><p style="text-align: right">
-512 x 512</p>
-
-   </td>
-   <td><p style="text-align: right">
-12</p>
-
-   </td>
-   <td>&lt; 500 ms
-   </td>
-   <td><p style="text-align: right">
-~2MB</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Retrospective Study</strong>
-   </td>
-   <td><p style="text-align: right">
-100,000 Studies</p>
-
-   </td>
-   <td><p style="text-align: right">
-512x512x600</p>
-
-   </td>
-   <td><p style="text-align: right">
-16</p>
-
-   </td>
-   <td>7 days
-   </td>
-   <td><p style="text-align: right">
-~260MB x 1000</p>
-
-   </td>
-  </tr>
-</table>
-
-
+| Workload                                   | Payload             | Pixels / Slice  | bpp | Response Time | Data Size     |
+| ------------------------------------------ | ------------------- | --------------- | --- | ------------- | ------------- |
+| Emergency Diagnostics                      | 1 study / 1  series | 512 x 512 x 100 | 16  | < 10 minutes  | ~260MB        |
+| Scheduled Radiology                        | 1 Study             | 512 x 512x2000  | 16  | \> 30 minutes | ~780MB        |
+| Interactive Diagnosis during Image Reading | 1 Study or 1 Series |                 |     |               |               |
+| Image QA @ Acquisition                     | 1 Series            | 2048 x 2028     | 12  | \> 30 minutes | ~8MB          |
+| Metadata QA                                | 1 series or 1 slice | 512 x 512       | 12  | < 500 ms      | ~2MB          |
+| Retrospective Study                        | 100,000 Studies     | 512x512x600     | 16  | 7 days        | ~260MB x 1000 |
 
 ## Computational Workloads {#computational-workloads}
-
-
-<table>
-  <tr>
-   <td><strong>Type</strong>
-   </td>
-   <td><strong>Start</strong>
-   </td>
-   <td><strong>Results</strong>
-   </td>
-   <td><strong>Workload</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Synchronous</strong>
-   </td>
-   <td>synchronous
-   </td>
-   <td>synchronous
-   </td>
-   <td>Discreet
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Async Result</strong>
-   </td>
-   <td>synchronous
-   </td>
-   <td>asynchronous
-   </td>
-   <td>Discreet
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Asynchronous</strong>
-   </td>
-   <td>asynchronous
-   </td>
-   <td>asynchronous
-   </td>
-   <td>Discreet
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Batch</strong>
-   </td>
-   <td>asynchronous
-   </td>
-   <td>asynchronous
-   </td>
-   <td>Expansive
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Streaming</strong>
-   </td>
-   <td>asynchronous
-   </td>
-   <td>synchronous
-   </td>
-   <td>Continuous
-   </td>
-  </tr>
-</table>
-
-
+| Type         | Start        | Results      | Workload   |
+| ------------ | ------------ | ------------ | ---------- |
+| Synchronous  | synchronous  | synchronous  | Discreet   |
+| Async Result | synchronous  | asynchronous | Discreet   |
+| Asynchronous | asynchronous | asynchronous | Discreet   |
+| Batch        | asynchronous | asynchronous | Expansive  |
+| Streaming    | asynchronous | synchronous  | Continuous |
 
 ### Synchronous Computational Workload {#synchronous-computational-workload}
 
@@ -481,10 +238,7 @@ Work starts when a request is received. If the system cannot process the request
 
 Example workload(s):
 
-
-
 * [Metadata Quality Assurance](#metadata-quality-assurance)
-
 
 ### Asynchronous Result Computational Workload {#asynchronous-result-computational-workload}
 
@@ -493,8 +247,6 @@ Work starts when a request is received. If the system cannot process the request
 Work completes after the initial request has completed. Once complete, the callback address provided as part of the initial request is used to send a completion notification.
 
 Example workload(s):
-
-
 
 * [Emergency Diagnostics](#emergency-diagnosticsdiagnosis)
 
@@ -507,10 +259,7 @@ Work starts when the scheduler determines. Once the work completes, the callback
 
 Example workload(s):
 
-
-
 * [Scheduled Radiology Diagnostics](#scheduled-radiology-diagnostics)
-
 
 ### Batch Computational Workload {#batch-computational-workload}
 
@@ -522,11 +271,8 @@ As each of the child-jobs completes, the callback address provided as part of th
 
 Example workload(s):
 
-
-
 * Single patient DICOM series sent to multiple algorithms for prospective diagnosis.
 * [Retrospective Study](#retrospective-study): cohort study of 10K patients sent to a single algorithm.
-
 
 ### Streaming Computational Workload {#streaming-computational-workload}
 
@@ -534,16 +280,11 @@ Work starts when a request is received. If the system cannot process the request
 
 Example workload(s):
 
-
-
 * Image enhancement and overlay for ultrasound.
-
 
 ## Clinical Capacity Planning {#clinical-capacity-planning}
 
 The clinical capacity needed for a typical large hospital or hospital system is used in determining the estimated computing workload seen at the system level.  The computing required will be allocated in one of the following ways based on the [clinical use cases](#clinical-use-cases).
-
-
 
 1. Reserved capacity (always on) for QA type of use cases
 2. Shared capacity (for emergency and scheduled radiology)
@@ -554,59 +295,15 @@ The estimated number of machines per modality for a large hospital will vary sig
 The estimated number of radiology exams per modality is provided from a few sources including data provided from three large hospitals across the US and in the UK as well as data from the UK National Health Service Diagnostic Information Dataset (DID) on RIS. 
 
 Here are the modalities derived from the data sets in descending order of average number of studies per month.
-
-
-<table>
-  <tr>
-   <td><strong>Modality</strong>
-   </td>
-   <td><strong>Other Terminology</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>Plain Radiography
-   </td>
-   <td>XR, X-Ray
-   </td>
-  </tr>
-  <tr>
-   <td>Diagnostic Ultrasonography
-   </td>
-   <td>US, Ultrasound
-   </td>
-  </tr>
-  <tr>
-   <td>Computerized Axial Tomography
-   </td>
-   <td>CT, CAT
-   </td>
-  </tr>
-  <tr>
-   <td>Magnetic Resonance Imaging
-   </td>
-   <td>MR, MRI
-   </td>
-  </tr>
-  <tr>
-   <td>Fluoroscopy
-   </td>
-   <td>FL
-   </td>
-  </tr>
-  <tr>
-   <td>Nuclear Medicine Procedure
-   </td>
-   <td>NM,
-   </td>
-  </tr>
-  <tr>
-   <td>Positron Emission Tomography
-   </td>
-   <td>PET
-   </td>
-  </tr>
-</table>
-
+| Modality                      | Other Terminology |
+| ----------------------------- | ----------------- |
+| Plain Radiography             | XR, X-Ray         |
+| Diagnostic Ultrasonography    | US, Ultrasound    |
+| Computerized Axial Tomography | CT, CAT           |
+| Magnetic Resonance Imaging    | MR, MRI           |
+| Fluoroscopy                   | FL                |
+| Nuclear Medicine Procedure    | NM,               |
+| Positron Emission Tomography  | PET               |
 
 **Table:** Modalities in descending order of utilization
 
@@ -624,7 +321,6 @@ Next, the information provided by the UK National Health Service showing the Ave
 
 Further data provided shows that the clinical workloads are distributed throughout the day with the peaks occurring during the middle of the day between 8AM and 6PM as would be expected aligning with normal scheduling hours.  An example of this distribution is provided in Figure: Histogram of all radiology exams per hour.
 
-
 **Figure:** Histogram of all Radiology Exams per Hour - Large Hospital
 
 ![MONAI_exams_perhour_hist](assets/MONAI_exams_perhour_hist.jpg)
@@ -633,382 +329,33 @@ The data from large US hospitals show these peaks for number of studies to be ar
 
 The data provides the relative ranking with respect to total monthly workloads based on modality and the percentage of these workloads relative to the overall number of imaging exams conducted. 
 
-​​
-
-
-<table>
-  <tr>
-   <td><strong>Modality</strong>
-   </td>
-   <td><strong>% of Total</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>Plain Radiography
-   </td>
-   <td>50%
-   </td>
-  </tr>
-  <tr>
-   <td>Diagnostic Ultrasonography
-   </td>
-   <td>22%
-   </td>
-  </tr>
-  <tr>
-   <td>Computerized Axial Tomography
-   </td>
-   <td>15%
-   </td>
-  </tr>
-  <tr>
-   <td>Magnetic Resonance Imaging
-   </td>
-   <td>8%
-   </td>
-  </tr>
-  <tr>
-   <td>Fluoroscopy
-   </td>
-   <td>2%
-   </td>
-  </tr>
-  <tr>
-   <td>Nuclear Medicine Procedure
-   </td>
-   <td>2%
-   </td>
-  </tr>
-  <tr>
-   <td>Positron Emission Tomography
-   </td>
-   <td>2%
-   </td>
-  </tr>
-</table>
-
-
+| Modality                      | % of Total |
+| ----------------------------- | ---------- |
+| Plain Radiography             | 50%        |
+| Diagnostic Ultrasonography    | 22%        |
+| Computerized Axial Tomography | 15%        |
+| Magnetic Resonance Imaging    | 8%         |
+| Fluoroscopy                   | 2%         |
+| Nuclear Medicine Procedure    | 2%         |
+| Positron Emission Tomography  | 2%         |
 **Table**: Monthly Percentage of Modality imaging to total workloads using UK NHS DID dataset.
 
 In fact, this distribution is statistically the same looking at the estimate of other major large US hospitals as well.  
 
 An estimate for impact on data size and number of images per exam/study to be processed is provided by the following table:
-
-
-<table>
-  <tr>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td colspan="2" ><strong>File size uncompressed [MB]</strong>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Modality</strong>
-   </td>
-   <td><strong>Image size</strong>
-   </td>
-   <td><strong># of images/study</strong>
-   </td>
-   <td><strong>Average</strong>
-   </td>
-   <td><strong>Range</strong>
-   </td>
-   <td><strong>Modality mix</strong>
-   </td>
-   <td><strong>Data volume per 100,000 studies [GB] (6)</strong>
-   </td>
-   <td><strong>Percent distribution</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>Conv. Radiography
-   </td>
-   <td>2,000 x 2,500 x 2
-   </td>
-   <td><p style="text-align: right">
-3</p>
-
-   </td>
-   <td><p style="text-align: right">
-30</p>
-
-   </td>
-   <td>20–50
-   </td>
-   <td><p style="text-align: right">
-11.1%</p>
-
-   </td>
-   <td><p style="text-align: right">
-333</p>
-
-   </td>
-   <td><p style="text-align: right">
-8.8%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>Digital radiography
-   </td>
-   <td>3,000 x 3,000 x 2
-   </td>
-   <td><p style="text-align: right">
-3</p>
-
-   </td>
-   <td><p style="text-align: right">
-54</p>
-
-   </td>
-   <td>36–90
-   </td>
-   <td><p style="text-align: right">
-33.2%</p>
-
-   </td>
-   <td><p style="text-align: right">
-1,793</p>
-
-   </td>
-   <td><p style="text-align: right">
-47.5%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>CT
-   </td>
-   <td>512 x 512 x 2
-   </td>
-   <td><p style="text-align: right">
-60</p>
-
-   </td>
-   <td><p style="text-align: right">
-32</p>
-
-   </td>
-   <td>21–157
-   </td>
-   <td><p style="text-align: right">
-13.5%</p>
-
-   </td>
-   <td><p style="text-align: right">
-432</p>
-
-   </td>
-   <td><p style="text-align: right">
-11.4%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>Multi-slice CT
-   </td>
-   <td>512 x 512 x 2
-   </td>
-   <td><p style="text-align: right">
-500</p>
-
-   </td>
-   <td><p style="text-align: right">
-262</p>
-
-   </td>
-   <td>131–2,100
-   </td>
-   <td><p style="text-align: right">
-1.5%</p>
-
-   </td>
-   <td><p style="text-align: right">
-393</p>
-
-   </td>
-   <td><p style="text-align: right">
-10.4%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>Mammography
-   </td>
-   <td>4000 x 5000 x 2
-   </td>
-   <td><p style="text-align: right">
-4</p>
-
-   </td>
-   <td><p style="text-align: right">
-87</p>
-
-   </td>
-   <td>35–208
-   </td>
-   <td><p style="text-align: right">
-7.1%</p>
-
-   </td>
-   <td><p style="text-align: right">
-618</p>
-
-   </td>
-   <td><p style="text-align: right">
-16.4%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>MRI
-   </td>
-   <td>256 x 256 x 2
-   </td>
-   <td><p style="text-align: right">
-200</p>
-
-   </td>
-   <td><p style="text-align: right">
-26</p>
-
-   </td>
-   <td>11–131
-   </td>
-   <td><p style="text-align: right">
-6.7%</p>
-
-   </td>
-   <td><p style="text-align: right">
-174</p>
-
-   </td>
-   <td><p style="text-align: right">
-4.6%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>Nuclear imaging
-   </td>
-   <td>256 x 256 x 2
-   </td>
-   <td><p style="text-align: right">
-10</p>
-
-   </td>
-   <td><p style="text-align: right">
-1.3</p>
-
-   </td>
-   <td>0.3–3.8
-   </td>
-   <td><p style="text-align: right">
-3.4%</p>
-
-   </td>
-   <td><p style="text-align: right">
-4</p>
-
-   </td>
-   <td><p style="text-align: right">
-0.1%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>Digital fluoroscopy
-   </td>
-   <td>1,024 x 1,024 x 1
-   </td>
-   <td><p style="text-align: right">
-20</p>
-
-   </td>
-   <td><p style="text-align: right">
-20</p>
-
-   </td>
-   <td>10–50
-   </td>
-   <td><p style="text-align: right">
-1.4%</p>
-
-   </td>
-   <td><p style="text-align: right">
-28</p>
-
-   </td>
-   <td><p style="text-align: right">
-0.7%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>Ultrasound
-   </td>
-   <td>640 x 480 x 1
-   </td>
-   <td><p style="text-align: right">
-30</p>
-
-   </td>
-   <td><p style="text-align: right">
-9.2</p>
-
-   </td>
-   <td>6.1-18.4
-   </td>
-   <td><p style="text-align: right">
-22.1%</p>
-
-   </td>
-   <td><p style="text-align: right">
-203</p>
-
-   </td>
-   <td><p style="text-align: right">
-5.4%</p>
-
-   </td>
-  </tr>
-  <tr>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-   <td><p style="text-align: right">
-100.0%</p>
-
-   </td>
-   <td><p style="text-align: right">
-3,775</p>
-
-   </td>
-   <td><p style="text-align: right">
-100.0%</p>
-
-   </td>
-  </tr>
-</table>
-
-
+|                     |                   |                    | File size uncompressed \[MB\] |           |              |                                            |
+| ------------------- | ----------------- | ------------------ | ----------------------------- | --------- | ------------ | ------------------------------------------ |
+| Modality            | Image size        | \# of images/study | Average                       | Range     | Modality mix | Data volume per 100,000 studies \[GB\] (6) | Percent distribution |
+| Conv. Radiography   | 2,000 x 2,500 x 2 | 3                  | 30                            | 20–50     | 11.1%        | 333                                        | 8.8% |
+| Digital radiography | 3,000 x 3,000 x 2 | 3                  | 54                            | 36–90     | 33.2%        | 1,793                                      | 47.5% |
+| CT                  | 512 x 512 x 2     | 60                 | 32                            | 21–157    | 13.5%        | 432                                        | 11.4% |
+| Multi-slice CT      | 512 x 512 x 2     | 500                | 262                           | 131–2,100 | 1.5%         | 393                                        | 10.4% |
+| Mammography         | 4000 x 5000 x 2   | 4                  | 87                            | 35–208    | 7.1%         | 618                                        | 16.4% |
+| MRI                 | 256 x 256 x 2     | 200                | 26                            | 11–131    | 6.7%         | 174                                        | 4.6% |
+| Nuclear imaging     | 256 x 256 x 2     | 10                 | 1.3                           | 0.3–3.8   | 3.4%         | 4                                          | 0.1% |
+| Digital fluoroscopy | 1,024 x 1,024 x 1 | 20                 | 20                            | 10–50     | 1.4%         | 28                                         | 0.7% |
+| Ultrasound          | 640 x 480 x 1     | 30                 | 9.2                           | 6.1-18.4  | 22.1%        | 203                                        | 5.4% |
+|                     |                   |                    |                               |           | 100.0%       | 3,775                                      | 100.0% |
 **Table:** Modality Imaging data volume
 
 1: Data as of 2009 (mammography data as of 2007)
@@ -1035,71 +382,10 @@ Typical hardware specifications to be used for the computational workloads are p
 
 
 ### Hardware Targets {#hardware-targets}
-
-
-<table>
-  <tr>
-   <td>
-   </td>
-   <td>Hardware Specifications for AI Platform (representative)
-   </td>
-  </tr>
-  <tr>
-   <td>System A
-   </td>
-   <td>1U, dual socket rack system supports up to:
-<p>
-Two Intel Xeon Scalable processors.
-<p>
-Twenty four DIMM slots.
-<p>
-Storage capacity of four Graphical Processing Units. A100 80GB
-<p>
-Two power supply units (PSUs)
-<p>
-Optional two 2.5-inch cabled SATA SSDs installed only in PSU 2 bay.
-   </td>
-  </tr>
-  <tr>
-   <td>System B
-   </td>
-   <td>GPU
-<p>
-Up to 4x NVIDIA GPUs
-<p>
-RTX 30XX, RTX A6000, RTX A5000, RTX A4000, and Quadro RTX options
-<p>
-Processor
-<p>
-AMD Threadripper or Intel Core i9
-<p>
-Configurable up to 64 cores, 128 threads, and 256 MB cache
-<p>
-Memory
-<p>
-Up to 1 TB
-<p>
-Fits up to eight 128 GB LRDIMMs at 3200 MHz
-<p>
-OS drive
-<p>
-Up to 2 TB
-<p>
-3,200 MB/s seq. read and 2,000 MB/s seq. write
-<p>
-Extra storage
-<p>
-Up to 61 TB
-<p>
-Fits up to eight 7.68 TB SATA SSDs.
-<p>
-Power supply
-   </td>
-  </tr>
-</table>
-
-
-
+| System   | Hardware Specifications for AI Platform (representative)                                                                                                                                                                                                                                                                                                                                                      |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| System A | 1U, dual socket rack system supports up to: Two Intel Xeon Scalable processors. Twenty four DIMM slots. Storage capacity of four Graphical Processing Units. A100 80GB Two power supply units (PSUs) Optional two 2.5-inch cabled SATA SSDs installed only in PSU 2 bay.                                                                                                                                      |
+| System B | GPU Up to 4x NVIDIA GPUs RTX 30XX, RTX A6000, RTX A5000, RTX A4000, and Quadro RTX options Processor AMD Threadripper or Intel Core i9 Configurable up to 64 cores, 128 threads, and 256 MB cache Memory Up to 1 TB Fits up to eight 128 GB LRDIMMs at 3200 MHz OS drive Up to 2 TB 3,200 MB/s seq. read and 2,000 MB/s seq. write Extra storage Up to 61 TB Fits up to eight 7.68 TB SATA SSDs. Power supply |
 ## Appendix {#appendix}
 
 
