@@ -162,6 +162,11 @@ MAY have combined staging and production systems.
 system. CUDA support. Larger HW configurations (GPU, CPU and memory) compared to
 the Integration environment.
 
+**AGX Hardware:**
+- CPU: 8-core Carmel ARM v8.2 64-bit CPU
+- GPU: RTX 6000 4608-core Volta GPU with 576 Tensor Cores
+- GPU: AGX Xavier 512-core Volta GPU with 64 Tensor Cores
+
 **Orchestration:** Kubernetes based container orchestration.
 
 **Applications:** Representative applications to what SHALL run
@@ -205,6 +210,12 @@ production clinical systems dealing with real patient data.
 system, depending on availability and performance requirements. CUDA support.
 Larger HW configurations (GPU, CPU and memory) compared to the Staging
 environment.
+
+**AGX Hardware:**
+- CPU: 8-core Carmel ARM v8.2 64-bit CPU
+- GPU: RTX 6000 4608-core Volta GPU with 576 Tensor Cores
+- GPU: AGX Xavier 512-core Volta GPU with 64 Tensor Cores
+
 
 **Orchestration:** Kubernetes based container orchestration.
 
