@@ -40,7 +40,7 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 
 1. Studies get routed in a large hospital DICOM routing system, at peak hour, the hospital is seeing about 300 studies per hour.
 2. As series arrive to DICOM router, DICOM router sends selected slices out of the series an AI processing system
-3. The AI processing system selects the correct slice or two for classification based on DICOM metadata.
+3. TThe AI processing system selects slices for classification based on DICOM metadata.
 4. The AI algorithm evaluates the image metadata with the pixels and determines if the metadata (i.e. left shoulder) is indeed what the pixel data is showing (classification for left shoulder from image data).
 5. After classifying the image the AI system sends a response back to the appropriate DICOM target location.
 6. After receiving the response the DICOM router can route the image accordingly, either to the rejected queue for further analysis by QA technicians, or if everything looks good to the radiology work queue.
@@ -50,7 +50,7 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 1. Studies are initiated on a modality and the DICOM is sent directly to a generalized application that ingests raw DICOM files.
 2. The application will read the DICOM metadata and select a single image or slice from the series and send a significantly reduced dataset to the AI platform and algorithm specific for the QA study associated with the dataset. Note: in this example the reduction is in some aspect of the overall data set to simplify the AI processing complexity in proportion to the algorithm accuracy.   In some variations, the application will send several image metadata and pixel sets in parallel to an AI platform and parse the results collectively.
 3. The AI platform will evaluate the image metadata and pixels to validate the pair. In this example a classification solution is used and the results are sent back to the application.
-4. After classification results are sent back to the application it adds metadata to the DICOM images that can be used later to filter the correct series of images for radiology studies. These DICOMs are added to the PACs along with the original data and made available to QA technicians.
+4. After classification results are sent back to the application it adds metadata to the DICOM images that can be used later to filter the correct series of images for radiology studies. These DICOMs are added to the PACS along with the original data and made available to QA technicians.
 5. Optionally and in addition to the previous action, the application can directly send corrected DICOM studies or augmented DICOMs to additional AI processing pipelines with different algorithms. 
 
 **Clinical Use Case:** Study Metadata QA
@@ -67,26 +67,26 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 
 #### Image Quality Verification During Image Acquisition {#image-quality-verification-during-image-acquisition}
 
-Help the radiology technician improve their results.  During an image acquisition a QA score is provided to the radiology technician to help validate if the image quality is sufficient and if imaging needs to be re-taken.  Typically seconds or 10’s of seconds matter for efficient, high quality imaging.
+Help the radiology technician assure the image quality.  During an image acquisition a QA score is provided to the radiology technician to help validate if the image quality is sufficient and if imaging needs to be re-taken.  Typically seconds or 10’s of seconds matter for efficient, high quality imaging.
 
 **Clinical Workflow**
 
-1. A patient gets scheduled for a routine imaging for a CT imaging.
-2. During Image acquisition time, the radiology technician is watching the imaging proceed and parts of the study be completed from his computer.
+1. A patient gets scheduled for a routine imaging for a CT image.
+2. During image acquisition time, the radiology technician is watching the imaging proceed and parts of the study completes and are sent to the workstation.
 3. As parts of the study complete, they get sent to an AI system for image quality verification.  The modality sends out parts of the DICOM study, one series at a time to an AI system.  Size of each series 512x512x100.  (CT, taking this is seconds, for MRI this is minutes). The modality is connected to an AI processing system via DICOM with a 1 gbps network connection. 
-4. AI system analyses the arriving series images with a volumetric  classification algorithm to notice if the patient is moving.  AI system creates a DICOM SR, including results.
-5. If the AI system notices any anomalies in the image it The AI system sends the results (DICOM SR) to two locations, PACS and radiographers desktop computer a notification to the radiology technician about the Quality Score of the image. 
+4. AI system analyses the arriving series images with a volumetric classification algorithm to notice if the patient is moving.  AI system creates a DICOM SR, including results.
+5. If the AI system notices any anomalies in the image it The AI system sends the results (DICOM SR) to two locations, PACS and radiographers desktop computer a notification to the radiology technician about the quality assurance (QA) score of the image. 
 6. While monitoring the imaging the technician receives the notification about image quality score onto their desktop computer.  The technician notices the image QA score not being acceptable and decides to restart the imaging series. 
 
 **Clinical Use Case:** Image Quality Verification
 
 **Computational Workload Type:** [Asynchronous Result](#asynchronous-result-computational-workload)
 
-**Clinical workload:** 1 request per series, Example: 1600 requests for 512x512x1600 CT series image.  20100 CT studies per day per modality, 3 series in each study.  60 requests per individual  modality per day, 600 requests per day in the whole clinic .  &lt;610 seconds from image sent to modality to response being available to technician. 
+**Clinical workload:** 1 request per series, Example: 1600 requests for 512x512x1600 CT series image.  20100 CT studies per day per modality, 3 series in each study.  60 requests per individual modality per day, 600 requests per day in the whole clinic. Less than 610 seconds from image sent to modality to response being available to technician. 
 
 **Importance to Clinical AI Deployment:** medium 
 
-The implementation of AI as part of image quality will not directly impact patient care, but does improve quality of hospital operations by reducing patient recall.
+The implementation of AI, as part of image quality, will not directly impact patient care, but does improve efficiency and quality of hospital operations by reducing patient recall. Patient recall may increase hospital operation cost, lengthen the time for diagnosis and delay other patients evaluation of medical images.
 
 **Figure:** Image Quality Validation
 
@@ -94,9 +94,9 @@ The implementation of AI as part of image quality will not directly impact patie
 
 ### AI Diagnostics {#ai-diagnostics}
 
-#### Emergency DiagnosticsDiagnosis {#emergency-diagnosticsdiagnosis}
+#### Emergency Diagnostics {#emergency-diagnostics}
 
-Immediate diagnostics required for emergency care: immediate processing is required for a clinical diagnosis of the trauma. These workloads have the patient either awaiting further imaging or diagnostics. Seconds count for some emergency diagnostics situations (such as stroke).
+Immediate diagnostics required for emergency care: immediate processing is required for a rapid diagnosis of some emergent condition. These workloads have the patient either awaiting further imaging or other diagnostics. Seconds count for some emergency diagnostics situations (such as stroke, traumatic injury, and heart attack).
 
 **Clinical Workflow**
 
@@ -104,15 +104,16 @@ A patient has been in a car accident and gets into the emergency room.
 
 1. The hospital orders an emergency CT imaging to be done on the patient's head to detect possible brain hemorrhage. Patient gets imaged with an emergency protocol.
 2. The modality is connected to the hospital network on 1gbps connection and the CT study (512x512x600) gets sent to 2 different systems in parallel: 
-    1. AI processing system.
-    2. DICOM Router.
+    a. AI processing system.
+    b. DICOM Router.
 3. a) DICOM study gets processed by the AI processing engine, including pre-processing, inference and post processing.  The output of AI processing will be a probability score of the patient having brain hemorrhage.  The result will be packaged into a DICOM SR object.  The size of the resulting object will be 1 MB.  
 
     b) DICOM router further sends the study to be stored in PACS.  
 
 4. AI processing engine sends the new AI generated study further to PACS via DICOM routing.  AI processing engine as a MIMPS notifies the RIS system about results completion.
 5. DICOM router sends the study further to PACS. PACS/MIMPS notifies RIS about the AI diagnosis and the original study being ready in the radiology worklist.  
-6. The radiologist on duty sees the case come up on top of their worklist with both the original DICOM image and the AI provided scoring.  
+6. The radiologist on duty sees the case come up on top of their worklist denoting that new results are available or needs further attention.
+7. The radiologist would be able to retrieve both the original DICOM image and either an annotated DICOM image or seperate report of the results depending on the design.   
 
 **Clinical Use Case:** emergency diagnosis
 
@@ -137,7 +138,7 @@ A patient has been scheduled for a radiology exam.
 1. The clinician orders CT imaging to be done on the patient's chest to detect issues with the lungs.
 2. Study gets sent from the modality to the DICOM router.  The modality is connected to the hospital network on 1gbps connection and the CT study (512x512xnnn) gets sent to the DICOM router.  The data transfer requirement for this connection is best effort from image completion to when the study needs to be routed.  
 3. DICOM router sends the original image to be stored in PACS and also in parallel routes a copy of the study to an AI processing engine.  DICOM router and AI processing engine are connected to each other with a high speed 10gbps network connection.  
-4. DICOM study gets processed by the AI processing engine, including pre-processing, inference and post processing.  The output of AI processing will be a probability score of the patient having COVID19.  The result will be packaged into a DICOM SR object.  The size of the resulting object will be the size of a DICOM image.  
+4. DICOM study gets processed by the AI processing engine, including pre-processing, inference and post processing.  The output of AI processing will be a probability score of the patient having COVID-19.  The result will be packaged into a DICOM SR object.  The size of the resulting object will be the size of a DICOM image.  
 5. AI processing engine sends the study further to DICOM routing.
 6. DICOM router sends the study further to PACS 
 7. PACS or the AI processing engine notifies RIS about the AI diagnosis being ready in the radiology worklist. 
@@ -204,7 +205,7 @@ As part of AI model development, single AI algorithms are evaluated against exis
 
 **Computational Workload:** [Batch](#batch-computational-workload)
 
-**Clinical workload:** 1500 (check histograms)  studies per day  for greater than 7 days with no manual intervention or study processing failures. study size N x M x K depending on modality and requested study type. See Table for estimates of study size to modality and study type mapping.
+**Clinical workload:** 1500 (check histograms)  studies per day for greater than 7 days with no manual intervention or study processing failures. study size N x M x K depending on modality and requested study type. See Table for estimates of study size to modality and study type mapping.
 
 **Importance to Clinical AI Deployment:** medium, the use case will drive up the quality and model generalization but will not directly impact AI use as part of the radiology workflow.
 
@@ -217,11 +218,11 @@ As part of AI model development, single AI algorithms are evaluated against exis
 | Workload                                   | Payload             | Pixels / Slice  | bpp | Response Time | Data Size     |
 | ------------------------------------------ | ------------------- | --------------- | --- | ------------- | ------------- |
 | Emergency Diagnostics                      | 1 study / 1  series | 512 x 512 x 100 | 16  | < 10 minutes  | ~260MB        |
-| Scheduled Radiology                        | 1 Study             | 512 x 512x2000  | 16  | \> 30 minutes | ~780MB        |
+| Scheduled Radiology                        | 1 Study             | 512 x 512 x 2000  | 16  | \> 30 minutes | ~780MB        |
 | Interactive Diagnosis during Image Reading | 1 Study or 1 Series |                 |     |               |               |
 | Image QA @ Acquisition                     | 1 Series            | 2048 x 2028     | 12  | \> 30 minutes | ~8MB          |
 | Metadata QA                                | 1 series or 1 slice | 512 x 512       | 12  | < 500 ms      | ~2MB          |
-| Retrospective Study                        | 100,000 Studies     | 512x512x600     | 16  | 7 days        | ~260MB x 1000 |
+| Retrospective Study                        | 100,000 Studies     | 512 x 512 x 600     | 16  | 7 days        | ~260MB x 1000 |
 
 ## Computational Workloads {#computational-workloads}
 | Type         | Start        | Results      | Workload   |
@@ -248,7 +249,7 @@ Work completes after the initial request has completed. Once complete, the callb
 
 Example workload(s):
 
-* [Emergency Diagnostics](#emergency-diagnosticsdiagnosis)
+* [Emergency Diagnostics](#emergency-diagnostics)
 
 
 ### Asynchronous Computational Workload {#asynchronous-computational-workload}
