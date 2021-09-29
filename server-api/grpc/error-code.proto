@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package monai.deploy.platform;
+
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.deploy.platform.grpc";
+
+enum ErrorCode {
+    // Request was successful.
+    ERROR_SUCCESS = 0;
+
+    // Request was malformed, or otherwise invalid.
+    ERROR_BAD_REQUEST = 1;
+    // Request authoriztion was malformed.
+    ERROR_AUTHORIZATION_INVALID = 2;
+    // Request user-agent was malformed.
+    ERROR_USER_AGENT_INVALID = 3;
+    // Request api-version was malformed.
+    ERROR_VERSION_INVALID = 4;
+    // Request api-version is unsupported.
+    ERROR_VERSION_UNSUPPORTED = 5;
+
+    // General authentication error occurred.
+    ERROR_AUTHENTICATION = 1001;
+    // Request is unauthorized.
+    ERROR_UNAUTHORIZED = 1002;
+    // User lacks sufficient privileges.
+    ERROR_UNPRIVILEGED = 1003;
+
+    // Authority is unavaialble.
+    ERROR_AUTHORITY_UNAVAILABLE = 2001;
+    // Kubernetes is unvailable.
+    ERROR_CLUSTER_UNAVAILABLE = 2002;
+    // Database is unavailble.
+    ERROR_DATABASE_UNAVAILABLE = 2003;
+    // Network is unavailable.
+    ERROR_NETWORK_UNAVAILABLE = 2004;
+    // Storage is unavailable or exhausted.
+    ERROR_STORAGE_UNAVAILABLE = 2005;
+    // Request timed out.
+    ERROR_REQUEST_TIMED_OUT = 2006;
+    // General internal error occurred.
+    ERROR_UNHANDLED = 2007;
+
+    // Generic job error occured.
+    ERROR_JOB = 4001;
+    // Job has been cancelled.
+    // Cannot cancel a job more than once.
+    // Cannot download from a cancelled job.
+    ERROR_JOB_CANCELED = 4002;
+    // Requested job has been deleted.
+    ERROR_JOB_DELETED = 4003;
+    // Provided job identifier is invalid.
+    ERROR_JOB_ID_INVALID = 4004;
+    // Provided job identifier is not associated with any known job.
+    ERROR_JOB_ID_UNKNOWN = 4005;
+    // Request job logs are currently unavailable.
+    ERROR_JOB_LOGS_UNAVAILBLE = 4006;
+    // Provided job-priority is invalid.
+    ERROR_JOB_PRIORITY_INVALID = 4007;
+    // Provided job-state is invalid.
+    ERROR_JOB_STATE_INVALID = 4008;
+    // Requested job has already stopped and cannot be cancelled.
+    ERROR_JOB_STOPPED = 4009;
+    // Unable to create job due to insufficient available resources.
+    ERROR_JOB_UNSCHEDULABLE = 4010;
+    // Requested job is unavailable.
+    ERROR_JOB_UNAVAILABLE = 4011;
+
+    // Generic MAP error occurred.
+    ERROR_MAP = 5001;
+    // Requested MAP has been deleted.
+    ERROR_MAP_DELETED = 5002;
+    // Provided MAP identifier is invalid.
+    ERROR_MAP_ID_INVALID = 5003;
+    // Provided MAP identifier is not assocaiated with any known MAP.
+    ERROR_MAP_ID_UNKNOWN = 5004;
+    // Provided MAP reference name already exists.
+    // If the intent is to move the reference name to the new MAP, set take_reference_name = true.
+    ERROR_MAP_NAME_DUPLICATE = 5005;
+    // Provided MAP reference name is invalid.
+    ERROR_MAP_NAME_INVALID = 5006;
+    // Provided MAP reference name is not associated with any known MAP.
+    ERROR_MAP_NAME_UNKNOWN = 5007;
+    // Provided MAP state is invalid.
+    ERROR_MAP_STATE_INVALID = 5008;
+    // Provided MAP URN is already associated with a known MAP.
+    ERROR_MAP_URN_DUPLICATE = 5009;
+    // Provided MAP URN is invalid.
+    ERROR_MAP_URN_INVALID = 5010;
+    // Requested MAP is unavailable.
+    ERROR_MAP_UNAVAILABLE = 5011;
+
+    ERROR_PAYLOAD = 6001;
+    // Requested payload has been deleted.
+    ERROR_PAYLOAD_DELETED = 6002;
+    // Payloads associated with pending or running jobs, or which have reference names cannot be deleted.
+    ERROR_PAYLOAD_IN_USE = 6003;
+    // Provided blob path is invalid.
+    ERROR_PAYLOAD_BLOB_PATH_INVALID = 6004;
+    // Provided blob path is not associated with any known payload blob.
+    ERROR_PAYLOAD_BLOB_PATH_UNKNOWN = 6005;
+    // Provided blob mode is invalid.
+    ERROR_PAYLOAD_BLOB_MODE_INVALID = 6006;
+    // Creation of empty payload blobs is not supported.
+    ERROR_PAYLOAB_BLOB_EMPTY = 6007;
+    // Provided payload identifier is invalid.
+    ERROR_PAYLOAD_ID_INVALID = 6008;
+    // Provided payload identifier is not assocaiated with any known payload.
+    ERROR_PAYLOAD_ID_UNKNOWN = 6009;
+    // Payloads associated with pending, running, or completed jobs cannot be modified.
+    // Blobs cannot be added or removed from the payload.
+    ERROR_PAYLOAD_IMMUTABLE = 6010;
+    // Provided payload reference name already exists.
+    // If the intent is to move the reference name to the new MAP, set take_reference_name = true.
+    ERROR_PAYLOAD_NAME_DUPLICATE = 6011;
+    // Provided payload reference name is invalid.
+    ERROR_PAYLOAD_NAME_INVALID = 6012;
+    // Provided payload reference name is not associated with any known payload.
+    ERROR_PAYLOAD_NAME_UNKNOWN = 6013;
+    // Requested payload is unavailable.
+    ERROR_PAYLOAD_UNAVAILBLE = 6014;
+
+    // Generic user error occurred.
+    ERROR_USER = 7001;
+    // Provided user identifier is invalid.
+    ERROR_USER_ID_INVALID = 7002;
+    // Provided user identifer not associated with any known user.
+    ERROR_USER_ID_UNKNOWN = 7003;
+}

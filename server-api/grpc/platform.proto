@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package monai.deploy.platform;
+
+option csharp_namespace = "Monai.Deploy.Platform.Grpc";
+option go_package = "monaid.grpc";
+option java_package = "com.monai.deploy.platform.grpc";
+
+import public "common.proto";
+
+service Platform {
+/** Feature Not Available in Current Version
+ * rpc ConfigurationRead(PlatformConfigurationReadRequest) return (PlatformConfigurationReadResponse);
+ *
+ * // Requests the status of the platform.
+ * rpc Status(PlatformStatusRequest) returns (PlatformStatusResponse);
+**/
+
+  // Requests the version of the server.
+  rpc Version(PlatformVersionRequest) returns (PlatformVersionResponse);
+}
+/** Feature Not Available in Current Version
+ * message ConfigurationJob {
+ *   // The default CPU request made for job based on a MAP which does not specify CPU requirements.
+ *   // The value must fall within the range of [cpu_resource_minimum, cpu_resource_maximum].
+ *   uint32 cpu_resource_default = 1;
+ *
+ *   // The maximum memory request which can be made by any job.
+ *   // The value must be greater-than-or-equal to cpu_resource_minimum value.
+ *   uint32 cpu_resource_maximum = 2;
+ *
+ *   // The minimum memory request which can be made by any job.
+ *   // The value must be less-than-or-equal to cpu_resource_maximum value.
+ *   uint32 cpu_resource_minimum = 3;
+ *
+ *   // The default memory request, in megabytes, made for job base on a MAP which does not specify memory requirements.
+ *   // The value must fall within the range of [memory_resource_minimum, memory_resource_maximum].
+ *   uint32 memory_resource_default = 1;
+ *
+ *   // The maximum memory request, in megabytes, which can be made by any job.
+ *   // The value must be greater-than-or-equal to memory_resource_minimum value.
+ *   uint32 memory_resource_maximum = 2;
+ *
+ *   // The minimum memory request, in megabytes, which can be made by any job.
+ *   // The value must be less-than-or-equal to memory_resource_maximum value.
+ *   uint32 memory_resource_minimum = 3;
+ *
+ *   // The default timeout applied to jobs based on a MAP which does not specify a timeout.
+ *   // The value must fall within the range of [timeout_minimum, timeout_maximum].
+ *   uint32 timeout_default = 1;
+ *
+ *   // The maximum timeout value a job can request.
+ *   // The value must greater-than-or-equal to timeout_minimum.
+ *   uint32 timeout_maximum = 1;
+ *
+ *   // The minimum timeout value a job can request.
+ *   // THe value must less-than-or-equal-to timeout_maximum.
+ *   uint32 timeout_minimum = 1;
+ * }
+ *
+ * message ConfigurationPayload {
+ *   // The default quota, in megabytes, applied payloads which do not specify a quota size.
+ *   // The value must be within the range (0, quota_maximum].
+ *   uint32 quota_default = 1;
+ *
+ *   // The maximum quota, in megabytes, allowed for payloads.
+ *   uint32 quota_maximum = 2;
+ *
+ *   // The time to live, in seconds, for a payload after it is no longer active.
+ *   // Payloads are considered active when have a reference name referring to them.
+ *   // Payloads are considered active when in active use (using Payload service to interact with them).
+ *   // Payloads are considered active when associated with a pending or running job.
+ *   // Once payload TTL expires, a payload is queued for garbage collection but might not be collected immediately.
+ *   uint32 ttl = 1;
+ *
+ *   // The maximum amount of storage the system will utilization allowed, represented as a percent of the total storage.
+ *   // The value must be in the range zero to one inclusive, with zero being empty storage and one being full storage.
+ *   // One the threshold is reached, the server will refuse to create new objects and accept payload blob uploads.
+ *   // Values greater than 0.85 may cause system instability.
+ *   float storage_use_limit = 1;
+ * }
+ *
+ * message PlatformConfigurationReadRequest {
+ *   // Standard RPC request header.
+ *   RequestHeader header = 1;
+ * }
+ *
+ * message PlatformConfigurationReadResponse {
+ *   // Standard RPC respose header.
+ *   ResponseHeader header = 1;
+ *
+ *   // The URI of the authority used to validate authentication tokens.
+ *   string authority_uri = 1;
+ *
+ *   ConfigurationJob job_configuration = 1;
+ *
+ *   ConfigurationPayload payload_configuration = 1;
+ * }
+ *
+ * message PlatformStatusRequest {
+ *   // Standard RPC request header.
+ *   RequestHeader header = 1;
+ * }
+ *
+ * message PlatformStatusResponse {
+ *   // Standard RPC respose header.
+ *   ResponseHeader header = 1;
+ * }
+**/
+
+message PlatformVersionRequest {
+  // Standard RPC request header.
+  RequestHeader header = 1;
+}
+
+message PlatformVersionResponse {
+  // Standard RPC respose header.
+  ResponseHeader header = 1;
+
+  // Version of the server.
+  Version version = 2;
+}
