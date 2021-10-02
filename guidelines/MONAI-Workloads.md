@@ -28,7 +28,7 @@ The goal of this proposal is to provide clarity and introduce terminology, so th
 
 The clinical use cases introduced in this section are intended to be a non-exhaustive set of examples to provide enough clarity to help define scenarios where a MONAI Deploy application is used and a way to map those scenarios to workloads and components that developers use to understand compute needs and end to end performance constraints.  Each figure in this section is a sequence diagram described by the use case steps in the same section.
 
-The clinical workflow is defined above. _Example: Incoming Images sent from the instrument via DICOM Router or PACS get sent to be diagnosed.  AI algorithms help with Segmentation & Classification algorithms and create a new DICOM object including the results, so they can be uploaded to PACS.  Incoming study size: 500MB, response time requirement from imaging to result being available for radiologists 20 minutes.
+The clinical workflow is defined above. _Example: Incoming Images sent from the scanner via DICOM Router or PACS to be diagnosed.  AI algorithms help with Segmentation & Classification algorithms and create a new DICOM object including the results, so they can be uploaded to PACS.  Incoming study size: 500MB, response time requirement from imaging to result being available for radiologists 20 minutes.
 
 ### Quality Assurance {#quality-assurance}
 
@@ -40,7 +40,7 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 
 1. Studies get routed in a large hospital DICOM routing system, at peak hour, the hospital is seeing about 300 studies per hour.
 2. As series arrive to DICOM router, DICOM router sends selected slices out of the series an AI processing system
-3. TThe AI processing system selects slices for classification based on DICOM metadata.
+3. The AI processing system selects slices for classification based on DICOM metadata.
 4. The AI algorithm evaluates the image metadata with the pixels and determines if the metadata (i.e. left shoulder) is indeed what the pixel data is showing (classification for left shoulder from image data).
 5. After classifying the image the AI system sends a response back to the appropriate DICOM target location.
 6. After receiving the response the DICOM router can route the image accordingly, either to the rejected queue for further analysis by QA technicians, or if everything looks good to the radiology work queue.
@@ -48,7 +48,7 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 **Clinical Workflow (without DICOM Router)**
 
 1. Studies are initiated on a modality and the DICOM is sent directly to a generalized application that ingests raw DICOM files.
-2. The application will read the DICOM metadata and select a single image or slice from the series and send a significantly reduced dataset to the AI platform and algorithm specific for the QA study associated with the dataset. Note: in this example the reduction is in some aspect of the overall data set to simplify the AI processing complexity in proportion to the algorithm accuracy.   In some variations, the application will send several image metadata and pixel sets in parallel to an AI platform and parse the results collectively.
+2. The application will read the DICOM metadata and select a single image or slice from the series and send a significantly reduced dataset to the AI platform and algorithm specific for the QA study associated with the dataset. Note: in this example the reduction is in some aspect of the overall data set to simplify the AI processing complexity in proportion to the algorithm accuracy. In some variations, the application will send several image metadata and pixel sets in parallel to an AI platform and parse the results collectively.
 3. The AI platform will evaluate the image metadata and pixels to validate the pair. In this example a classification solution is used and the results are sent back to the application.
 4. After classification results are sent back to the application it adds metadata to the DICOM images that can be used later to filter the correct series of images for radiology studies. These DICOMs are added to the PACS along with the original data and made available to QA technicians.
 5. Optionally and in addition to the previous action, the application can directly send corrected DICOM studies or augmented DICOMs to additional AI processing pipelines with different algorithms. 
@@ -75,7 +75,7 @@ Help the radiology technician assure the image quality.  During an image acquisi
 2. During image acquisition time, the radiology technician is watching the imaging proceed and parts of the study completes and are sent to the workstation.
 3. As parts of the study complete, they get sent to an AI system for image quality verification.  The modality sends out parts of the DICOM study, one series at a time to an AI system.  Size of each series 512x512x100.  (CT, taking this is seconds, for MRI this is minutes). The modality is connected to an AI processing system via DICOM with a 1 gbps network connection. 
 4. AI system analyses the arriving series images with a volumetric classification algorithm to notice if the patient is moving.  AI system creates a DICOM SR, including results.
-5. If the AI system notices any anomalies in the image it The AI system sends the results (DICOM SR) to two locations, PACS and radiographers desktop computer a notification to the radiology technician about the quality assurance (QA) score of the image. 
+5. If the AI system notices any anomalies in the image it sends the results (DICOM SR) to two locations, PACS and radiographers desktop computer a notification to the radiology technician about the quality assurance (QA) score of the image. 
 6. While monitoring the imaging the technician receives the notification about image quality score onto their desktop computer.  The technician notices the image QA score not being acceptable and decides to restart the imaging series. 
 
 **Clinical Use Case:** Image Quality Verification
@@ -168,7 +168,7 @@ Imagine a 3D image where a radiologist only wants to get an inference on a small
 
 **Inference on only a single series in a 4D image**
 
-Consider a scenario where AI segmentation is done only on the Left Ventricular Myocardium (LVM) only on the systolic and diastolic phases of the cardiac cycle.  The problem here is both image segmentation and potentially using AI to select the ROI and the correct sub-images to process. 
+Consider a scenario where AI segmentation is done only on the Left Ventricular Myocardium (LVM) only on the systolic and diastolic phases of the cardiac cycle. The problem here is both image segmentation and potentially using AI to select the ROI and the correct sub-images to process. 
 
 Assume for now the radiologist can select which series he/she wants to perform an inference. After selection the radiologist can just send the series number (or identifier) and inference result (dicom seg) object can be sent as a reply. 
 
