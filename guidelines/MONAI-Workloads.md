@@ -40,7 +40,7 @@ While studies are routed through the hospital DICOM routing infrastructure, imag
 
 1. Studies get routed in a large hospital DICOM routing system, at peak hour, the hospital is seeing about 300 studies per hour.
 2. As series arrive to DICOM router, DICOM router sends selected slices out of the series an AI processing system
-3. TThe AI processing system selects slices for classification based on DICOM metadata.
+3. The AI processing system selects slices for classification based on DICOM metadata.
 4. The AI algorithm evaluates the image metadata with the pixels and determines if the metadata (i.e. left shoulder) is indeed what the pixel data is showing (classification for left shoulder from image data).
 5. After classifying the image the AI system sends a response back to the appropriate DICOM target location.
 6. After receiving the response the DICOM router can route the image accordingly, either to the rejected queue for further analysis by QA technicians, or if everything looks good to the radiology work queue.
@@ -75,14 +75,14 @@ Help the radiology technician assure the image quality.  During an image acquisi
 2. During image acquisition time, the radiology technician is watching the imaging proceed and parts of the study completes and are sent to the workstation.
 3. As parts of the study complete, they get sent to an AI system for image quality verification.  The modality sends out parts of the DICOM study, one series at a time to an AI system.  Size of each series 512x512x100.  (CT, taking this is seconds, for MRI this is minutes). The modality is connected to an AI processing system via DICOM with a 1 gbps network connection. 
 4. AI system analyses the arriving series images with a volumetric classification algorithm to notice if the patient is moving.  AI system creates a DICOM SR, including results.
-5. If the AI system notices any anomalies in the image it The AI system sends the results (DICOM SR) to two locations, PACS and radiographers desktop computer a notification to the radiology technician about the quality assurance (QA) score of the image. 
+5. If the AI system notices any anomalies in the image it The AI system sends the results (DICOM SR) to two locations, PACS and radiographers desktop computer a notification to the radiology technician about the QA score of the image. 
 6. While monitoring the imaging the technician receives the notification about image quality score onto their desktop computer.  The technician notices the image QA score not being acceptable and decides to restart the imaging series. 
 
 **Clinical Use Case:** Image Quality Verification
 
 **Computational Workload Type:** [Asynchronous Result](#asynchronous-result-computational-workload)
 
-**Clinical workload:** 1 request per series, Example: 1600 requests for 512x512x1600 CT series image.  20100 CT studies per day per modality, 3 series in each study.  60 requests per individual modality per day, 600 requests per day in the whole clinic. Less than 610 seconds from image sent to modality to response being available to technician. 
+**Clinical workload:** 1 request per series. CT exam 512 x 512 x 500.  Less than 610 seconds from image sent to modality to response being available to technician. 
 
 **Importance to Clinical AI Deployment:** medium 
 
@@ -108,9 +108,9 @@ A patient has been in a car accident and gets into the emergency room.
     b. DICOM Router.
 3. a) DICOM study gets processed by the AI processing engine, including pre-processing, inference and post processing.  The output of AI processing will be a probability score of the patient having brain hemorrhage.  The result will be packaged into a DICOM SR object.  The size of the resulting object will be 1 MB.  
 
-    b) DICOM router further sends the study to be stored in PACS.  
+    b) DICOM router sends the original study collected by the modality to be stored in PACS.  
 
-4. AI processing engine sends the new AI generated study further to PACS via DICOM routing.  AI processing engine as a MIMPS notifies the RIS system about results completion.
+4. AI processing engine sends the updated AI annotated study further to PACS via DICOM routing.  AI processing engine as a MIMPS notifies the RIS system about results completion.
 5. DICOM router sends the study further to PACS. PACS/MIMPS notifies RIS about the AI diagnosis and the original study being ready in the radiology worklist.  
 6. The radiologist on duty sees the case come up on top of their worklist denoting that new results are available or needs further attention.
 7. The radiologist would be able to retrieve both the original DICOM image and either an annotated DICOM image or seperate report of the results depending on the design.   
@@ -164,15 +164,15 @@ A time delay of 10 secs might be acceptable in _edge cases_, where the radiologi
 
 **Classifying nodules (localised anomaly) in a 3D scan**
 
-Imagine a 3D image where a radiologist only wants to get an inference on a small section of an image. The small section may be free hand drawn by the radiologist a selected 3D cube (or a 2D rectangular region). An inference will be done only in the selected region. Annotating this region will generate a DICOM SR object and only the SR object will be sent to the inference engine. The inference will be computed and a SR object will be sent back.   
+Imagine a 3D image where a radiologist only wants to get an inference on a small section of an image. The small section may be free hand drawn by the radiologist a selected 3D cube (or a 2D rectangular region). To streamline the process the original image is pre-fetched from PACS. An inference will be done only in the selected region. Annotating this region will generate a DICOM SR object and only the SR object will be sent to the inference engine. The inference can be done on the selected ROI and the results are then added to the DICOM record.   
 
-**Inference on only a single series in a 4D image**
+**Inference on only a single image in a 4D DICOM Series**
 
 Consider a scenario where AI segmentation is done only on the Left Ventricular Myocardium (LVM) only on the systolic and diastolic phases of the cardiac cycle.  The problem here is both image segmentation and potentially using AI to select the ROI and the correct sub-images to process. 
 
-Assume for now the radiologist can select which series he/she wants to perform an inference. After selection the radiologist can just send the series number (or identifier) and inference result (dicom seg) object can be sent as a reply. 
+Assume for now the radiologist can select which image from the series is to be used for inference. After selection the radiologist can provide information to the AI system on which image is to be used and the inference result (dicom seg) object can be sent as a reply. 
 
-In the both the above mentioned cases, we are assuming that DICOM adapter in the AI platform pulls the images from the PACS with some identifier and the AI platform send just a lightweight DICOM SR object. We are also assuming a fast communication between PACS and the system where MONAI is deployed. Maybe the appropriate images are prefetched on the system (from PACS) where MONAI is deployed. 
+The assumptions for this use case include the streamlining of the amount of imaging information sent to the AI system for inference by either a manual process or in the future automated process.  Further, the expectation is that the communications and networking between the system components are fast enough to not be a significant portion of the overall turn around time for the use case.    
 
 **Computational Workload Type:** [Streaming](#streaming-computational-workload)
 
@@ -207,7 +207,7 @@ As part of AI model development, single AI algorithms are evaluated against exis
 
 **Clinical workload:** 1500 (check histograms)  studies per day for greater than 7 days with no manual intervention or study processing failures. study size N x M x K depending on modality and requested study type. See Table for estimates of study size to modality and study type mapping.
 
-**Importance to Clinical AI Deployment:** medium, the use case will drive up the quality and model generalization but will not directly impact AI use as part of the radiology workflow.
+**Importance to Clinical AI Deployment:** high, the use case is crucial to getting models through regulatory approval and deployed clinically and making it general available will impact the usage of AI workflows.
 
 **Figure:** Retrospective Study
 
@@ -399,13 +399,13 @@ For the purpose of this document, the following workloads are out of scope:
 Analyze pathology images with AI algorithms.
 
 
-### Image Enhancement {#image-enhancement}
+**Image Enhancement** {#image-enhancement}
 
 Using computation and AI techniques, clarify the image for human and machine analysis.
 
 **Medical Text Analysis:**
 
-Natural language recognition used with medical notes producing coding and diagnostic assistance. For instance, validate that the medical regime is both safe and effective for this patient given known medical history. 
+Natural language processing (NLP) used with medical notes producing coding and diagnostic assistance. For instance, validate that the medical regime is both safe and effective for this patient given known medical history. 
 
 
 
@@ -417,7 +417,7 @@ AI assisted labeling is part of the training workflow. MONAI labeling assists a 
 
 **Speech Based Medical Coding:** 
 
-Using natural language recognition, transcribe and code the clinical notes. 
+Using natural language processing, transcribe and code the clinical notes. 
 
 
 
