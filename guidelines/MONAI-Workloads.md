@@ -302,9 +302,9 @@ The estimated number of radiology exams per modality is provided from a few sour
 Here are the modalities derived from the data sets in descending order of average number of studies per month.
 | Modality                      | Other Terminology |
 | ----------------------------- | ----------------- |
-| Plain Radiography             | XR, X-Ray         |
+| Plain Radiography             | XR, X-Ray, Computed Radiography (CR), Digital Radiography (DR) |
 | Diagnostic Ultrasonography    | US, Ultrasound    |
-| Computerized Axial Tomography | CT, CAT           |
+| Computed Tomography           | CT, CAT           |
 | Magnetic Resonance Imaging    | MR, MRI           |
 | Fluoroscopy                   | FL                |
 | Nuclear Medicine Procedure    | NM,               |
