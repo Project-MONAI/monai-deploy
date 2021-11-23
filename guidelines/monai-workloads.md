@@ -49,6 +49,17 @@ The clinical use cases introduced in this section are intended to be a non-exhau
 
 The clinical workflow is defined above. _Example: Incoming Images sent from the scanner via DICOM Router or PACS to be diagnosed.  AI algorithms help with Segmentation & Classification algorithms and create a new DICOM object including the results, so they can be uploaded to PACS.  Incoming study size: 500MB, response time requirement from imaging to result being available for radiologists 20 minutes.
 
+**Summary**
+A relative Clincal Use Case deployment priority is provided here based on a strawman vote of six different MONAI contributing institutions.  Each use case is described in detail in the following sections.
+|Use Case                                                   |Priority         |
+|:----------------------------------------------------------|:----------------|
+UC-5: Scheduled Radiology Diagnostics                       |1                |
+UC-3: Image Quality Verification during Image Acquisition   |2                |
+UC-2: Retrospective Study                                   |3                |
+UC-1: Metadata Quality Assurance                            |4                |
+UC-4: Emergency Diagnostics                                 |5                |
+UC-6: Interactive Diagnostics During image Reading          |6                |
+
 ### Quality Assurance
 
 #### Metadata Quality Assurance
