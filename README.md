@@ -20,13 +20,13 @@ Where **MONAI** is focused on training and creating models, **MONAI Deploy** is 
 
 ## Sub-systems
 First version, **v0.1.0** includes:
-- **MONAI Application Package (MAP)** - defines how applications can be packaged.
+- [**MONAI Application Package (MAP)**](https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/monai-application-package.md) - defines how applications can be packaged.
     and distributed amongst MONAI Working Group member organizations.
 - [**MONAI Deploy App SDK**](https://github.com/Project-MONAI/monai-deploy-app-sdk) - set of development tools to create MAPs out of MONAI / Pytorch models.
 
 Future versions will include:
 - [**MONAI Deploy Informatics Gateway**](https://github.com/Project-MONAI/monai-deploy-informatics-gateway) - I/0 for DICOM and FHIR.
-- [**MONAI Deploy Workload Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on incoming patient requests.
+- [**MONAI Deploy Workflow Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on incoming patient requests.
 - [**MONAI Deploy App Server**](https://github.com/Project-MONAI/monai-deploy-app-server) - Server environment which can run MONAI Applications (MAPs).
 
 ## Status
