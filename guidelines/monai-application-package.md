@@ -37,7 +37,7 @@ This proposal documents the specification of the initial version of the MONAI Ap
 
 ### Goal
 
-The goal of this proposal is to provide structure of a MAP, define the purpose of a MAP and how it can be
+The goal of this proposal is to provide the structure of a MAP, define the purpose of a MAP and how it can be
 interacted with, and the required and optional components of a MAP.
 
 
@@ -135,7 +135,7 @@ The containerized portion of a MAP SHALL comply with [Open Container Initiative]
 
 A MAP SHALL enable applications to be developed with GPU acceleration.
 
-A MAP SHALL NOT impeded the adoption or utilization of accelerator (GPU) technology.
+A MAP SHALL NOT impede the adoption or utilization of accelerator (GPU) technology.
 
 
 # Architecture & Design
@@ -151,7 +151,7 @@ The primary component of a MAP is the Application. The Application is provided b
 
 All application code and binaries SHALL be in the `/opt/monai/app/` folder, with the exception of any dependencies which are installed by the MONAI Application Package Builder during the creation of the MAP.
 
-All AI models (PyTorch, TensorFlow, TensorRT, etc.) should be SHOULD be in separate sub-folders of the `/opt/monai/models/` folder.
+All AI models (PyTorch, TensorFlow, TensorRT, etc.) SHOULD be in separate sub-folders of the `/opt/monai/models/` folder.
 
 
 ## Manifests
