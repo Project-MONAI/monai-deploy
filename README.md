@@ -35,8 +35,7 @@ MONAI Deploy will be released at **MICCAI 2021** and will be part of the [**MONA
 
 ## Community
 
-To participate in the MONAI Deploy WG, please review the [MONAI Deploy WG Wiki page](https://github.com/Project-MONAI/MONAI/wiki/Deploy-Working-Group).
-All the recordings and meeting notes since day zero can be found at [MONAI Deploy WG master doc](https://docs.google.com/document/d/1fzG3z7TxB9SzWdfqsApAMFrM91nHfYiISnSz4QHJHrM/)
+To participate, please join the MONAI Deploy WG weekly meetings on the [calendar](https://calendar.google.com/calendar/u/0/embed?src=c_954820qfk2pdbge9ofnj5pnt0g@group.calendar.google.com&ctz=America/New_York). All the recordings and meeting notes since day zero can be found at [MONAI Deploy WG master doc](https://docs.google.com/document/d/1fzG3z7TxB9SzWdfqsApAMFrM91nHfYiISnSz4QHJHrM/)
 
 Join our [Slack channel](https://forms.gle/QTxJq3hFictp31UM9) or join the conversation on Twitter [@ProjectMONAI](https://twitter.com/ProjectMONAI).
 
