@@ -18,20 +18,21 @@ Where **MONAI** is focused on training and creating models, **MONAI Deploy** is 
 - Interoperability with clinical systems. Starting with DICOM, then FHIR.
 - Central repository to facilitate collaboration among institutions.
 
+## Status
+
+MONAI Deploy was released at **MICCAI 2021** and was part of the [**MONAI 2021 Bootcamp**](https://www.gpuhackathons.org/event/monai-miccai-bootcamp-2021). Since then we have released several versions of some of the sub-systems, while others are being actively developed. Please check out the next section.
+
 ## Sub-systems
-First version, **v0.1.0** includes:
+First versions include:
 - [**MONAI Application Package (MAP)**](https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/monai-application-package.md) - defines how applications can be packaged.
     and distributed amongst MONAI Working Group member organizations.
 - [**MONAI Deploy App SDK**](https://github.com/Project-MONAI/monai-deploy-app-sdk) - set of development tools to create MAPs out of MONAI / Pytorch models.
 
 Future versions will include:
 - [**MONAI Deploy Informatics Gateway**](https://github.com/Project-MONAI/monai-deploy-informatics-gateway) - I/0 for DICOM and FHIR.
-- [**MONAI Deploy Workflow Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on incoming patient requests.
+- [**MONAI Deploy Workflow Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on the [**clinical workflow specification**](https://github.com/Project-MONAI/monai-deploy-workflow-manager/blob/main/guidelines/mwm-workflow-spec.md) and incoming requests.
 - [**MONAI Deploy App Server**](https://github.com/Project-MONAI/monai-deploy-app-server) - Server environment which can run MONAI Applications (MAPs).
 
-## Status
-
-MONAI Deploy will be released at **MICCAI 2021** and will be part of the [**MONAI 2021 Bootcamp**](https://www.gpuhackathons.org/event/monai-miccai-bootcamp-2021). Sign up [HERE](https://www.gpuhackathons.org/form/gpu-event-registration) to know more, no later than **September 21st, 2021**! 
 
 ## Community
 
