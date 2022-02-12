@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- name: "MONAI Consortium"
+title: "monai-deploy"
+version: 1.0.0
+doi: # need to create DOI using Zenodo
+date-released: 2022-02-12
+url: "https://github.com/Project-MONAI/monai-deploy"
