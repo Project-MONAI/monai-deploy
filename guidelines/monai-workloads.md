@@ -377,18 +377,18 @@ In fact, this distribution is statistically the same looking at the estimate of 
 
 An estimate for impact on data size and number of images per exam/study to be processed is provided by the following table:
 
-| Modality            | Image Size  | \# of Images / Study | Avg. Size (raw) |     Range | Modality Mix | Data Volume per 100,000 Studies (6) | Percent Distribution |
-| :------------------ | :---------- | -------------------: | --------------: | --------: | -----------: | ----------------------------------: | -------------------: |
-| Conv. Radiography   | 2000x2500x2 |                    3 |        30\[MB\] |     20–50 |        11.1% |                           333\[GB\] |                 8.8% |
-| Digital radiography | 3000x3000x2 |                    3 |        54\[MB\] |     36–90 |        33.2% |                         1,793\[GB\] |                47.5% |
-| CT                  | 512x512x2   |                   60 |        32\[MB\] |    21–157 |        13.5% |                           432\[GB\] |                11.4% |
-| Multi-slice CT      | 512x512x2   |                  500 |       262\[MB\] | 131–2,100 |         1.5% |                           393\[GB\] |                10.4% |
-| Mammography         | 4000x5000x2 |                    4 |        87\[MB\] |    35–208 |         7.1% |                           618\[GB\] |                16.4% |
-| MRI                 | 256x256x2   |                  200 |        26\[MB\] |    11–131 |         6.7% |                           174\[GB\] |                 4.6% |
-| Nuclear imaging     | 256x256x2   |                   10 |       1.3\[MB\] |   0.3–3.8 |         3.4% |                             4\[GB\] |                 0.1% |
-| Digital fluoroscopy | 1024x1024x1 |                   20 |        20\[MB\] |     10–50 |         1.4% |                            28\[GB\] |                 0.7% |
-| Ultrasound          | 640x480x1   |                   30 |       9.2\[MB\] |  6.1-18.4 |        22.1% |                           203\[GB\] |                 5.4% |
-|                     |             |                      |                 |           |       100.0% |                         3,775\[GB\] |               100.0% |
+| Modality            | Typical Image Size (x, y, z, t) | \# of Images / Study | Avg. Size (raw) |     Range | Modality Mix | Data Volume per 100,000 Studies (6) | Percent Distribution |
+| :------------------ |:--------------------------------|---------------------:| --------------: | --------: | -----------: | ----------------------------------: | -------------------: |
+| Conv. Radiography   | (2000, 2500, 1, 1)              |                    3 |        30\[MB\] |     20–50 |        11.1% |                           333\[GB\] |                 8.8% |
+| Digital radiography | (3000, 3000, 1, 1)              |                    3 |        54\[MB\] |     36–90 |        33.2% |                         1,793\[GB\] |                47.5% |
+| CT                  | (512, 512, 1, 1)                |                   60 |        32\[MB\] |    21–157 |        13.5% |                           432\[GB\] |                11.4% |
+| Multi-slice CT      | (512, 512, 200, 1)              |                  500 |       262\[MB\] | 131–2,100 |         1.5% |                           393\[GB\] |                10.4% |
+| Mammography         | (4000, 5000, 1, 1)              |                    4 |        87\[MB\] |    35–208 |         7.1% |                           618\[GB\] |                16.4% |
+| MRI                 | (256, 256, 30, 1)               |                  200 |        26\[MB\] |    11–131 |         6.7% |                           174\[GB\] |                 4.6% |
+| Nuclear imaging     | (1024, 1024, 1, 1)              |                    4 |       1.3\[MB\] |   0.3–3.8 |         3.4% |                             4\[GB\] |                 0.1% |
+| Digital fluoroscopy | (1024, 1024, 1, 20)             |                   80 |        20\[MB\] |     10–50 |         1.4% |                            28\[GB\] |                 0.7% |
+| Ultrasound          | (640, 480, 1, 1)                |                   30 |       9.2\[MB\] |  6.1-18.4 |        22.1% |                           203\[GB\] |                 5.4% |
+|                     |                                 |                      |                 |           |       100.0% |                         3,775\[GB\] |               100.0% |
 
 **Table:** Modality Imaging data volume
 
