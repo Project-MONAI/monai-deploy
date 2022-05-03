@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: segmentation-map
+spec:
+  entrypoint: segmentation
+  templates:
+    - name: segmentation
+      inputs:
+        artifacts:
+        - name: input-dicom
+          path: /var/monai/input
+      outputs:
+        artifacts:
+        archive:
+          none: {}
+        - name: output
+          path: /var/monai/output
+      container:
+        image: seg_app:0.3.0
+        command: ["/bin/bash", "-c"]
+        args: ['python3 -u /opt/monai/app/app.py -m /opt/monai/models/model/model.ts']

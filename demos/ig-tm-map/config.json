@@ -1,0 +1,23 @@
+{
+    "storage": {
+        "endpoint": "10.105.3.254",
+        "username": "minio",
+        "password": "monaideploy",
+        "bucket": "monaideploy"
+    },
+    "messaging": {
+        "username": "mdig",
+        "password": "gidm",
+        "host": "10.110.54.121",
+        "virtual_host": "monaideploy",
+        "exchange": "monaideploy",
+        "topics": [
+            "md.tasks.update",
+            "md.workflow.request",
+            "md.export.complete"
+        ]
+    },
+    "argo": {
+        "baseUrl": "http://localhost:2746"
+    }
+}

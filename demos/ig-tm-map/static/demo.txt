@@ -1,0 +1,63 @@
+// Created using https://sequencediagram.org/
+
+participant #2E61BA PACS
+participant #61A235 "Informatics Gateway" as IG
+participant #E56B17 MinIO
+participant #E56B17 RabbitMQ
+participant #61A235 "Demo Workflow Manager" as Demo
+
+participantgroup Task Manager
+participant #61A235 "Task Manager" as TM
+participant #61A235 "Argo Plug-in" as AP
+end 
+
+participant #E56B17 Argo
+
+PACS->IG: Send DICOM Study (C-STORE)
+activate IG
+IG->IG: Generate //CorrelationID//
+IG->MinIO: Upload Payload
+IG->RabbitMQ: Publish **md.workflow.request**
+deactivate IG
+Demo<--RabbitMQ: Receive **md.workflow.request**
+activate Demo
+Demo->RabbitMQ: Publish **md.tasks.dispatch**
+deactivate Demo
+TM<--RabbitMQ: Receive **md.tasks.dispath**
+activate TM
+TM->MinIO: Generate temporary credentials
+TM<--MinIO: Temporary credentials
+TM->AP: Initialize plug-in
+activate AP
+TM->>AP: ExecuteTask()
+TM->RabbitMQ: Publish **md.tasks.update** (Status: Accepted)
+deactivate TM
+Demo<--RabbitMQ: Receive **md.tasks.update**(Status: Accepted)
+AP->Argo: Read //WorkflowTemplate//
+AP->AP: Compose Argo //Workflow//
+AP->>Argo: Submit Argo //Workflow//
+deactivate AP
+activate Argo
+Argo->Argo: Execute Argo //Workflow// w/ MAP
+Argo->RabbitMQ: Publish **md.tasks.callback** (JOBID)
+deactivate Argo
+TM<--RabbitMQ: Receive **md.tasks.callback** (JOBID)
+activate TM
+TM->AP: GetStatus(JOBID)
+activate AP
+AP->Argo: Get //Workflow// details (JOBID)
+TM<--AP: Return ExecutionResult
+deactivate AP
+TM->RabbitMQ: Publish **md.tasks.update** (Status: Succeeded/Failed)
+deactivate TM
+Demo<--RabbitMQ: Receive **md.tasks.update** (Status: Succeeded/Failed)
+activate Demo
+Demo->RabbitMQ: Publish **md.export.request**
+deactivate Demo
+IG<--RabbitMQ: Receive **md.export.request**
+activate IG
+IG->MinIO: Download results geenerated from MAP
+IG->PACS: Export via DICOM Export Service
+IG->RabbitMQ: Publish **md.export.complete**
+deactivate IG
+Demo<--RabbitMQ: Receive **md.export.complete**
