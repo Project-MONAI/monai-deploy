@@ -166,6 +166,7 @@ class App():
 
     def _handle_export_complete(self, properties, method, message):
         self._logger.info(f"==> Export task completed with status={message['status']}.")
+        self._send_acknowledgement(method.delivery_tag)
 
     def _message_callback(self, ch, method, properties, body):
         self._logger.info(
