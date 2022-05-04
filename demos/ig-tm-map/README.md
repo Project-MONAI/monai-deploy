@@ -1,10 +1,14 @@
 # DEMO: MONAI Deploy Informatics Gateway - Task Manager 
 
+
+## Overview
 This demo integrates MONAI Deploy Informatics Gateway and the Task Manager using Argo plug-in to trigger an inference request.
 
-
-
 ![Demo](./static/demo.png)
+
+## Sequence Diagram
+
+![Sequence Diagram](./static/sequence_diagram.png)
 
 ## Requirements
 
