@@ -138,7 +138,7 @@ class App():
             export_request = {
                 "workflow_id": message['workflow_id'],
                 "export_task_id": str(uuid.uuid4()),
-                "destination": 'STORESCP',  
+                "destination": 'ORTHANC',
                 "correlation_id": message['correlation_id'],
                 "files": self._list_files(message['workflow_id'])
             }
