@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  pacs:
+   image: "jodogne/orthanc-plugins"
+   ports:
+     - "8042:8042"
+     - "4242:4242"
+   environment:
+     AuthenticationEnabled: "false"
+     RemoteAccessAllowed: "true"
+   networks:
+     - aide-network
+
+networks:
+  aide-network:
+
+volumes:
+  data01:
+    driver: local
