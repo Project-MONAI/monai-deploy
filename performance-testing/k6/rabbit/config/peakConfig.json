@@ -1,0 +1,14 @@
+{
+    "activeWorkflow": {
+        "rate": 10,
+        "timeUnit": "1h", 
+        "duration": "1h",
+        "preAllocatedVUs": 5 
+    },
+    "inactiveWorkflow": {
+        "rate": 13,
+        "timeUnit": "1h", 
+        "duration": "1h",
+        "preAllocatedVUs": 5 
+    }
+}
