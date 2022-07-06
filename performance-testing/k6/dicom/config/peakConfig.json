@@ -1,0 +1,26 @@
+{
+    "ct": {
+        "rate": 30,
+        "timeUnit": "1h", 
+        "duration": "1h",
+        "preAllocatedVUs": 5 
+    },
+    "mri": {
+        "rate": 25,
+        "timeUnit": "1h", 
+        "duration": "1h",
+        "preAllocatedVUs": 5 
+    },
+    "ultrasound": {
+        "rate": 50,
+        "timeUnit": "1h", 
+        "duration": "1h",
+        "preAllocatedVUs": 5 
+    },
+    "xray": {
+        "rate": 120,
+        "timeUnit": "1h", 
+        "duration": "1h",
+        "preAllocatedVUs": 5 
+    }
+}
