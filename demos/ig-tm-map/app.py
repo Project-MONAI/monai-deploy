@@ -78,23 +78,25 @@ class App():
             self._send_acknowledgement(method.delivery_tag)
             return
 
-        workflow_id =  str(uuid.uuid4())
-        output_dir = f"/spleen-output/{workflow_id}"
+        workflow_instance_id =  str(uuid.uuid4())
+        output_dir = f"spleen-output/{workflow_instance_id}"
         task_dispatch = {
-            "workflow_id": workflow_id,
+            "workflow_instance_id": workflow_instance_id,
             "task_id": str(uuid.uuid4()),
             "execution_id": str(uuid.uuid4()),
             "correlation_id": correlation_id,
             "type": "argo",
+            "payload_id": request_message['payload_id'],
             "task_plugin_arguments": {
-                "baseUrl": self._config['argo']['baseUrl'],
-                "workflowTemplateName": request_message['workflows'][0],
-                "workflowTemplateEntrypoint": request_message['workflows'][1],
-                "messagingEndpoint": f"{self._config['messaging']['host']}/{self._config['messaging']['virtual_host']}",
-                "messagingUsername": self._config['messaging']['username'],
-                "messagingPassword": self._config['messaging']['password'],
-                "messagingExchange": self._config['messaging']['exchange'],
-                "messagingTopic": "md.tasks.callback",
+                "server_url": self._config['argo']['baseUrl'],
+                "workflow_id": workflow_instance_id,
+                "workflow_template_name": request_message['workflows'][0],
+                "messaging_endpoint": f"{self._config['messaging']['host']}",
+                "messaging_username": self._config['messaging']['username'],
+                "messaging_password": self._config['messaging']['password'],
+                "messaging_exchange": self._config['messaging']['exchange'],
+                "messaging_topic": "md.tasks.callback",
+                "messaging_vhost":  self._config['messaging']['virtual_host'],
             },
             "inputs": [],
             "outputs": []            
@@ -106,16 +108,15 @@ class App():
                 "endpoint": self._config['storage']['endpoint'],
                 "bucket": self._config['storage']['bucket'],
                 "secured_connection": False,
-                "relative_root_path": f"{request_message['payload_id']}/"
+                "relative_root_path": f"{request_message['payload_id']}"
             })
-        task_dispatch['outputs'].append(
-            {
+        task_dispatch['intermediate_storage'] = {
                 "name": "tempStorage",
                 "endpoint": self._config['storage']['endpoint'],
                 "bucket": self._config['storage']['bucket'],
                 "secured_connection": False,
-                "relative_root_path": "/rabbit"
-            })
+                "relative_root_path": "rabbit"
+            }
         task_dispatch['outputs'].append(
             {
                 "name": "output",
@@ -125,22 +126,22 @@ class App():
                 "relative_root_path": output_dir
             })
         self._publish(task_dispatch, 'md.tasks.dispatch')
-        self._output_directories[workflow_id] = output_dir
+        self._output_directories[workflow_instance_id] = output_dir
         self._send_acknowledgement(method.delivery_tag)
 
     def _handle_task_update(self, properties, method, message):
         
         if message['status'] == 'Succeeded':
-            if message['workflow_id'] not in self._output_directories:
+            if message['workflow_instance_id'] not in self._output_directories:
                 self._logger.warn('Unable to send an export request due to missing workflow')
                 return
             
             export_request = {
-                "workflow_id": message['workflow_id'],
+                "workflow_instance_id": message['workflow_instance_id'],
                 "export_task_id": str(uuid.uuid4()),
                 "destination": 'ORTHANC',
                 "correlation_id": message['correlation_id'],
-                "files": self._list_files(message['workflow_id'])
+                "files": self._list_files(message['workflow_instance_id'])
             }
             self._publish(export_request, 'md.export.request.monaiscu')
             self._logger.info("==> Export request sent.")
@@ -151,10 +152,10 @@ class App():
             
         self._send_acknowledgement(method.delivery_tag)
         
-    def _list_files(self, workflow_id):
+    def _list_files(self, workflow_instance_id):
         objects = self._storage_client.list_objects(
             self._config['storage']['bucket'], 
-            prefix=f"/spleen-output/{workflow_id}",
+            prefix=f"/spleen-output/{workflow_instance_id}",
             recursive=True)
         
         files = []
