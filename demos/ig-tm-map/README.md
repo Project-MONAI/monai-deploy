@@ -27,9 +27,9 @@ This demo integrates MONAI Deploy Informatics Gateway and the Task Manager using
 2. Deploy an Argo `kind:WorkflowTemplate` with a MAP. ([sample](./templates/WorkflowTemplateWIthMap.yml))
 3. Configure Informatics Gateway:
    1. Configure an AET deployed in step 2. 
-      For example, the following command would trigger the `segmentation-map` `kind:WorkflowTemplate` and use `segmentation` as the entrypoint to the Argo Workflow. (Please note the space between `segmentation-map` and `segmentation`.)
+      For example, the following command would trigger the `segmentation-map` `kind:WorkflowTemplate` Argo Workflow. (Please note the space between `segmentation-map`.)
       ```
-      mig-cli  aet add -a SPLEEN -w "segmentation-map" "segmentation"
+      mig-cli  aet add -a SPLEEN -w "segmentation-map" 
       ```
    2. Configure source AE title.
    3. Configure destination AE title with your DICOM listener to receive results.
