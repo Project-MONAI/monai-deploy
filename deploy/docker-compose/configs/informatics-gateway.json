@@ -64,9 +64,9 @@
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Dicom": "Information",
+      "Dicom": "Warning",
       "System": "Warning",
-      "Microsoft": "Information",
+      "Microsoft": "Warning",
       "Microsoft.EntityFrameworkCore": "Warning",
       "Microsoft.Hosting.Lifetime": "Warning",
       "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Error",
@@ -74,7 +74,7 @@
     },
     "Console": {
       "FormatterOptions": {
-        "ColorBehavior": "Disabled",
+        "ColorBehavior": "Enabled",
         "IncludeScopes": true,
         "SingleLine": false,
         "TimestampFormat": " HH:mm:ss ",

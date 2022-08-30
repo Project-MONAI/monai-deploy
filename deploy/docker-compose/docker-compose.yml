@@ -19,6 +19,7 @@ services:
     image: minio/minio:latest
     command: server --console-address ":9001" /data
     hostname: minio
+    container_name: minio
     volumes:
       - ./.md/minio/data:/data
       - ./.md/minio/config:/root/.minio
@@ -82,6 +83,7 @@ services:
   mongodb:
     hostname: mongo
     image: mongo:latest
+    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
@@ -101,6 +103,7 @@ services:
   orthanc:
     image: osimis/orthanc
     hostname: orthanc
+    container_name: orthanc
     volumes:
       - ./configs/orthanc.json:/etc/orthanc/orthanc.json
       - ./.md/orthanc:/var/lib/orthanc/db/
@@ -122,6 +125,7 @@ services:
 
   informatics-gateway:
     hostname: mdig
+    container_name: informatics-gateway
     image: ghcr.io/project-monai/monai-deploy-informatics-gateway:0.3.0
     volumes:
       - ./configs/informatics-gateway.json:/opt/monai/ig/appsettings.json
@@ -168,12 +172,15 @@ services:
 
   workflow-manager:
     hostname: mdwm
+    container_name: workflow-manager
     image: ghcr.io/project-monai/monai-deploy-workflow-manager:0.1.0
     volumes:
       - ./configs/workflow-manager.json:/opt/monai/wm/appsettings.json
       # - ./plug-ins/:/opt/monai/wm/plug-ins/
+    environment:
+      ASPNETCORE_URLS: http://+:6000
     ports:
-      - 6000:5000
+      - 6000:6000
     networks:
       - monaideploy
     depends_on:
@@ -191,12 +198,15 @@ services:
   
   task-manager:
     hostname: mdtm
+    container_name: task-manager
     image: ghcr.io/project-monai/monai-deploy-task-manager:0.1.0
     volumes:
       - ./configs/informatics-gateway.json:/opt/monai/wm/appsettings.json
       # - ./plug-ins/:/opt/monai/wm/plug-ins/
+    environment:
+      ASPNETCORE_URLS: http://+:7000
     ports:
-      - 7000:5000
+      - 7000:7000
     networks:
       - monaideploy
     depends_on:

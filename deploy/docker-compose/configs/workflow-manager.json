@@ -90,9 +90,8 @@
       "Monai": "Information"
     },
     "Console": {
-      "FormatterName": "Systemd",
       "FormatterOptions": {
-        "ColorBehavior": "Disabled",
+        "ColorBehavior": "Enabled",
         "IncludeScopes": true,
         "SingleLine": false,
         "TimestampFormat": " HH:mm:ss ",

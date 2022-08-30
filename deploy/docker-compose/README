@@ -1,0 +1,8 @@
+# MONAI Deploy
+
+## Prerequisites
+
+- Docker Engine [install](https://docs.docker.com/engine/install/)
+- Docker Compose Plug-in [install](https://docs.docker.com/compose/install/)
+- MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
+
