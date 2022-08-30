@@ -1,0 +1,218 @@
+# Copyright 2022 MONAI Consortium
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: "3.9"
+
+services:
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data
+    hostname: minio
+    volumes:
+      - ./.md/minio/data:/data
+      - ./.md/minio/config:/root/.minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    networks:
+      - monaideploy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 30s
+      retries: 3
+        
+  createbuckets:
+    image: minio/mc
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      BUCKET_NAME: monaideploy
+      ENDPOINT: http://minio:9000
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - monaideploy
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add monaideploy $$ENDPOINT $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb monaideploy/$$BUCKET_NAME;
+      /usr/bin/mc policy set public monaideploy/$$BUCKET_NAME;
+      /usr/bin/mc ls monaideploy;
+      # exit 0
+      "
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    container_name: rabbitmq1
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+      RABBITMQ_DEFAULT_VHOST: "monaideploy"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - .md/rabbitmq/data/:/var/lib/rabbitmq/mnesia/
+    networks:
+      - monaideploy
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 15s
+      timeout: 30s
+      retries: 3
+
+  mongodb:
+    hostname: mongo
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+    networks:
+      - monaideploy
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/productiondb --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+      
+  orthanc:
+    image: osimis/orthanc
+    hostname: orthanc
+    volumes:
+      - ./configs/orthanc.json:/etc/orthanc/orthanc.json
+      - ./.md/orthanc:/var/lib/orthanc/db/
+    ports:
+      - "1114:1114"
+      - "8089:8089"
+    environment:
+      VERBOSE_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      CONNECTIVITY_CHECKS_PLUGIN_ENABLED: "true"
+    networks:
+      - monaideploy
+    healthcheck:
+      test: ["CMD", "/probes/test-aliveness.py"]
+      start_period: 5s
+      retries: 5
+      interval: 10s
+      timeout: 30s
+
+  informatics-gateway:
+    hostname: mdig
+    image: ghcr.io/project-monai/monai-deploy-informatics-gateway:0.3.0
+    volumes:
+      - ./configs/informatics-gateway.json:/opt/monai/ig/appsettings.json
+      # - ./plug-ins/:/opt/monai/ig/plug-ins/
+      - ./.md/mdig/payloads:/temp
+      - ./.md/mdig/database:/database/
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+    ports:
+      - 104:104
+      - 2575:2575
+      - 5000:5000
+    networks:
+      - monaideploy
+    depends_on:
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - minio
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://mdig:5000/health"]
+      start_period: 5s
+      interval: 10s
+      timeout: 30s
+      retries: 10
+
+  configure-ig:
+    image: dwdraju/alpine-curl-jq:latest
+    networks:
+      - monaideploy
+    volumes:
+      - ./configs/config-ig.sh:/init.sh
+    depends_on:
+      informatics-gateway:
+        condition: service_healthy
+      orthanc:
+        condition: service_healthy
+    entrypoint: 
+      - /bin/sh
+      - ./init.sh
+
+  workflow-manager:
+    hostname: mdwm
+    image: ghcr.io/project-monai/monai-deploy-workflow-manager:0.1.0
+    volumes:
+      - ./configs/workflow-manager.json:/opt/monai/wm/appsettings.json
+      # - ./plug-ins/:/opt/monai/wm/plug-ins/
+    ports:
+      - 6000:5000
+    networks:
+      - monaideploy
+    depends_on:
+      informatics-gateway:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - minio
+      - rabbitmq
+      - informatics-gateway
+      - mongodb
+  
+  task-manager:
+    hostname: mdtm
+    image: ghcr.io/project-monai/monai-deploy-task-manager:0.1.0
+    volumes:
+      - ./configs/informatics-gateway.json:/opt/monai/wm/appsettings.json
+      # - ./plug-ins/:/opt/monai/wm/plug-ins/
+    ports:
+      - 7000:5000
+    networks:
+      - monaideploy
+    depends_on:
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - minio
+      - rabbitmq
+      - mongodb
+
+networks:
+  monaideploy:
+    name: monaideploy
+    driver: bridge
+
+volumes:
+  mongodb_data_container:
