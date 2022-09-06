@@ -16,39 +16,41 @@ version: "3.9"
 
 services:
   minio:
-    image: minio/minio:latest
-    command: server --console-address ":9001" /data
-    hostname: minio
-    container_name: minio
+    image: $MINIO_IMAGE
+    hostname: $MINIO_HOSTNAME
+    container_name: $MINIO_HOSTNAME
+    command: server --console-address ":$MINIO_CONSOLE_PORT" /data
     volumes:
-      - ./.md/minio/data:/data
-      - ./.md/minio/config:/root/.minio
+      - $MINIO_DATA:/data
+      - $MINIO_CONFIG:/root/.minio
     ports:
-      - 9000:9000
-      - 9001:9001
+      - $MINIO_API_PORT:$MINIO_API_PORT
+      - $MINIO_CONSOLE_PORT:$MINIO_CONSOLE_PORT
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $MINIO_IP
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://$MINIO_HOSTNAME:$MINIO_API_PORT/minio/health/live"]
       interval: 15s
       timeout: 30s
       retries: 3
         
   createbuckets:
-    image: minio/mc
+    image: $MINIO_MC_IMAGE
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
       BUCKET_NAME: monaideploy
-      ENDPOINT: http://minio:9000
+      ENDPOINT: http://$MINIO_HOSTNAME:$MINIO_API_PORT
     depends_on:
       minio:
         condition: service_healthy
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $MINIO_CONFIG_IP
     entrypoint: >
       /bin/sh -c "
       until (/usr/bin/mc config host add monaideploy $$ENDPOINT $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD) do echo '...waiting...' && sleep 1; done;
@@ -59,21 +61,22 @@ services:
       "
 
   rabbitmq:
-    image: rabbitmq:3-management
-    hostname: rabbitmq
-    container_name: rabbitmq1
+    image: $RABBITMQ_IMAGE
+    hostname: $RABBITMQ_HOSTNAME
+    container_name: $RABBITMQ_HOSTNAME
     environment:
       RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
       RABBITMQ_DEFAULT_USER: "admin"
       RABBITMQ_DEFAULT_PASS: "admin"
       RABBITMQ_DEFAULT_VHOST: "monaideploy"
     ports:
-      - 5672:5672
-      - 15672:15672
+      - $RABBITMQ_PORT:$RABBITMQ_PORT
+      - $RABBITMQ_MGT_PORT:$RABBITMQ_MGT_PORT
     volumes:
-      - .md/rabbitmq/data/:/var/lib/rabbitmq/mnesia/
+      - $RABBITMQ_DATA:/var/lib/rabbitmq/mnesia/
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $RABBITMQ_IP
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 15s
@@ -81,41 +84,43 @@ services:
       retries: 3
 
   mongodb:
-    hostname: mongo
-    image: mongo:latest
-    container_name: mongodb
+    image: $MONGODB_IMAGE
+    hostname: $MONGODB_HOSTNAME
+    container_name: $MONGODB_HOSTNAME
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
     ports:
-      - 27017:27017
+      - $MONGODB_PORT:$MONGODB_PORT
     volumes:
-      - mongodb_data_container:/data/db
+      - $MONGODB_DATA:/data/db
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $MONGODB_IP
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/productiondb --quiet
+      test: echo 'db.runCommand("ping").ok' | mongo $MONGODB_HOSTNAME:$MONGODB_PORT/productiondb --quiet
       interval: 10s
       timeout: 10s
       retries: 5
       start_period: 40s
       
   orthanc:
-    image: osimis/orthanc
-    hostname: orthanc
-    container_name: orthanc
+    image: $ORTHANC_IMAGE
+    hostname: $ORTHANC_HOSTNAME
+    container_name: $ORTHANC_HOSTNAME
     volumes:
       - ./configs/orthanc.json:/etc/orthanc/orthanc.json
-      - ./.md/orthanc:/var/lib/orthanc/db/
+      - $ORTHANC_DATA:/var/lib/orthanc/db/
     ports:
-      - "1114:1114"
-      - "8089:8089"
+      - "$ORTHANC_SCP_PORT:$ORTHANC_SCP_PORT"
+      - "$ORTHANC_UI_PORT:$ORTHANC_UI_PORT"
     environment:
       VERBOSE_ENABLED: "true"
       DICOM_WEB_PLUGIN_ENABLED: "true"
       CONNECTIVITY_CHECKS_PLUGIN_ENABLED: "true"
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $ORTHANC_IP
     healthcheck:
       test: ["CMD", "/probes/test-aliveness.py"]
       start_period: 5s
@@ -124,22 +129,23 @@ services:
       timeout: 30s
 
   informatics-gateway:
-    hostname: mdig
+    image: $INFORMATICS_GATEWAY_IMAGE
+    hostname: $INFORMATICS_GATEWAY_HOSTNAME
     container_name: informatics-gateway
-    image: ghcr.io/project-monai/monai-deploy-informatics-gateway:0.3.0
     volumes:
       - ./configs/informatics-gateway.json:/opt/monai/ig/appsettings.json
-      # - ./plug-ins/:/opt/monai/ig/plug-ins/
-      - ./.md/mdig/payloads:/temp
-      - ./.md/mdig/database:/database/
+      # - $MONAI_DEPLOY_PLUGINS:/opt/monai/ig/plug-ins/
+      - $INFORMATICS_GATEWAY_PAYLOADS:/temp
+      - $INFORMATICS_GATEWAY_DATABASE:/database/
     environment:
-      ASPNETCORE_URLS: http://+:5000
+      ASPNETCORE_URLS: http://+:$INFORMATICS_GATEWAY_API_PORT
     ports:
-      - 104:104
-      - 2575:2575
-      - 5000:5000
+      - $INFORMATICS_GATEWAY_SCP_PORT:$INFORMATICS_GATEWAY_SCP_PORT
+      - $INFORMATICS_GATEWAY_HL7_PORT:$INFORMATICS_GATEWAY_HL7_PORT
+      - $INFORMATICS_GATEWAY_API_PORT:$INFORMATICS_GATEWAY_API_PORT
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $INFORMATICS_GATEWAY_API_IP
     depends_on:
       minio:
         condition: service_healthy
@@ -149,16 +155,17 @@ services:
       - minio
       - rabbitmq
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://mdig:5000/health"]
-      start_period: 5s
+      test: ["CMD", "curl", "-f", "http://$INFORMATICS_GATEWAY_HOSTNAME:$INFORMATICS_GATEWAY_API_PORT/health"]
+      start_period: 10s
       interval: 10s
       timeout: 30s
       retries: 10
 
   configure-ig:
-    image: dwdraju/alpine-curl-jq:latest
+    image: $INFORMATICS_GATEWAY_CONFIG_IMAGE
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $INFORMATICS_GATEWAY_API_CONFIG_IP
     volumes:
       - ./configs/config-ig.sh:/init.sh
     depends_on:
@@ -168,21 +175,26 @@ services:
         condition: service_healthy
     entrypoint: 
       - /bin/sh
-      - ./init.sh
+      - ./init.sh 
+      - $INFORMATICS_GATEWAY_HOSTNAME
+      - $INFORMATICS_GATEWAY_API_PORT
+      - $ORTHANC_IP
+      - $ORTHANC_SCP_PORT
 
   workflow-manager:
-    hostname: mdwm
-    container_name: workflow-manager
-    image: ghcr.io/project-monai/monai-deploy-workflow-manager:0.1.0
+    image: $WORKFLOW_MANAGER_IMAGE
+    hostname: $WORKFLOW_MANAGER_HOSTNAME
+    container_name: $WORKFLOW_MANAGER_HOSTNAME
     volumes:
       - ./configs/workflow-manager.json:/opt/monai/wm/appsettings.json
-      # - ./plug-ins/:/opt/monai/wm/plug-ins/
+      # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
-      ASPNETCORE_URLS: http://+:6000
+      ASPNETCORE_URLS: http://+:$WORKFLOW_MANAGER_PORT
     ports:
-      - 6000:6000
+      - $WORKFLOW_MANAGER_PORT:$WORKFLOW_MANAGER_PORT
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $WORKFLOW_MANAGER_IP
     depends_on:
       informatics-gateway:
         condition: service_healthy
@@ -197,18 +209,23 @@ services:
       - mongodb
   
   task-manager:
-    hostname: mdtm
-    container_name: task-manager
-    image: ghcr.io/project-monai/monai-deploy-task-manager:0.1.0
+    image: $TASK_MANAGER_IMAGE
+    hostname: $TASK_MANAGER_HOSTNAME
+    container_name: $TASK_MANAGER_HOSTNAME
     volumes:
-      - ./configs/informatics-gateway.json:/opt/monai/wm/appsettings.json
-      # - ./plug-ins/:/opt/monai/wm/plug-ins/
+      - ./configs/task-manager.json:/opt/monai/wm/appsettings.json
+      - /home/vicchang/.kube/config:/opt/monai/kubeconfig
+      - $TASK_MANAGER_DATA:/var/lib/monai/
+      - /var/run/docker.sock:/var/run/docker.sock
+      # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
-      ASPNETCORE_URLS: http://+:7000
+      ASPNETCORE_URLS: http://+:$TASK_MANAGER_PORT
+      KUBECONFIG : /opt/monai/kubeconfig
     ports:
-      - 7000:7000
+      - $TASK_MANAGER_PORT:$TASK_MANAGER_PORT
     networks:
-      - monaideploy
+      monaideploy:
+          ipv4_address: $TASK_MANAGER_IP
     depends_on:
       minio:
         condition: service_healthy
@@ -223,6 +240,7 @@ networks:
   monaideploy:
     name: monaideploy
     driver: bridge
-
-volumes:
-  mongodb_data_container:
+    ipam:
+     config:
+       - subnet: $SUBNET
+         gateway: $GATEWAY

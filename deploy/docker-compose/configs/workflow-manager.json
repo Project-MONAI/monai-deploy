@@ -87,7 +87,8 @@
       "Microsoft.EntityFrameworkCore": "Warning",
       "Microsoft.Hosting.Lifetime": "Information",
       "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Error",
-      "Monai": "Information"
+      "Monai": "Debug",
+      "Monai.Deploy.WorkflowManager.MonaiBackgroundService.Worker": "Warning"
     },
     "Console": {
       "FormatterOptions": {
@@ -117,12 +118,8 @@
   "Kestrel": {
     "EndPoints": {
       "Http": {
-        "Url": "http://localhost:5000"
-      } //,
-      //"Http2": {
-      //  "Url": "https://localhost:7000",
-      //  "Protocols": "Http2"
-      //}
+        "Url": "http://+:5001"
+      }
     }
   },
   "AllowedHosts": "*"

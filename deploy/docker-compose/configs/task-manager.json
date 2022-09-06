@@ -17,6 +17,7 @@
       "taskTimeoutMinutes": 60,
       "plug-ins": {
         "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.ArgoPlugin, Monai.Deploy.WorkflowManager.TaskManager.Argo",
+        "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker",
         "aide_clinical_review": "Monai.Deploy.WorkflowManager.TaskManager.AideClinicalReview.AideClinicalReviewPlugin, Monai.Deploy.WorkflowManager.TaskManager.AideClinicalReview",
         "test": "Monai.Deploy.WorkflowManager.TaskManager.TestPlugin.TestPlugin, Monai.Deploy.WorkflowManager.TaskManager.TestPlugin"
       },
@@ -84,7 +85,7 @@
       "Microsoft.EntityFrameworkCore": "Warning",
       "Microsoft.Hosting.Lifetime": "Information",
       "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Error",
-      "Monai": "Information"
+      "Monai": "Debug"
     },
     "Console": {
       "FormatterOptions": {

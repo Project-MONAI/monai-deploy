@@ -13,11 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+echo "===Configuring Informatics Gateway==="
+echo "Informatics Gateway Host Name = $1"
+echo "Informatics Gateway Port      = $2"
+echo "Orthanc IP Address            = $3"
+echo "Orthanc SCP Port              = $4"
+echo -e "\n"
+
+printf "\nAdding MONAI Deploy AE Title\n"
+curl -s --request POST "http://$1:2/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\"}"  | jq
 printf "\nAdding DICOM Source\n"
-curl -s --request POST 'http://mdig:5000/config/source' --header 'Content-Type: application/json' --data-raw '{"name": "ORTHANC","hostIp": "orthanc","aeTitle": "ORTHANC"}'  | jq
+curl -s --request POST "http://$1:2/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"aeTitle\": \"ORTHANC\"}"  | jq
 printf "\nAdding DICOM Destination\n"
-curl -s --request POST 'http://mdig:5000/config/destination' --header 'Content-Type: application/json' --data-raw '{"name": "ORTHANC","hostIp": "orthanc","port": 1114,"aeTitle": "orthanc"}'  | jq
+curl -s --request POST "http://$1:2/config/destination" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"port\": $4,\"aeTitle\": \"ORTHANC\"}"  | jq
 printf "\nListing DICOM Sources\n"
-curl -fs --request GET 'http://mdig:5000/config/source' | jq
+curl -fs --request GET "http://$1:2/config/source" | jq
 printf "\nListing DICOM Destinations\n"
-curl -fs --request GET 'http://mdig:5000/config/destination' | jq
+curl -fs --request GET "http://$1:2/config/destination" | jq

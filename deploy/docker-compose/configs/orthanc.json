@@ -32,14 +32,11 @@
   "RemoteAccessAllowed": true,
   "SslEnabled": false,
   "SslCertificate": "certificate.pem",
-  "AuthenticationEnabled": true,
-  "RegisteredUsers": {
-    "monai": "monai!"
-  },
+  "AuthenticationEnabled": false,
   "DicomModalities": {
-    "MDIG": [
-      "Orthanc",
-      "mdig",
+    "MONAI-DEPLOY": [
+      "MONAI-DEPLOY",
+      "informatics-gateway",
       104
     ]
   },
