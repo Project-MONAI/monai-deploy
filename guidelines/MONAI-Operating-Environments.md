@@ -5,8 +5,8 @@ This is a proposal for the MONAI Deploy Working Group.
 ## Overview ##
 
 This proposal documents the different operating environments that are relevant
-for deployment lifecycle from inception to production. The proposal introduces
-workstation, development server, staging server, production server and cloud
+for the MONAI Application (MAP) lifecycle from inception to production. The proposal introduces
+laptop, workstation, integration server, staging server, production server and cloud
 environments as general environments where software development happens and it
 tries to highlight the differences in quality and integration attributes that
 are relevant to each of these environments.
@@ -28,8 +28,8 @@ This document SHALL follow the guidance of [rfc
 
 1. [Desktop/Laptop Environment](#desktoplaptop-environment)
 2. [Workstation Environment](#workstation-environment)
-3. [Development/Integration Server
-Environment](#developmentintegration-server-environment)
+3. [Integration Server
+Environment](#integration-server-environment)
 4. [Staging Server Environment](#staging-server-environment)
 5. [Production Server Environment](#production-server-environment)
 6. [Cloud Environments](#cloud-environments)
@@ -101,12 +101,12 @@ and not get much support from centralized IT.
 **Availability:** best effort
 
 
-### Development/Integration Server Environment ###
+### Integration Server Environment ###
 
 A single, multi-user system, where developers, data scientists, and clinicians 
 are collaborating on experimental software versions and new algorithms. 
 
-**Users:** Developers, data scientists, IT administrators, and clinicians.
+**Users:** Developers, IT administrators, and clinicians.
 
 **Operating System:** A native Linux (ex: RedHat, Ubuntu) server environment, where
 IT administrators and developers MAY install experimental versions of software.
