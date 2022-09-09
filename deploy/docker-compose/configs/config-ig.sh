@@ -21,12 +21,12 @@ echo "Orthanc SCP Port              = $4"
 echo -e "\n"
 
 printf "\nAdding MONAI Deploy AE Title\n"
-curl -s --request POST "http://$1:2/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\"}"  | jq
+curl --request POST "http://$1:$2/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\"}"  | jq
 printf "\nAdding DICOM Source\n"
-curl -s --request POST "http://$1:2/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"aeTitle\": \"ORTHANC\"}"  | jq
+curl --request POST "http://$1:$2/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"aeTitle\": \"ORTHANC\"}"  | jq
 printf "\nAdding DICOM Destination\n"
-curl -s --request POST "http://$1:2/config/destination" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"port\": $4,\"aeTitle\": \"ORTHANC\"}"  | jq
+curl --request POST "http://$1:$2/config/destination" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"port\": $4,\"aeTitle\": \"ORTHANC\"}"  | jq
 printf "\nListing DICOM Sources\n"
-curl -fs --request GET "http://$1:2/config/source" | jq
+curl -f --request GET "http://$1:$2/config/source" | jq
 printf "\nListing DICOM Destinations\n"
-curl -fs --request GET "http://$1:2/config/destination" | jq
+curl -f --request GET "http://$1:$2/config/destination" | jq

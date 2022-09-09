@@ -17,18 +17,12 @@
 			"description": "Print files from input directory",
 			"type": "docker",
 			"args": {
-				"namespace": "default",
 				"container_image": "alpine:latest",
 				"server_url": "unix:///var/run/docker.sock",
-				"command": "/usr/bin/find,/monai/input,-type,f",
+				"entrypoint": "/bin/sh,-c",
+				"command": "/usr/bin/find /monai/input -type f",
 				"temp_storage_container_path": "/var/lib/monai/",
-				"temp_storage_host_path": "/home/vicchang/sc/monai/monai-deploy/deploy/docker-compose/.md/mdtm",
-				"messaging_endpoint": "rabbit-monai",
-				"messaging_username": "admin",
-				"messaging_password": "admin",
-				"messaging_topic": "md.tasks.callback",
-				"messaging_exchange": "monaideploy",
-				"messaging_vhost": "monaideploy"
+				"temp_storage_host_path": "/home/vicchang/sc/monai/monai-deploy/deploy/docker-compose/.md/mdtm"
 			},
 			"artifacts": {
 				"input": [
