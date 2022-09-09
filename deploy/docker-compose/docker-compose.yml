@@ -176,10 +176,12 @@ services:
     entrypoint: 
       - /bin/sh
       - ./init.sh 
-      - $INFORMATICS_GATEWAY_HOSTNAME
+      - $INFORMATICS_GATEWAY_API_IP
       - $INFORMATICS_GATEWAY_API_PORT
       - $ORTHANC_IP
       - $ORTHANC_SCP_PORT
+    links:
+      - informatics-gateway
 
   workflow-manager:
     image: $WORKFLOW_MANAGER_IMAGE
@@ -214,8 +216,7 @@ services:
     container_name: $TASK_MANAGER_HOSTNAME
     volumes:
       - ./configs/task-manager.json:/opt/monai/wm/appsettings.json
-      - /home/vicchang/.kube/config:/opt/monai/kubeconfig
-      - $TASK_MANAGER_DATA:/var/lib/monai/
+      - $TASK_MANAGER_DATA:/var/lib/monai/:rw
       - /var/run/docker.sock:/var/run/docker.sock
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:

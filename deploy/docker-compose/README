@@ -1,8 +1,153 @@
-# MONAI Deploy
+# MONAI Deploy Lite
+
+MONAI Deploy Lite provides a simple & lightweight solution for running MONAI Applications (MAPs) on a minimal MONAI Deploy platform.
+
+It is meant to bridge the big gap between local development of MAPs in a laptop using the MONAI Deploy App SDK, and a production-ready deployment. 
+
+Users of MONAI Deploy Lite will be able to run their MAPs, connected to a test PACS, or their own test / research PACS, for further validation, confidently taking steps towards production.   
+
+By reusing the same key core services for DICOM I/O and AI workflow orchestration, it provides the same functionality and consistent experience independently on where and how the applications are run, with minimal changes for the end user.
+
 
 ## Prerequisites
 
-- Docker Engine [install](https://docs.docker.com/engine/install/)
-- Docker Compose Plug-in [install](https://docs.docker.com/compose/install/)
+- [Docker Engine](https://docs.docker.com/engine/install/) v20.10.18+
+- [Docker Compose Plug-in](https://docs.docker.com/compose/install/) v2.10.2+
 - MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
 
+## Start the Services
+
+The docker [compose file](docker-compose.yml) spins up the following services. Each service may be accessed at the IP and port described below.
+
+Execute the following command to bring up all services.
+
+```bash
+docker compose up
+docker compose up -d # or run detached
+docker compose logs -t -f # view output from all containers
+```
+
+### MONAI Deploy Services
+- Informatics Gateway - http://localhost:5000 or http://172.29.0.50:5000
+  - SCP Port 104
+- Workflow Manager - http://localhost:5001 or http://172.29.0.60:5001
+- Task Manager - http://localhost:5002 or http://172.29.0.70:5002
+
+### Third-Party Services
+- Orthanc - http://localhost:8089 or http://172.29.0.100:5000
+  - SCP Port 1114
+- MinIO - http://localhost:9001 or http://172.29.0.10:9001
+- RabbitMQ - http://localhost:15672 or http://172.29.0.20:15672
+- MongoDB - http://localhost:27017 or http://172.29.0.30:27017
+
+## Running a MONAI Deploy Workflow
+
+This package includes Orthanc running and connected to the Informatics Gateway, with all required AE Titles pre-configured.
+
+To get started, upload any DICOM dataset to Orthanc. If you don't have any DICOM dataset available, please feel free to download the [lung CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) or [liver CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing). These datasets may be used for the referenced example later in this document.
+
+
+### Uploading Data
+
+Navigate to Orthanc via http://localhost:27017 or http://172.29.0.30:27017, and click *Upload* on the top right-hand corner.
+Drag & drop any DICOM files (no folders) to the blue box on the page and then click *Start the upload*.
+
+Or, upload your files to Orthanc using the *storescu* command from [dcmtk](https://dcmtk.org/dcmtk.php.en).
+```
+storescu -v +r +sd -aec ORTHANC localhost 1114 /path/to/my/dicom/*
+```
+
+Navigate to the home page and click *All studies* to confirm data's been uploaded.
+
+### Sample Workflows
+
+Under the **sample-workflows* directory, a couple sample workflow definitions are provided:
+
+- `hello-world.json `: Hello World!
+- `spleen-seg.json`: AI Spleen Segmentation MAP
+- `liver-seg.json`: AI Liver Segmentation MAP
+
+
+#### Hello World
+
+##### Description
+
+This example uses `alpine` image to simply print all files found in the input directory.
+
+1. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+   ```
+   $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/hello-world.json"  http://localhost:5001/workflows
+
+   {"workflow_id":"849d4683-006b-410c-aa17-d0474ee26b7b"}
+   ```
+   If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
+1. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+   In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
+1. To see the output from the container, run the following commands:
+   ```bash
+   $ docker container list -a | grep alpine
+   # locate the container ID and run the following
+   $ docker logs {CONTAINER ID}
+   # expect a list of files to be printed
+   /var/monai/input/1.2.826.0.1.3680043.2.1125.1.19616861412188316212577695277886020/1.2.826.0.1.3680043.2.1125.1.34918616334750294149839565085991567/1.2.826.0.1.3680043.2.1125.1.60545822758941849948931508930806372.dcm.json
+   /var/monai/input/1.2.826.0.1.3680043.2.1125.1.19616861412188316212577695277886020/1.2.826.0.1.3680043.2.1125.1.34918616334750294149839565085991567/1.2.826.0.1.3680043.2.1125.1.60545822758941849948931508930806372.dcm
+   ...
+   ```
+
+#### AI Spleen Segmentation MAP
+
+##### Description
+
+In this section, we will run the [Spleen Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_spleen_seg_app) from the
+[MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk).
+
+1. Download the data set from [here](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
+1. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+   ```
+   $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/spleen-seg.json"  http://localhost:5001/workflows
+
+   {"workflow_id":"811620da-381f-4daa-854d-600948e67228"}
+   ```
+   If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
+1. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+   In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
+1. Reload the Orthanc study page and expect a new series to be added.
+1. To see the output from the container, run the following commands:
+   ```bash
+   $ docker container list -a | grep monai_ai_lung_seg_app
+   # locate the container ID and run the following
+   $ docker logs {CONTAINER ID}
+   ```
+
+#### AI Liver Segmentation MAP
+
+##### Description
+
+In this section, we will run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_livertumor_seg_app) from the
+[MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk).
+
+1. Download the data set from [here](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing)
+1. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+   ```
+   $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/spleen-seg.json"  http://localhost:5001/workflows
+
+   {"workflow_id":"811620da-381f-4daa-854d-600948e67228"}
+   ```
+   If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
+1. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+   In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
+1. Reload the Orthanc study page and expect a new series to be added.
+1. To see the output from the container, run the following commands:
+   ```bash
+   $ docker container list -a | grep monai_ai_livertumor_seg_app
+   # locate the container ID and run the following
+   $ docker logs {CONTAINER ID}
+   ```
+
+## Advanced Configuration
+
+### Docker-Compose Configuration
+Services may be configured throught the `.env` file 
+
+
+### Configure External PACS

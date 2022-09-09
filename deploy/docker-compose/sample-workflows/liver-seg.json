@@ -1,7 +1,7 @@
 {
-	"name": "ai-spleen-seg",
+	"name": "ai-liver-seg",
 	"version": "1.0.0",
-	"description": "AI Spleen Segmentation",
+	"description": "AI Liver Segmentation",
 	"informatics_gateway": {
 		"ae_title": "MONAI-DEPLOY",
 		"data_origins": [
@@ -13,11 +13,11 @@
 	},
 	"tasks": [
 		{
-			"id": "spleen",
-			"description": "Execute Spleen Segmentation MAP",
+			"id": "liver",
+			"description": "Execute Liver Segmentation MAP",
 			"type": "docker",
 			"args": {
-				"container_image": "ghcr.io/mmelqin/monai_ai_lung_seg_app:1.0",
+				"container_image": "ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0",
 				"user_group": "1000:1000",
 				"server_url": "unix:///var/run/docker.sock",
 				"entrypoint": "/bin/bash,-c",
@@ -46,12 +46,12 @@
 			},
 			"task_destinations": [
 				{
-					"name": "export-spleen-seg"
+					"name": "export-liver-seg"
 				}
 			]
 		},
 		{
-			"id": "export-spleen-seg",
+			"id": "export-liver-seg",
 			"description": "Export Segmentation Storage Object",
 			"type": "export",
 			"export_destinations": [
@@ -63,7 +63,7 @@
 				"input": [
 					{
 						"name": "report-dicom",
-						"value": "{{ context.executions.spleen.artifacts.env_MONAI_OUTPUTPATH }}",
+						"value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}",
 						"mandatory": true
 					}
 				],
