@@ -221,7 +221,7 @@ services:
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
       ASPNETCORE_URLS: http://+:$TASK_MANAGER_PORT
-      KUBECONFIG : /opt/monai/kubeconfig
+      HOST_TEMP_STORAGE : $TASK_MANAGER_DATA
     ports:
       - $TASK_MANAGER_PORT:$TASK_MANAGER_PORT
     networks:

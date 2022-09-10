@@ -22,7 +22,6 @@
 				"entrypoint": "/bin/sh,-c",
 				"command": "/usr/bin/find /var/monai/input -type f",
 				"temp_storage_container_path": "/var/lib/monai/",
-				"temp_storage_host_path": "/home/vicchang/sc/monai/monai-deploy/deploy/docker-compose/.md/mdtm",
 				"MYINPUT": "/var/monai/input/"
 			},
 			"artifacts": {
