@@ -7,7 +7,7 @@
       "scp": {
         "port": 104,
         "logDimseDatasets": false,
-        "rejectUnknownSources": true
+        "rejectUnknownSources": false
       },
       "scu": {
         "aeTitle": "MonaiSCU",

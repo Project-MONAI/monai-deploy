@@ -12,13 +12,13 @@
   ],
   "ConcurrentJobs": 2,
   "HttpServerEnabled": true,
-  "HttpPort": 8089,
+  "HttpPort": 8042,
   "HttpDescribeErrors": true,
   "HttpCompressionEnabled": true,
   "DicomServerEnabled": true,
   "DicomAet": "ORTHANC",
   "DicomCheckCalledAet": false,
-  "DicomPort": 1114,
+  "DicomPort": 4242,
   "DefaultEncoding": "Latin1",
   "DeflatedTransferSyntaxAccepted": true,
   "JpegTransferSyntaxAccepted": true,
@@ -83,7 +83,7 @@
     "Root": "/dicom-web/", // Root URI of the DICOMweb API (for QIDO-RS, STOW-RS and WADO-RS)
     "EnableWado": true, // Whether WADO-URI (previously known as WADO) support is enabled
     "WadoRoot": "/wado", // Root URI of the WADO-URI (aka. WADO) API
-    "Host": "localhost:8089", // Hard-codes the name of the host for subsequent WADO-RS requests
+    "Host": "localhost:8042", // Hard-codes the name of the host for subsequent WADO-RS requests
     "Ssl": false, // Whether HTTPS should be used for subsequent WADO-RS requests
     "StowMaxInstances": 10, // For STOW-RS client, the maximum number of instances in one single HTTP query (0 = no limit)
     "StowMaxSize": 10, // For STOW-RS client, the maximum size of the body in one single HTTP query (in MB, 0 = no limit)

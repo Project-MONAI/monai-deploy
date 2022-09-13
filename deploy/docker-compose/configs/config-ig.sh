@@ -14,18 +14,19 @@
 # limitations under the License.
 
 echo "===Configuring Informatics Gateway==="
-echo "Informatics Gateway Host Name = $1"
-echo "Informatics Gateway Port      = $2"
-echo "Orthanc IP Address            = $3"
-echo "Orthanc SCP Port              = $4"
+echo "Informatics Gateway IP Address = $1"
+echo "Informatics Gateway Port       = $2"
+echo "Informatics Gateway AE TItle   = $3"
+echo "Orthanc IP Address             = $4"
+echo "Orthanc SCP Port               = $5"
 echo -e "\n"
 
 printf "\nAdding MONAI Deploy AE Title\n"
 curl --request POST "http://$1:$2/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\"}"  | jq
 printf "\nAdding DICOM Source\n"
-curl --request POST "http://$1:$2/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"aeTitle\": \"ORTHANC\"}"  | jq
+curl --request POST "http://$1:$2/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$4\",\"aeTitle\": \"ORTHANC\"}"  | jq
 printf "\nAdding DICOM Destination\n"
-curl --request POST "http://$1:$2/config/destination" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$3\",\"port\": $4,\"aeTitle\": \"ORTHANC\"}"  | jq
+curl --request POST "http://$1:$2/config/destination" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$4\",\"port\": $5,\"aeTitle\": \"ORTHANC\"}"  | jq
 printf "\nListing DICOM Sources\n"
 curl -f --request GET "http://$1:$2/config/source" | jq
 printf "\nListing DICOM Destinations\n"

@@ -178,6 +178,7 @@ services:
       - ./init.sh 
       - $INFORMATICS_GATEWAY_API_IP
       - $INFORMATICS_GATEWAY_API_PORT
+      - $INFORMATICS_GATEWAY_AE_TITLE
       - $ORTHANC_IP
       - $ORTHANC_SCP_PORT
     links:

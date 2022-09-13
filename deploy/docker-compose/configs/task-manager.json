@@ -16,14 +16,9 @@
       "concurrency": 1,
       "taskTimeoutMinutes": 60,
       "plug-ins": {
-        "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.ArgoPlugin, Monai.Deploy.WorkflowManager.TaskManager.Argo",
         "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker",
-        "aide_clinical_review": "Monai.Deploy.WorkflowManager.TaskManager.AideClinicalReview.AideClinicalReviewPlugin, Monai.Deploy.WorkflowManager.TaskManager.AideClinicalReview",
-        "test": "Monai.Deploy.WorkflowManager.TaskManager.TestPlugin.TestPlugin, Monai.Deploy.WorkflowManager.TaskManager.TestPlugin"
       },
       "meta-data": {
-        "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.Repositories.ArgoMetadataRepository, Monai.Deploy.WorkflowManager.TaskManager.Argo",
-        "test": "Monai.Deploy.WorkflowManager.TaskManager.TestPlugin.Repositories.TestPluginRepository, Monai.Deploy.WorkflowManager.TaskManager.TestPlugin"
       }
     },
     "messaging": {

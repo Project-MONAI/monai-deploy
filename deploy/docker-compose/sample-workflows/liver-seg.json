@@ -18,7 +18,6 @@
 			"type": "docker",
 			"args": {
 				"container_image": "ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0",
-				"user_group": "1000:1000",
 				"server_url": "unix:///var/run/docker.sock",
 				"entrypoint": "/bin/bash,-c",
 				"command": "python3 -u /opt/monai/app/app.py",
@@ -61,7 +60,7 @@
 			"artifacts": {
 				"input": [
 					{
-						"name": "report-dicom",
+						"name": "export-dicom",
 						"value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}",
 						"mandatory": true
 					}
