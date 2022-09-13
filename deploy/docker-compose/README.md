@@ -66,7 +66,7 @@ storescu -v +r +sd -aec ORTHANC localhost 4242 /path/to/my/dicom/*
 
 Navigate to the home page and click *All studies* to confirm data's been uploaded.
 
-### Sample Workflows
+## Sample Workflows
 
 Under the **sample-workflows* directory, a couple of sample workflow definitions are provided:
 
@@ -75,9 +75,9 @@ Under the **sample-workflows* directory, a couple of sample workflow definitions
 - `liver-seg.json`: AI Liver Segmentation MAP
 
 
-#### Hello World
+### Hello World
 
-##### Description
+#### Description
 
 This example uses the `alpine` image to print all files found in the input directory simply.
 
@@ -101,9 +101,9 @@ This example uses the `alpine` image to print all files found in the input direc
    ...
    ```
 
-#### AI Liver Segmentation MAP
+### AI Liver Segmentation MAP
 
-##### Description
+#### Description
 
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_livertumor_seg_app) from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
@@ -127,9 +127,9 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    $ docker logs {CONTAINER ID}
    ```
 
-#### AI Lung Segmentation MAP
+### AI Lung Segmentation MAP
 
-##### Description
+#### Description
 
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the **Lung Segmentation MAP** from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
@@ -259,3 +259,17 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
 	]
 }
 ```
+
+
+
+## Uninstallation
+
+- Delete MONAI Deploy Docker images
+  ```bash
+  docker rmi $(docker images | grep 'monai-deploy')
+  ```
+- Delete this package & data directories. By default, all data are stored under the `.md` directory where the `docker-compose.yml` file is stored.
+  ```bash
+  sudo rm -r DIR_TO_THE_PACKAGE
+
+  ```
