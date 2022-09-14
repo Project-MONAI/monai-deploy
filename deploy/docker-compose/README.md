@@ -11,11 +11,23 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 
 ## Prerequisites
 
+### Ubuntu 20.04 or later
+
 - [Docker Engine](https://docs.docker.com/engine/install/) v20.10.18+
 - [Docker Compose Plug-in](https://docs.docker.com/compose/install/) v2.10.2+
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 - MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
-- [jq](https://stedolan.github.io/jq/)
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
+
+### Windows with WSL 2
+
+- [WSLv2](https://docs.microsoft.com/en-us/windows/wsl/install)
+- [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
+  - With `Use the WSL 2 based engine` option enabled
+- [Ubuntu 22.04](https://www.microsoft.com/store/productId/9PN20MSR04DW) for WSL 2
+- [NVIDIA Windows Driver](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) for WSL 2
+- (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
+
 
 ## Installation
 
