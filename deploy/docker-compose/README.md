@@ -49,15 +49,6 @@ docker compose up -d # or run detached
 docker compose logs -t -f # view output from all containers
 ```
 
-### Common/Known Issues
-
-- The following erorr indicates that the version of `docker compose` may not be up-to-date as indicated in the [Prerequisites](#prerequisites) section. If the problem persists, modify the `TASK_MANAGER_DATA` variable defined in the `.env` file and change `$PWD/.md/mdtm` to a fully qualified path. E.g. `/home/monai/some/path/to/.md/mdtm/`.
-	```
-	ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
-	```
-
-	*WHY? The value of `TASK_MANAGER_DATA` is exposed to the Task Manager container as an environment variable in order for Task Manager to map the volume from the host to the MAP container correctly.*
-
 ### MONAI Deploy Services
 
 | Service                 | Host IP/Port          | Internal IP/Port        |
@@ -78,6 +69,15 @@ docker compose logs -t -f # view output from all containers
 | Orthanc SCP (optional)                                          | 4242                   | 4242                     |
 
 Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices. 
+
+### Common/Known Issues
+
+- The following erorr indicates that the version of `docker compose` may not be up-to-date as indicated in the [Prerequisites](#prerequisites) section. If the problem persists, modify the `TASK_MANAGER_DATA` variable defined in the `.env` file and change `$PWD/.md/mdtm` to a fully qualified path. E.g. `/home/monai/some/path/to/.md/mdtm/`.
+	```
+	ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
+	```
+
+	*WHY? The value of `TASK_MANAGER_DATA` is exposed to the Task Manager container as an environment variable in order for Task Manager to map the volume from the host to the MAP container correctly.*
 
 ## Running a MONAI Deploy Workflow
 
