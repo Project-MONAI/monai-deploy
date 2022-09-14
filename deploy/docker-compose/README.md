@@ -180,25 +180,25 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
 
 In the `combo.json` workflow definition, we combined the AI Lung MAP and the AI Liver MAP into one single workflow definition. With this workflow definition, the Workflow Manager would route the incoming data based on the routing rules defined.
 
-1. Download one or both of the (#running-a-monai-deploy-workflow) dataset provided above
-2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
-3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
-   ```
-   $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/combo.json"  http://localhost:5001/workflows
+   1. Download one or both of the [datasets](#running-a-monai-deploy-workflow) provided above
+   2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
+   3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+      ```
+      $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/combo.json"  http://localhost:5001/workflows
 
-   {"workflow_id":"6d5e1e73-bd07-4e71-b1fa-b66408d43b82"}
-   ```
-   If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
-4. Navigate to Orthanc, select one of the studies and then click *Send to DICOM Modality* from the menu on the left.
-   In the popup dialog, choose **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
-6. To see the output from the container, run the following commands:
-   ```bash
-   $ docker container list -a | grep monai_ai_
-   # locate the container ID and run the following
-   $ docker logs {CONTAINER ID}
-   ```
-7. Repeat the steps with the other dataset.
+      {"workflow_id":"6d5e1e73-bd07-4e71-b1fa-b66408d43b82"}
+      ```
+      If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
+   4. Navigate to Orthanc, select one of the studies and then click *Send to DICOM Modality* from the menu on the left.
+      In the popup dialog, choose **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
+   5. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
+   6. To see the output from the container, run the following commands:
+      ```bash
+      $ docker container list -a | grep monai_ai_
+      # locate the container ID and run the following
+      $ docker logs {CONTAINER ID}
+      ```
+   7. Repeat the steps with the other dataset.
 
 In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) should only launch the AI Lung MAP, while the [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) would launch the AI Liver MAP.
 
@@ -211,7 +211,7 @@ In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7
 
 ### Docker-Compose Configuration
 
-All services included in the `docker-compose` file may be customized through the default environment file, `.env`, file 
+All services included in the `docker-compose` file may be customized through the default environment file, `.env`, file.
 
 *Note: Changing any IP address or port number requires an update to the applicable service configuration files.*
 
@@ -227,9 +227,9 @@ To accept DICOM dataset from external DICOM devices or PACS, first, configure yo
 - Port: 104 (see `INFORMATICS_GATEWAY_SCP_PORT` in `.env` file)
 - AE Title: MONAI-DEPLOY (see `INFORMATICS_GATEWAY_AE_TITLE` in `.env` file)
 
-Informatics Gateway is configured in this package to accept any association from any DICOM devices. To disable this feature and allow data source validation, set `rejectUnknownSources` to `true` in the [informatics-gateway.json](configs/informatics-gateway.json). Once `rejectUnknownSources` is set to `true`, you must register each data source using `curl`. Check out [config-ig.sh](configs/config-ig.sh)) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configsource) for complete reference.
+Informatics Gateway is configured in this package to accept any association from any DICOM devices. To disable this feature and enable data source validation, set `rejectUnknownSources` to `true` in the [informatics-gateway.json](configs/informatics-gateway.json). Once `rejectUnknownSources` is set to `true`, you must register each data source using `curl`. Check out [config-ig.sh](configs/config-ig.sh) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configsource) for complete reference.
 
-To export DICOM results to external DICOM devices, you must first register them with the Informatics Gateway using `curl`. Check out [config-ig.sh](configs/config-ig.sh)) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configdestination) for complete reference.
+To export DICOM results to external DICOM devices, you must first register them with the Informatics Gateway using `curl`. Check out [config-ig.sh](configs/config-ig.sh) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configdestination) for complete reference.
 
 Any changes made in this section must also reflect in your workflow definition. Therefore, follow the next section to compose your workflow definition.
 
