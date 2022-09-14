@@ -19,7 +19,9 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
-### Windows with WSL 2
+
+
+### Windows Subsystem for Linux v2
 
 - [WSLv2](https://docs.microsoft.com/en-us/windows/wsl/install)
 - [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
@@ -28,6 +30,8 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - [NVIDIA Windows Driver](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) for WSL 2
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
+
+*Note: see [tips](#tips--hints) section additional instructions.*
 
 ## Installation
 
@@ -206,6 +210,37 @@ In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7
 
 - If you are using your DICOM dataset, please remove the router task or modify the routing conditions to meet your needs.
 - If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, if the Chest CT dataset was sent, the Workflow Manager would launch three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
+
+### Enable NVIDIA Container Runtime for Docker
+
+To enable NVIDIA runtime for Docker, append the following section to `/etc/docker/daemon.json` for Linux. FOr WSLv2, open Docker Desktop Settings and go to Docker Engine and append the following:
+
+```json
+  "runtimes": {
+    "nvidia": {
+      "path": "nvidia-container-runtime",
+      "runtimeArgs": []
+    }
+  }
+```
+
+### WSL
+
+If you encounter an error in section 3 on [CUDA Support for WSL 2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html#cuda-support-for-wsl2), use the following:
+
+```bash
+ sudo apt-key del 7fa2af80
+
+ wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
+ sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
+ wget https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda-repo-wsl-ubuntu-11-7-local_11.7.0-1_amd64.deb
+ sudo dpkg -i cuda-repo-wsl-ubuntu-11-7-local_11.7.0-1_amd64.deb
+
+ sudo cp /var/cuda-repo-wsl-ubuntu-11-7-local/*.gpg /usr/share/keyrings/
+
+ sudo apt-get update
+ sudo apt-get -y install cuda
+```
 
 ## Advanced Configuration
 
