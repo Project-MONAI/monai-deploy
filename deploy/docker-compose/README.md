@@ -29,7 +29,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
 
-**IMPORTANT: Please ensure Docker and Docker Compose are up-to-date.**
+**IMPORTANT: Please ensure all prerequisites are up-to-date.**
 
 *Note: see [tips](#tips--hints) section for additional instructions.*
 
@@ -228,7 +228,7 @@ In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7
 
 ### Enable NVIDIA Container Runtime for Docker
 
-To enable NVIDIA runtime for Docker, append the following section to `/etc/docker/daemon.json` for Linux. FOr WSLv2, open Docker Desktop Settings and go to Docker Engine and append the following:
+To enable NVIDIA runtime for Docker, append the following section to `/etc/docker/daemon.json` for Linux. For WSLv2, open Docker Desktop Settings and go to Docker Engine and append the following:
 
 ```json
   "runtimes": {
@@ -277,9 +277,9 @@ To accept DICOM dataset from external DICOM devices or PACS, first, configure yo
 - Port: 104 (see `INFORMATICS_GATEWAY_SCP_PORT` in `.env` file)
 - AE Title: MONAI-DEPLOY (see `INFORMATICS_GATEWAY_AE_TITLE` in `.env` file)
 
-Informatics Gateway is configured in this package to accept any association from any DICOM devices. To disable this feature and enable data source validation, set `rejectUnknownSources` to `true` in the [informatics-gateway.json](configs/informatics-gateway.json). Once `rejectUnknownSources` is set to `true`, you must register each data source using `curl`. Check out [config-ig.sh](configs/config-ig.sh) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configsource) for complete reference.
+Informatics Gateway is configured in this package to accept any association from any DICOM devices. To disable this feature and enable data source validation, set `rejectUnknownSources` to `true` in the [informatics-gateway.json](configs/informatics-gateway.json). Once `rejectUnknownSources` is set to `true`, you must register each data source using `curl`. Check out [config-ig.sh](configs/config-ig.sh) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configsource) for the complete reference.
 
-To export DICOM results to external DICOM devices, you must first register them with the Informatics Gateway using `curl`. Check out [config-ig.sh](configs/config-ig.sh) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configdestination) for complete reference.
+To export DICOM results to external DICOM devices, you must first register them with the Informatics Gateway using `curl`. Check out [config-ig.sh](configs/config-ig.sh) for examples and [Configuration API](https://monai.io/monai-deploy-informatics-gateway/api/rest/config.html#post-configdestination) for the complete reference.
 
 Any changes made in this section must also reflect in your workflow definition. Therefore, follow the next section to compose your workflow definition.
 
