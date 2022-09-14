@@ -31,7 +31,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
 
-*Note: see [tips](#tips--hints) section additional instructions.*
+*Note: see [tips](#tips--hints) section for additional instructions.*
 
 ## Installation
 
