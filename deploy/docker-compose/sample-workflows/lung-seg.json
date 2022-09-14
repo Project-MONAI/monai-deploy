@@ -13,6 +13,17 @@
 	},
 	"tasks": [
 		{
+			"id": "router",
+			"description": "router task",
+			"type": "router",
+			"task_destinations": [
+				{
+					"name": "lung",
+					"conditions": "{{context.dicom.series.any('0008','103E')}} == 'Axial Chest CT COVID-19'"
+				}
+			]
+		},
+		{
 			"id": "lung",
 			"description": "Execute Lung Segmentation MAP",
 			"type": "docker",

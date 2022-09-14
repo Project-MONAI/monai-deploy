@@ -73,7 +73,7 @@ Under the **sample-workflows* directory, a couple of sample workflow definitions
 - `hello-world.json `: Hello World!
 - `lung-seg.json`: AI Lung Segmentation MAP
 - `liver-seg.json`: AI Liver Segmentation MAP
-
+- `combo.json`: Workflow with both AI Lung & AI Liver MAPs
 
 ### Hello World
 
@@ -153,6 +153,36 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    $ docker logs {CONTAINER ID}
    ```
 
+### Combo - AI Lung + AI Liver MAPs
+
+In the `combo.json` workflow definition, we combined the AI Lung MAP and the AI Liver MAP into one single workflow definition. With this workflow definition, the Workflow Manager would route the incoming data based on the routing rules defined.
+
+1. Download the data sets from [here](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) and [here](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing).
+2. Upload the dataset as described in [Uploading Data](#uploading-data)
+3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+   ```
+   $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/combo.json"  http://localhost:5001/workflows
+
+   {"workflow_id":"6d5e1e73-bd07-4e71-b1fa-b66408d43b82"}
+   ```
+   If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
+4. Navigate to Orthanc, select one of the studies and then click *Send to DICOM Modality* from the menu on the left.
+   In the popup dialog, choose **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
+5. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
+6. To see the output from the container, run the following commands:
+   ```bash
+   $ docker container list -a | grep monai_ai_lung_seg_app
+   # locate the container ID and run the following
+   $ docker logs {CONTAINER ID}
+   ```
+
+In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) should only launch the AI Lung MAP, while the [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) would launch the AI Liver MAP.
+
+## Tips & Hints
+
+- If you are using your DICOM dataset, please ensure to remove the router task or modify the routing conditions.
+- If all four workflow definitions are registered, and only one of the provided DICOM studies was sent, then three workflows are executed. For example, if the Chest CT dataset was sent, then Workflow Manager would launch three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
+
 ## Advanced Configuration
 
 ### Docker-Compose Configuration
@@ -200,6 +230,17 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
 		]
 	},
 	"tasks": [ # one or more tasks allowed
+		{
+			"id": "router", # name of the task
+			"description": "Ensure series description contains liver", # description of the task
+			"type": "router", # router denotes we are routing data to another task or tasks based on the conditions
+			"task_destinations": [ # list of downstream tasks to be executed when this task completes
+				{
+					"name": "liver", # if the following condition matches, the dataset is routed to the liver task.
+					"conditions": "{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'" # matches series description by the value specified.
+				}
+			]
+		},
 		{
 			"id": "liver", # name of the task
 			"description": "Execute Liver Segmentation MAP", # description of the task

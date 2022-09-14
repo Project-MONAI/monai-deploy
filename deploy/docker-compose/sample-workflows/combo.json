@@ -1,7 +1,7 @@
 {
-	"name": "ai-liver-seg",
+	"name": "all-in-one",
 	"version": "1.0.0",
-	"description": "AI Liver Segmentation",
+	"description": "AI Liver & Lung Segmentation",
 	"informatics_gateway": {
 		"ae_title": "MONAI-DEPLOY",
 		"data_origins": [
@@ -14,12 +14,16 @@
 	"tasks": [
 		{
 			"id": "router",
-			"description": "Ensure series description contains liver",
+			"description": "Route data based on series description",
 			"type": "router",
 			"task_destinations": [
 				{
 					"name": "liver",
 					"conditions": "{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'"
+				},
+				{
+					"name": "lung",
+					"conditions": "{{context.dicom.series.any('0008','103E')}} == 'Axial Chest CT COVID-19'"
 				}
 			]
 		},
@@ -73,6 +77,62 @@
 					{
 						"name": "export-dicom",
 						"value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}",
+						"mandatory": true
+					}
+				],
+				"output": []
+			}
+		},
+		{
+			"id": "lung",
+			"description": "Execute Lung Segmentation MAP",
+			"type": "docker",
+			"args": {
+				"container_image": "ghcr.io/mmelqin/monai_ai_lung_seg_app:1.0",
+				"server_url": "unix:///var/run/docker.sock",
+				"entrypoint": "/bin/bash,-c",
+				"command": "python3 -u /opt/monai/app/app.py",
+				"task_timeout_minutes": "5",
+				"temp_storage_container_path": "/var/lib/monai/",
+				"env_MONAI_INPUTPATH": "/var/monai/input/",
+				"env_MONAI_OUTPUTPATH": "/var/monai/output/",
+				"env_MONAI_MODELPATH": "/opt/monai/models/",
+				"env_MONAI_WORKDIR": "/var/monai/"
+			},
+			"artifacts": {
+				"input": [
+					{
+						"name": "env_MONAI_INPUTPATH",
+						"value": "{{ context.input.dicom }}"
+					}
+				],
+				"output": [
+					{
+						"name": "env_MONAI_OUTPUTPATH",
+						"mandatory": true
+					}
+				]
+			},
+			"task_destinations": [
+				{
+					"name": "export-lung-seg"
+				}
+			]
+		},
+		{
+			"id": "export-lung-seg",
+			"description": "Export Segmentation Storage Object",
+			"type": "export",
+			"export_destinations": [
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "export-dicom",
+						"value": "{{ context.executions.lung.artifacts.env_MONAI_OUTPUTPATH }}",
 						"mandatory": true
 					}
 				],
