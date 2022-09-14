@@ -18,14 +18,14 @@ services:
   minio:
     image: $MINIO_IMAGE
     hostname: $MINIO_HOSTNAME
-    container_name: $MINIO_HOSTNAME
-    command: server --console-address ":$MINIO_CONSOLE_PORT" /data
+    container_name: $MINIO_CONTAINERNAME
+    command: server --console-address ":9001" /data
     volumes:
       - $MINIO_DATA:/data
       - $MINIO_CONFIG:/root/.minio
     ports:
-      - $MINIO_API_PORT:$MINIO_API_PORT
-      - $MINIO_CONSOLE_PORT:$MINIO_CONSOLE_PORT
+      - $MINIO_API_PORT:9000
+      - $MINIO_CONSOLE_PORT:9001
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -40,6 +40,7 @@ services:
         
   createbuckets:
     image: $MINIO_MC_IMAGE
+    container_name: $MINIO_CONFIG_CONTAINERNAME
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -63,15 +64,15 @@ services:
   rabbitmq:
     image: $RABBITMQ_IMAGE
     hostname: $RABBITMQ_HOSTNAME
-    container_name: $RABBITMQ_HOSTNAME
+    container_name: $RABBITMQ_CONTAINERNAME
     environment:
       RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
       RABBITMQ_DEFAULT_USER: "admin"
       RABBITMQ_DEFAULT_PASS: "admin"
       RABBITMQ_DEFAULT_VHOST: "monaideploy"
     ports:
-      - $RABBITMQ_PORT:$RABBITMQ_PORT
-      - $RABBITMQ_MGT_PORT:$RABBITMQ_MGT_PORT
+      - $RABBITMQ_PORT:5672
+      - $RABBITMQ_MGT_PORT:15672
     volumes:
       - $RABBITMQ_DATA:/var/lib/rabbitmq/mnesia/
     networks:
@@ -86,12 +87,12 @@ services:
   mongodb:
     image: $MONGODB_IMAGE
     hostname: $MONGODB_HOSTNAME
-    container_name: $MONGODB_HOSTNAME
+    container_name: $MONGODB_CONTAINERNAME
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
     ports:
-      - $MONGODB_PORT:$MONGODB_PORT
+      - $MONGODB_PORT:27017
     volumes:
       - $MONGODB_DATA:/data/db
     networks:
@@ -107,13 +108,13 @@ services:
   orthanc:
     image: $ORTHANC_IMAGE
     hostname: $ORTHANC_HOSTNAME
-    container_name: $ORTHANC_HOSTNAME
+    container_name: $ORTHANC_CONTAINERNAME
     volumes:
       - ./configs/orthanc.json:/etc/orthanc/orthanc.json
       - $ORTHANC_DATA:/var/lib/orthanc/db/
     ports:
-      - "$ORTHANC_SCP_PORT:$ORTHANC_SCP_PORT"
-      - "$ORTHANC_UI_PORT:$ORTHANC_UI_PORT"
+      - $ORTHANC_SCP_PORT:4242
+      - $ORTHANC_UI_PORT:8042
     environment:
       VERBOSE_ENABLED: "true"
       DICOM_WEB_PLUGIN_ENABLED: "true"
@@ -131,7 +132,7 @@ services:
   informatics-gateway:
     image: $INFORMATICS_GATEWAY_IMAGE
     hostname: $INFORMATICS_GATEWAY_HOSTNAME
-    container_name: informatics-gateway
+    container_name: $INFORMATICS_GATEWAY_CONTAINERNAME
     volumes:
       - ./configs/informatics-gateway.json:/opt/monai/ig/appsettings.json
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/ig/plug-ins/
@@ -140,9 +141,9 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:$INFORMATICS_GATEWAY_API_PORT
     ports:
-      - $INFORMATICS_GATEWAY_SCP_PORT:$INFORMATICS_GATEWAY_SCP_PORT
-      - $INFORMATICS_GATEWAY_HL7_PORT:$INFORMATICS_GATEWAY_HL7_PORT
-      - $INFORMATICS_GATEWAY_API_PORT:$INFORMATICS_GATEWAY_API_PORT
+      - $INFORMATICS_GATEWAY_SCP_PORT:104
+      - $INFORMATICS_GATEWAY_HL7_PORT:2575
+      - $INFORMATICS_GATEWAY_API_PORT:5000
     networks:
       monaideploy:
           ipv4_address: $INFORMATICS_GATEWAY_API_IP
@@ -163,6 +164,7 @@ services:
 
   configure-ig:
     image: $INFORMATICS_GATEWAY_CONFIG_IMAGE
+    container_name: $INFORMATICS_GATEWAY_CFG_CONTAINERNAME
     networks:
       monaideploy:
           ipv4_address: $INFORMATICS_GATEWAY_API_CONFIG_IP
@@ -187,14 +189,14 @@ services:
   workflow-manager:
     image: $WORKFLOW_MANAGER_IMAGE
     hostname: $WORKFLOW_MANAGER_HOSTNAME
-    container_name: $WORKFLOW_MANAGER_HOSTNAME
+    container_name: $WORKFLOW_MANAGER_CONTAINERNAME
     volumes:
       - ./configs/workflow-manager.json:/opt/monai/wm/appsettings.json
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
-      ASPNETCORE_URLS: http://+:$WORKFLOW_MANAGER_PORT
+      ASPNETCORE_URLS: http://+:5001
     ports:
-      - $WORKFLOW_MANAGER_PORT:$WORKFLOW_MANAGER_PORT
+      - $WORKFLOW_MANAGER_PORT:5001
     networks:
       monaideploy:
           ipv4_address: $WORKFLOW_MANAGER_IP
@@ -214,17 +216,17 @@ services:
   task-manager:
     image: $TASK_MANAGER_IMAGE
     hostname: $TASK_MANAGER_HOSTNAME
-    container_name: $TASK_MANAGER_HOSTNAME
+    container_name: $TASK_MANAGER_CONTAINERNAME
     volumes:
       - ./configs/task-manager.json:/opt/monai/wm/appsettings.json
       - $TASK_MANAGER_DATA:/var/lib/monai/:rw
       - /var/run/docker.sock:/var/run/docker.sock
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
-      ASPNETCORE_URLS: http://+:$TASK_MANAGER_PORT
+      ASPNETCORE_URLS: http://+:5002
       HOST_TEMP_STORAGE : $TASK_MANAGER_DATA
     ports:
-      - $TASK_MANAGER_PORT:$TASK_MANAGER_PORT
+      - $TASK_MANAGER_PORT:5002
     networks:
       monaideploy:
           ipv4_address: $TASK_MANAGER_IP

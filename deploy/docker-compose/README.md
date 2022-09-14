@@ -19,8 +19,6 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
-
-
 ### Windows Subsystem for Linux v2
 
 - [WSLv2](https://docs.microsoft.com/en-us/windows/wsl/install)
@@ -30,6 +28,8 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - [NVIDIA Windows Driver](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) for WSL 2
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
+
+**IMPORTANT: Please ensure Docker and Docker Compose are up-to-date.**
 
 *Note: see [tips](#tips--hints) section for additional instructions.*
 
@@ -72,13 +72,19 @@ Note: Orthanc is included for convenience and to demo end-to-end workflow execut
 
 ### Common/Known Issues
 
-- The following erorr indicates that the version of `docker compose` may not be up-to-date as indicated in the [Prerequisites](#prerequisites) section. If the problem persists, modify the `TASK_MANAGER_DATA` variable defined in the `.env` file and change `$PWD/.md/mdtm` to a fully qualified path. E.g. `/home/monai/some/path/to/.md/mdtm/`.
+- The following error indicates that the `docker compose` version may not be up-to-date. If the problem persists, modify the `TASK_MANAGER_DATA` variable defined in the `.env` file and change `$PWD/.md/mdtm` to a fully qualified path. E.g. `/home/monai/some/path/to/.md/mdtm/`.
 	```
 	ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
 	```
 
 	*WHY? The value of `TASK_MANAGER_DATA` is exposed to the Task Manager container as an environment variable in order for Task Manager to map the volume from the host to the MAP container correctly.*
 
+- The Informatics Gateway service is unhealthy and fails to start with the following error if Docker is not up-to-date:
+  ```bash
+  $ docker logs mdl-ig
+  Failed to create CoreCLR, HRESULT: 0x80070008
+  ```
+  
 ## Running a MONAI Deploy Workflow
 
 This package includes Orthanc running and connected to the Informatics Gateway, with all required AE Titles pre-configured.
