@@ -50,19 +50,19 @@ docker compose logs -t -f # view output from all containers
 | Service                 | Host IP/Port          | Internal IP/Port        |
 | ----------------------- | --------------------- | ----------------------- |
 | Informatics Gateway UI  | http://localhost:5000 | http://172.29.0.50:5000 |
-| Informatics Gateway SCP | 104                   |
+| Informatics Gateway SCP | 104                   | 104                     |
 | Workflow Manager        | http://localhost:5001 | http://172.29.0.60:5001 |
 | Task Manager            | http://localhost:5002 | http://172.29.0.70:5002 |
 
 ### Third-Party Services
 
-| Service                                                         | Host IP/Port                  | Internal IP/Port         |
-| --------------------------------------------------------------- | ----------------------------- | ------------------------ |
-| MinIO (default storage service)                                 | http://localhost:9001         | http://172.29.0.10:9001  |
-| RabbitMQ (default message broker service)                       | [104](http://localhost:15672) | http://172.29.0.20:15672 |
-| MongoDB (default database for Worklflow Manager & Task Manager) | http://localhost:27017        | http://172.29.0.30:27017 |
-| Orthanc UI (optional)                                           | http://localhost:8042         | http://172.29.0.100:8042 |
-| Orthanc SCP (optional)                                          | 4242                          |
+| Service                                                         | Host IP/Port           | Internal IP/Port         |
+| --------------------------------------------------------------- | ---------------------- | ------------------------ |
+| MinIO (default storage service)                                 | http://localhost:9001  | http://172.29.0.10:9001  |
+| RabbitMQ (default message broker service)                       | http://localhost:15672 | http://172.29.0.20:15672 |
+| MongoDB (default database for Worklflow Manager & Task Manager) | http://localhost:27017 | http://172.29.0.30:27017 |
+| Orthanc UI (optional)                                           | http://localhost:8042  | http://172.29.0.100:8042 |
+| Orthanc SCP (optional)                                          | 4242                   | 4242                     |
 
 Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices. 
 
