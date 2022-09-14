@@ -47,22 +47,22 @@ docker compose logs -t -f # view output from all containers
 
 ### MONAI Deploy Services
 
-| Service | Host IP/Port | Internal IP/Port |
-|-|-|-|
-| Informatics Gateway UI | http://localhost:5000 | http://172.29.0.50:5000 |
-| Informatics Gateway SCP | 104 |
-| Workflow Manager | http://localhost:5001 | http://172.29.0.60:5001 |
-| Task Manager | http://localhost:5002 | http://172.29.0.70:5002 |
+| Service                 | Host IP/Port          | Internal IP/Port        |
+| ----------------------- | --------------------- | ----------------------- |
+| Informatics Gateway UI  | http://localhost:5000 | http://172.29.0.50:5000 |
+| Informatics Gateway SCP | 104                   |
+| Workflow Manager        | http://localhost:5001 | http://172.29.0.60:5001 |
+| Task Manager            | http://localhost:5002 | http://172.29.0.70:5002 |
 
 ### Third-Party Services
 
-| Service | Host IP/Port | Internal IP/Port |
-|-|-|-|
-| MinIO (default storage service) | http://localhost:9001 | http://172.29.0.10:9001 |
-| RabbitMQ (default message broker service) | [104](http://localhost:15672) | http://172.29.0.20:15672 |
-| MongoDB (default database for Worklflow Manager & Task Manager) | http://localhost:27017 | http://172.29.0.30:27017 |
-| Orthanc UI (optional) | http://localhost:8042 | http://172.29.0.100:8042 |
-| Orthanc SCP (optional) | 4242 |
+| Service                                                         | Host IP/Port                  | Internal IP/Port         |
+| --------------------------------------------------------------- | ----------------------------- | ------------------------ |
+| MinIO (default storage service)                                 | http://localhost:9001         | http://172.29.0.10:9001  |
+| RabbitMQ (default message broker service)                       | [104](http://localhost:15672) | http://172.29.0.20:15672 |
+| MongoDB (default database for Worklflow Manager & Task Manager) | http://localhost:27017        | http://172.29.0.30:27017 |
+| Orthanc UI (optional)                                           | http://localhost:8042         | http://172.29.0.100:8042 |
+| Orthanc SCP (optional)                                          | 4242                          |
 
 Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices. 
 
@@ -72,14 +72,14 @@ This package includes Orthanc running and connected to the Informatics Gateway, 
 
 To get started, download the following DICOM datasets and upload them to Orthanc.
 
--  [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
-- [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing). 
+- [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
+- [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing)
 
 Note: these DICOM datasets were converted to DICOM from Medical Decathlon training and validation mages & may be used for the referenced examples later in this document.
 
 ### Upload DICOM Datasets
 
-Navigate to Orthanc via http://localhost:8042 or http://172.29.0.100:8042, and click *Upload* on the top right-hand corner.
+Navigate to Orthanc via http://localhost:8042, and click *Upload* on the top right-hand corner.
 Drag & drop any DICOM files (no folders) to the blue box on the page and then click *Start the upload*.
 
 Or, upload your files to Orthanc using the *storescu* command from [dcmtk](https://dcmtk.org/dcmtk.php.en).
@@ -91,12 +91,12 @@ Navigate to the home page and click *All studies* to confirm data's been uploade
 
 ## Sample Workflows
 
-The **sample-workflows* directory includes the following four sample workflow definitions:
+The **sample-workflows** directory includes the following four sample workflow definitions:
 
 - `hello-world.json `: Hello World!
 - `lung-seg.json`: AI Lung Segmentation MAP
 - `liver-seg.json`: AI Liver Segmentation MAP
-- `combo.json`: Workflow with both AI Lung & AI Liver MAPs
+- `combo.json`: AI Lung & AI Liver Combo
 
 ### Hello World
 
@@ -131,8 +131,8 @@ This example uses the `alpine` image to print all files found in the input direc
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_livertumor_seg_app) from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
 
-1. Download the dataset from [here](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing)
-2. Upload the dataset as described in [Uploading Data](#uploading-data)
+1. Download the [Abdomen CT dataset](#running-a-monai-deploy-workflow) dataset
+2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
 3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
    ```
    $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/liver-seg.json"  http://localhost:5001/workflows
@@ -142,8 +142,8 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
 4. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
-6. To see the output from the container, run the following commands:
+5. Wait for the workflow to complete, reload the Orthanc study page and expect a new series to appear with the segmentation object.
+6. To see the output of the container, run the following commands:
    ```bash
    $ docker container list -a | grep monai_ai_livertumor_seg_app
    # locate the container ID and run the following
@@ -157,8 +157,8 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the **Lung Segmentation MAP** from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
 
-1. Download the data set from [here](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
-2. Upload the dataset as described in [Uploading Data](#uploading-data)
+1. Download the [Chest CT dataset](#running-a-monai-deploy-workflow) dataset
+2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
 3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
    ```
    $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/lung-seg.json"  http://localhost:5001/workflows
@@ -168,7 +168,7 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
 4. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
+5. Wait for the workflow to complete, reload the Orthanc study page and expect a new series to appear with the segmentation object.
 6. To see the output from the container, run the following commands:
    ```bash
    $ docker container list -a | grep monai_ai_lung_seg_app
@@ -180,8 +180,8 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
 
 In the `combo.json` workflow definition, we combined the AI Lung MAP and the AI Liver MAP into one single workflow definition. With this workflow definition, the Workflow Manager would route the incoming data based on the routing rules defined.
 
-1. Download the data sets from [here](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) and [here](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing).
-2. Upload the dataset as described in [Uploading Data](#uploading-data)
+1. Download one or both of the (#running-a-monai-deploy-workflow) dataset provided above
+2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
 3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
    ```
    $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/combo.json"  http://localhost:5001/workflows
@@ -194,17 +194,18 @@ In the `combo.json` workflow definition, we combined the AI Lung MAP and the AI 
 5. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
 6. To see the output from the container, run the following commands:
    ```bash
-   $ docker container list -a | grep monai_ai_lung_seg_app
+   $ docker container list -a | grep monai_ai_
    # locate the container ID and run the following
    $ docker logs {CONTAINER ID}
    ```
+7. Repeat the steps with the other dataset.
 
 In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) should only launch the AI Lung MAP, while the [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) would launch the AI Liver MAP.
 
 ## Tips & Hints
 
-- If you are using your DICOM dataset, please ensure to remove the router task or modify the routing conditions.
-- If all four workflow definitions are registered, and only one of the provided DICOM studies was sent, then three workflows are executed. For example, if the Chest CT dataset was sent, then Workflow Manager would launch three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
+- If you are using your DICOM dataset, please remove the router task or modify the routing conditions to meet your needs.
+- If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, if the Chest CT dataset was sent, the Workflow Manager would launch three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
 
 ## Advanced Configuration
 
