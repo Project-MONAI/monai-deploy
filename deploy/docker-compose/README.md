@@ -35,7 +35,7 @@ To use MONAI Deploy Lite, install all prerequisites & download this entire direc
 
 ## Start the Services
 
-The [docker compose file](docker-compose.yml) spins up the following services. Each service may be accessed at the IP and port described below using the default [.env](.env) configuration file.
+The [docker compose file](docker-compose.yml) spins up the following services. Services are accessible at the IP addresses and ports listed below and may be modified in the [.env](.env) configuration file.
 
 Execute the following command to bring up all services.
 
@@ -46,27 +46,38 @@ docker compose logs -t -f # view output from all containers
 ```
 
 ### MONAI Deploy Services
-- Informatics Gateway - http://localhost:5000 or http://172.29.0.50:5000
-  - SCP Port 104
-- Workflow Manager - http://localhost:5001 or http://172.29.0.60:5001
-- Task Manager - http://localhost:5002 or http://172.29.0.70:5002
+
+| Service | Host IP/Port | Internal IP/Port |
+|-|-|-|
+| Informatics Gateway UI | http://localhost:5000 | http://172.29.0.50:5000 |
+| Informatics Gateway SCP | 104 |
+| Workflow Manager | http://localhost:5001 | http://172.29.0.60:5001 |
+| Task Manager | http://localhost:5002 | http://172.29.0.70:5002 |
 
 ### Third-Party Services
-- MinIO (default storage service) - http://localhost:9001 or http://172.29.0.10:9001
-- RabbitMQ (default message broker service) - http://localhost:15672 or http://172.29.0.20:15672
-- MongoDB (default database for Worklfow Manager & Task Manager) - http://localhost:27017 or http://172.29.0.30:27017
-- Orthanc (optional) - http://localhost:8042 or http://172.29.0.100:8042
-  - SCP Port 4242
 
-Note: Orthanc service is included for convenience to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices,
+| Service | Host IP/Port | Internal IP/Port |
+|-|-|-|
+| MinIO (default storage service) | http://localhost:9001 | http://172.29.0.10:9001 |
+| RabbitMQ (default message broker service) | [104](http://localhost:15672) | http://172.29.0.20:15672 |
+| MongoDB (default database for Worklflow Manager & Task Manager) | http://localhost:27017 | http://172.29.0.30:27017 |
+| Orthanc UI (optional) | http://localhost:8042 | http://172.29.0.100:8042 |
+| Orthanc SCP (optional) | 4242 |
+
+Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices. 
 
 ## Running a MONAI Deploy Workflow
 
 This package includes Orthanc running and connected to the Informatics Gateway, with all required AE Titles pre-configured.
 
-To get started, upload any DICOM dataset to Orthanc. If you don't have any DICOM dataset available, please feel free to download the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) or [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing). These datasets were converted to DICOM from Medical Decathlon training and validation mages & may be used for the referenced examples later in this document.
+To get started, download the following DICOM datasets and upload them to Orthanc.
 
-### Uploading Data
+-  [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
+- [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing). 
+
+Note: these DICOM datasets were converted to DICOM from Medical Decathlon training and validation mages & may be used for the referenced examples later in this document.
+
+### Upload DICOM Datasets
 
 Navigate to Orthanc via http://localhost:8042 or http://172.29.0.100:8042, and click *Upload* on the top right-hand corner.
 Drag & drop any DICOM files (no folders) to the blue box on the page and then click *Start the upload*.
@@ -80,7 +91,7 @@ Navigate to the home page and click *All studies* to confirm data's been uploade
 
 ## Sample Workflows
 
-Under the **sample-workflows* directory, a couple of sample workflow definitions are provided:
+The **sample-workflows* directory includes the following four sample workflow definitions:
 
 - `hello-world.json `: Hello World!
 - `lung-seg.json`: AI Lung Segmentation MAP
@@ -91,7 +102,7 @@ Under the **sample-workflows* directory, a couple of sample workflow definitions
 
 #### Description
 
-This example uses the `alpine` image to print all files found in the input directory simply.
+This example uses the `alpine` image to print all files found in the input directory.
 
 1. Deploy the workflow definition to MONAI Deploy Workflow Manager:
    ```
@@ -229,87 +240,87 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
 
 ```json
 {
-	"name": "ai-liver-seg", # name of the workflow
-	"version": "1.0.0", # version of the workflow
-	"description": "AI Liver Segmentation", # a description of the workflow
-	"informatics_gateway": { # defines data ingestion and export
-		"ae_title": "MONAI-DEPLOY", # name of the IG AE Title receiving your DICOM data
-		"data_origins": [ # one or more external DICOM devices sending data to the IG
-			"ORTHANC" # Name of that external DICOM device (name configured in IG)
-		],
-		"export_destinations": [ # zero or more external DICOM devices that will be receiving AI-generated results
-			"ORTHANC" # Name of that external DICOM device (name configured in IG)
-		]
-	},
-	"tasks": [ # one or more tasks allowed
-		{
-			"id": "router", # name of the task
-			"description": "Ensure series description contains liver", # description of the task
-			"type": "router", # router denotes we are routing data to another task or tasks based on the conditions
-			"task_destinations": [ # list of downstream tasks to be executed when this task completes
-				{
-					"name": "liver", # if the following condition matches, the dataset is routed to the liver task.
-					"conditions": "{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'" # matches series description by the value specified.
-				}
-			]
-		},
-		{
-			"id": "liver", # name of the task
-			"description": "Execute Liver Segmentation MAP", # description of the task
-			"type": "docker", # docker denotes we are running this task using Docker plug-in
-			"args": {
-				"container_image": "ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0", # container image
-				"server_url": "unix:///var/run/docker.sock", # how the Docker plug-in communicates with Docker API
-				"entrypoint": "/bin/bash,-c", # entrypoint of your container image; separated by commas
-				"command": "python3 -u /opt/monai/app/app.py", # commands to execute with the container image; separated by commas
-				"task_timeout_minutes": "5", # how long this task is expected to execute; terminated after the configured value
-				"temp_storage_container_path": "/var/lib/monai/", # how thd Docker plug-in maps your data from host to container - this is mapped to `$TASK_MANAGER_DATA` in the docker-compose file 
-				"env_MONAI_INPUTPATH": "/var/monai/input/", # an environment varible provided to the container to read the input data
-				"env_MONAI_OUTPUTPATH": "/var/monai/output/", # an environment variable provided to the container to write AI-genrated results
-				"env_MONAI_MODELPATH": "/opt/monai/models/", # an environment variable provided to the container to located AI models
-				"env_MONAI_WORKDIR": "/var/monai/" # an environment variable provided to the container for storing temporary artifacts
-			},
-			"artifacts": {
-				"input": [ # one or more input artifacts/volumes mapped to the container
-					{
-						"name": "env_MONAI_INPUTPATH", # name of the input where your application is reading input data from; must be defined in the args section with a valid path internal to the container
-						"value": "{{ context.input.dicom }}" # the container expects DICOM data
-					}
-				],
-				"output": [# zero or more output artifacts/volumes mapped to the container
-					{
-						"name": "env_MONAI_OUTPUTPATH", # name of the output where your application is writing final results to; msut be defined in the args section with a valid path internal to the container
-						"mandatory": true
-					}
-				]
-			},
-			"task_destinations": [ # list of downstream tasks to be executed when this task completes
-				{
-					"name": "export-liver-seg" # name of the downstream task
-				}
-			]
-		},
-		{
-			"id": "export-liver-seg", # name of the task
-			"description": "Export Segmentation Storage Object", # description of the task
-			"type": "export", # export denotes that we are exporting data
-			"export_destinations": [ # one or more export destinations where the results from the output of the previous task would be exported to
-				{
-					"Name": "ORTHANC" # name of the export destination as defined in the informatics_gateway>export_destinations section above
-				}
-			],
-			"artifacts": {
-				"input": [ # one or more data input that included the files to be exported
-					{
-						"name": "export-dicom", # name of the input
-						"value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}", # an expression used to located the source of the data. In this case, the Workflow Manager would locate the data from the task named `liver` with an output artifact named `env_MONAI_OUTPUTPATH`
-						"mandatory": true # true if we must export the result; if the results can't be located, the workflow would be considered as failed; false otherwise.
-					}
-				],
-				"output": []
-			}
-		}
-	]
+    "name": "ai-liver-seg", # name of the workflow
+    "version": "1.0.0", # version of the workflow
+    "description": "AI Liver Segmentation", # a description of the workflow
+    "informatics_gateway": { # defines data ingestion and export
+        "ae_title": "MONAI-DEPLOY", # name of the IG AE Title receiving your DICOM data
+        "data_origins": [ # one or more external DICOM devices sending data to the IG
+            "ORTHANC" # Name of that external DICOM device (name configured in IG)
+        ],
+        "export_destinations": [ # zero or more external DICOM devices that will be receiving AI-generated results
+            "ORTHANC" # Name of that external DICOM device (name configured in IG)
+        ]
+    },
+    "tasks": [ # one or more tasks allowed
+        {
+            "id": "router", # name of the task
+            "description": "Ensure series description contains liver", # description of the task
+            "type": "router", # router denotes we are routing data to another task or tasks based on the conditions
+            "task_destinations": [ # list of downstream tasks to be executed when this task completes
+                {
+                    "name": "liver", # if the following condition matches, the dataset is routed to the liver task.
+                    "conditions": "{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'" # matches series description by the value specified.
+                }
+            ]
+        },
+        {
+            "id": "liver", # name of the task
+            "description": "Execute Liver Segmentation MAP", # description of the task
+            "type": "docker", # docker denotes we are running this task using Docker plug-in
+            "args": {
+                "container_image": "ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0", # container image
+                "server_url": "unix:///var/run/docker.sock", # how the Docker plug-in communicates with Docker API
+                "entrypoint": "/bin/bash,-c", # entrypoint of your container image; separated by commas
+                "command": "python3 -u /opt/monai/app/app.py", # commands to execute with the container image; separated by commas
+                "task_timeout_minutes": "5", # how long this task is expected to execute; terminated after the configured value
+                "temp_storage_container_path": "/var/lib/monai/", # how thd Docker plug-in maps your data from host to container - this is mapped to `$TASK_MANAGER_DATA` in the docker-compose file 
+                "env_MONAI_INPUTPATH": "/var/monai/input/", # an environment varible provided to the container to read the input data
+                "env_MONAI_OUTPUTPATH": "/var/monai/output/", # an environment variable provided to the container to write AI-genrated results
+                "env_MONAI_MODELPATH": "/opt/monai/models/", # an environment variable provided to the container to located AI models
+                "env_MONAI_WORKDIR": "/var/monai/" # an environment variable provided to the container for storing temporary artifacts
+            },
+            "artifacts": {
+                "input": [ # one or more input artifacts/volumes mapped to the container
+                    {
+                        "name": "env_MONAI_INPUTPATH", # name of the input where your application is reading input data from; must be defined in the args section with a valid path internal to the container
+                        "value": "{{ context.input.dicom }}" # the container expects DICOM data
+                    }
+                ],
+                "output": [# zero or more output artifacts/volumes mapped to the container
+                    {
+                        "name": "env_MONAI_OUTPUTPATH", # name of the output where your application is writing final results to; msut be defined in the args section with a valid path internal to the container
+                        "mandatory": true
+                    }
+                ]
+            },
+            "task_destinations": [ # list of downstream tasks to be executed when this task completes
+                {
+                    "name": "export-liver-seg" # name of the downstream task
+                }
+            ]
+        },
+        {
+            "id": "export-liver-seg", # name of the task
+            "description": "Export Segmentation Storage Object", # description of the task
+            "type": "export", # export denotes that we are exporting data
+            "export_destinations": [ # one or more export destinations where the results from the output of the previous task would be exported to
+                {
+                    "Name": "ORTHANC" # name of the export destination as defined in the informatics_gateway>export_destinations section above
+                }
+            ],
+            "artifacts": {
+                "input": [ # one or more data input that included the files to be exported
+                    {
+                        "name": "export-dicom", # name of the input
+                        "value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}", # an expression used to located the source of the data. In this case, the Workflow Manager would locate the data from the task named `liver` with an output artifact named `env_MONAI_OUTPUTPATH`
+                        "mandatory": true # true if we must export the result; if the results can't be located, the workflow would be considered as failed; false otherwise.
+                    }
+                ],
+                "output": []
+            }
+        }
+    ]
 }
 ```
 
