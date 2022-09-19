@@ -41,7 +41,7 @@ To use MONAI Deploy Lite, install all prerequisites & download this entire direc
 
 The [docker compose file](docker-compose.yml) spins up the following services. Services are accessible at the IP addresses and ports listed below and may be modified in the [.env](.env) configuration file.
 
-Execute the following command to bring up all services.
+Execute the following command to bring up all services. All services should spin up within 30 seconds to 60 seconds.
 
 ```bash
 docker compose up
@@ -68,7 +68,9 @@ docker compose logs -t -f # view output from all containers
 | Orthanc UI (optional)                                           | http://localhost:8042  | http://172.29.0.100:8042 |
 | Orthanc SCP (optional)                                          | 4242                   | 4242                     |
 
-Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices. 
+*Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices.*
+
+*Note: The `172.29.0.0/16` subnet is for container communication. If the subnet is not available, please refer to the [Advanced Configuration](#advanced-configuration) on how to update the subnet.*
 
 ### Common/Known Issues
 
@@ -89,7 +91,7 @@ Note: Orthanc is included for convenience and to demo end-to-end workflow execut
 
 This package includes Orthanc running and connected to the Informatics Gateway, with all required AE Titles pre-configured.
 
-To get started, download the following DICOM datasets and upload them to Orthanc.
+To get started, download & unzip the following DICOM datasets and upload them to Orthanc.
 
 - [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
 - [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing)
@@ -103,7 +105,7 @@ Drag & drop any DICOM files (no folders) to the blue box on the page and then cl
 
 Or, upload your files to Orthanc using the *storescu* command from [dcmtk](https://dcmtk.org/dcmtk.php.en).
 ```
-storescu -v +r +sd -aec ORTHANC localhost 4242 /path/to/my/dicom/*
+storescu -v +r +sd -aec ORTHANC localhost 4242 /path/to/my/unzipped/dicom/files/*
 ```
 
 Navigate to the home page and click *All studies* to confirm data's been uploaded.
@@ -161,7 +163,7 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
 4. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete, reload the Orthanc study page and expect a new series to appear with the segmentation object.
+5. Wait for the workflow to complete, the entire workflow takes roughly one minute and thirty seconds to complete. To see the AI generated segmentation object, reload the Orthanc study page.
 6. To see the output of the container, run the following commands:
    ```bash
    $ docker container list -a | grep monai_ai_livertumor_seg_app
@@ -187,7 +189,7 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
 4. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete, reload the Orthanc study page and expect a new series to appear with the segmentation object.
+5. Wait for the workflow to complete, the entire workflow takes roughly one minute to complete. To see the AI generated segmentation object, reload the Orthanc study page.
 6. To see the output from the container, run the following commands:
    ```bash
    $ docker container list -a | grep monai_ai_lung_seg_app
@@ -262,6 +264,8 @@ If you encounter an error in section 3 on [CUDA Support for WSL 2](https://docs.
 ### Docker-Compose Configuration
 
 All services included in the `docker-compose` file may be customized through the default environment file, `.env`, file.
+
+By default, all services run in the `172.29.0.0/16` subnet and the values can be found in the `.env` file.
 
 *Note: Changing any IP address or port number requires an update to the applicable service configuration files.*
 
