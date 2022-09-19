@@ -15,7 +15,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 
 - [Docker Engine](https://docs.docker.com/engine/install/) v20.10.18+
 - [Docker Compose Plug-in](https://docs.docker.com/compose/install/) v2.10.2+
-- [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) v11.7+
+- [NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) v11.7+
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 - MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
