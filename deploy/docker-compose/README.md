@@ -18,6 +18,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - [NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) v11.7+
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 - MONAI Deploy MAPs built using the [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
+- [curl](https://curl.se/) - `sudo apt install curl`
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
 ### Windows Subsystem for Linux v2
@@ -27,6 +28,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
   - With `Use the WSL 2 based engine` option enabled
 - [Ubuntu 22.04](https://www.microsoft.com/store/productId/9PN20MSR04DW) for WSL 2
 - [NVIDIA Windows Driver](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) for WSL 2
+- [curl](https://curl.se/) - `sudo apt install curl`
 - (Optional) [Informatics Gateway CLI](https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases)
 
 
@@ -119,6 +121,8 @@ The **sample-workflows** directory includes the following four sample workflow d
 - `lung-seg.json`: AI Lung Segmentation MAP
 - `liver-seg.json`: AI Liver Segmentation MAP
 - `combo.json`: AI Lung & AI Liver Combo
+
+*Note: in these examples, we will be using `curl` command to register MONAI Deploy workflow definitions with the Workflow Manager. To learn more about `curl`, visit the [curl Man Page](https://curl.se/docs/manpage.html).*
 
 ### Hello World
 
