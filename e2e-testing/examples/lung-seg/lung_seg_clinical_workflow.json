@@ -1,0 +1,78 @@
+{
+    "name": "lung-seg",
+    "version": "1.0.0",
+    "description": "MONAI AI Lung Seg",
+    "informatics_gateway": {
+        "ae_title": "DOTTER",
+        "data_origins": [
+            "test"
+        ],
+        "export_destinations": [
+            "VISAGE_DOTTER"
+        ]
+    },
+    "tasks": [
+        {
+            "id": "lung-seg",
+            "description": "lung segmentation",
+            "type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "lung-seg-argo-template",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+            "ref": "",
+            "task_destinations": [
+                {
+                    "name": "export-report",
+                    "conditions": ""
+                }
+            ],
+            "export_destinations": [],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "input-dicom",
+                        "value": "{{ context.input.dicom }}",
+                        "mandatory": true
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "output",
+                        "value": "{{ context.executions.lung-seg.output_dir }}",
+                        "mandatory": true
+                    }
+                ]
+            },
+            "input_parameters": null
+        },
+        {
+            "id": "export-report",
+            "description": "export report",
+            "type": "export",
+            "args": {
+                "test": "test1"
+            },
+            "ref": "",
+            "task_destinations": [],
+            "export_destinations": [
+                {
+                    "name": "VISAGE_DOTTER"
+                }
+            ],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "output",
+                        "value": "{{ context.executions.lung-seg.artifacts.output }}",
+                        "mandatory": true
+                    }
+                ],
+                "output": []
+            },
+            "input_parameters": null
+        }
+    ]
+}
