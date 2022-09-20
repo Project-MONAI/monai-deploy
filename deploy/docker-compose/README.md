@@ -40,9 +40,9 @@ To use MONAI Deploy Lite, install all prerequisites & download this entire direc
 
 ## Start the Services
 
-The [docker compose file](docker-compose.yml) spins up the following services. Services are accessible at the IP addresses and ports listed below and may be modified in the [.env](.env) configuration file.
+The [Docker compose file](docker-compose.yml) spins up the following services. Services are accessible at the IP addresses and ports listed below and may be modified in the [.env](.env) configuration file.
 
-Execute the following command to bring up all services. All services should spin up within 30 seconds to 60 seconds.
+Execute the following commands with `docker compose` as the current working directory to bring up all services. All services should spin up within 30 seconds to 60 seconds.
 
 ```bash
 docker compose up
@@ -76,11 +76,11 @@ docker compose logs -t -f # view output from all containers
 ### Common/Known Issues
 
 - The following error indicates that the `docker compose` version may not be up-to-date. If the problem persists, modify the `TASK_MANAGER_DATA` variable defined in the `.env` file and change `$PWD/.md/mdtm` to a fully qualified path. E.g. `/home/monai/some/path/to/.md/mdtm/`.
-	```
-	ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
-	```
+    ```
+    ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
+    ```
 
-	*WHY? The value of `TASK_MANAGER_DATA` is exposed to the Task Manager container as an environment variable in order for Task Manager to map the volume from the host to the MAP container correctly.*
+    *WHY? The value of `TASK_MANAGER_DATA` is exposed to the Task Manager container as an environment variable in order for Task Manager to map the volume from the host to the MAP container correctly.*
 
 - The Informatics Gateway service is unhealthy and fails to start with the following error if Docker is not up-to-date:
   ```bash
@@ -97,7 +97,7 @@ To get started, download & unzip the following DICOM datasets and upload them to
 - [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing)
 - [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing)
 
-Note: these DICOM datasets were converted to DICOM from Medical Decathlon training and validation mages & may be used for the referenced examples later in this document.
+Note: these DICOM datasets were converted to DICOM from Medical Decathlon training and validation images and may be used for the referenced examples later in this document.
 
 ### Upload DICOM Datasets
 
@@ -124,7 +124,7 @@ The **sample-workflows** directory includes the following four sample workflow d
 
 #### Description
 
-This example uses the `alpine` image to print all files found in the input directory.
+This example uses the `alpine` container image instead of a MAP to print all files found in the input directory; this example demonstrates how data received by the Informatics Gateway travel through MONAI Deploy and how the data is made available to the application container.
 
 1. Deploy the workflow definition to MONAI Deploy Workflow Manager:
    ```
@@ -133,9 +133,9 @@ This example uses the `alpine` image to print all files found in the input direc
    {"workflow_id":"849d4683-006b-410c-aa17-d0474ee26b7b"}
    ```
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
-1. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+2. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-1. To see the output from the container, run the following commands:
+3. To see the output from the container, run the following commands:
    ```bash
    $ docker container list -a | grep alpine
    # locate the container ID and run the following
@@ -164,7 +164,7 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
 4. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete, the entire workflow takes roughly one minute and thirty seconds to complete. To see the AI generated segmentation object, reload the Orthanc study page.
+5. Wait for the workflow to complete; the entire workflow takes roughly one minute and thirty seconds to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
 6. To see the output of the container, run the following commands:
    ```bash
    $ docker container list -a | grep monai_ai_livertumor_seg_app
@@ -190,7 +190,7 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal.
 4. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-5. Wait for the workflow to complete, the entire workflow takes roughly one minute to complete. To see the AI generated segmentation object, reload the Orthanc study page.
+5. Wait for the workflow to complete; the entire workflow takes roughly one minute to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
 6. To see the output from the container, run the following commands:
    ```bash
    $ docker container list -a | grep monai_ai_lung_seg_app
@@ -227,7 +227,7 @@ In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7
 ## Tips & Hints
 
 - If you are using your DICOM dataset, please remove the router task or modify the routing conditions to meet your needs.
-- If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, if the Chest CT dataset was sent, the Workflow Manager would launch three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
+- If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, the Chest CT dataset would trigger three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
 
 ### Enable NVIDIA Container Runtime for Docker
 
@@ -266,7 +266,7 @@ If you encounter an error in section 3 on [CUDA Support for WSL 2](https://docs.
 
 All services included in the `docker-compose` file may be customized through the default environment file, `.env`, file.
 
-By default, all services run in the `172.29.0.0/16` subnet and the values can be found in the `.env` file.
+All services run in the `172.29.0.0/16` subnet, and the values can be found in the `.env` file.
 
 *Note: Changing any IP address or port number requires an update to the applicable service configuration files.*
 
