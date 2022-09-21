@@ -1,8 +1,8 @@
 # MONAI Deploy Lite
 
-MONAI Deploy Lite provides a simple & lightweight solution for running MONAI Applications (MAPs) on a minimal MONAI Deploy platform.
+As described in the [MONAI Operating Environments guideline](https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/MONAI-Operating-Environments.md), the journey from development to production usually requires multiple steps across different environments, operated by different teams and with different requirements.
 
-It is meant to bridge the big gap between the local development of MAPs in a laptop using the MONAI Deploy App SDK and a production-ready deployment. 
+MONAI Deploy Lite is designed to facilitate the testing and validation of MAPs in the early stages of this pipeline (i.e. workstation environment), where ease of use and time to get started are most important.
 
 Users of MONAI Deploy Lite will be able to run their MAPs, connected to a test PACS, or their own test/research PACS, for further validation, confidently taking steps towards production.   
 
@@ -34,7 +34,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 
 **IMPORTANT: Please ensure all prerequisites are up-to-date.**
 
-*Note: see [tips](#tips--hints) section for additional instructions.*
+*Note: see the [tips](#tips) section for additional instructions.*
 
 ## Installation
 
@@ -120,7 +120,7 @@ The **sample-workflows** directory includes the following four sample workflow d
 - `hello-world.json `: Hello World!
 - `lung-seg.json`: AI Lung Segmentation MAP
 - `liver-seg.json`: AI Liver Segmentation MAP
-- `combo.json`: AI Lung & AI Liver Combo
+- `liver-lung-seg.json`: AI Lung & AI Liver Combo
 
 *Note: in these examples, we will be using `curl` command to register MONAI Deploy workflow definitions with the Workflow Manager. To learn more about `curl`, visit the [curl Man Page](https://curl.se/docs/manpage.html).*
 
@@ -202,15 +202,15 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    $ docker logs {CONTAINER ID}
    ```
 
-### Combo - AI Lung + AI Liver MAPs
+### AI Lung + AI Liver MAPs
 
-In the `combo.json` workflow definition, we combined the AI Lung MAP and the AI Liver MAP into one single workflow definition. With this workflow definition, the Workflow Manager would route the incoming data based on the routing rules defined.
+In the `liver-lung-seg.json` workflow definition, we combined the AI Lung MAP and the AI Liver MAP into one single workflow definition. With this workflow definition, the Workflow Manager would route the incoming data based on the routing rules defined.
 
    1. Download one or both of the [datasets](#running-a-monai-deploy-workflow) provided above
    2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
    3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
       ```
-      $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/combo.json"  http://localhost:5001/workflows
+      $ curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/liver-lung-seg.json"  http://localhost:5001/workflows
 
       {"workflow_id":"6d5e1e73-bd07-4e71-b1fa-b66408d43b82"}
       ```
@@ -228,10 +228,12 @@ In the `combo.json` workflow definition, we combined the AI Lung MAP and the AI 
 
 In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) should only launch the AI Lung MAP, while the [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) would launch the AI Liver MAP.
 
-## Tips & Hints
+## Tips
 
 - If you are using your DICOM dataset, please remove the router task or modify the routing conditions to meet your needs.
-- If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, the Chest CT dataset would trigger three workflows: `Hello World`, `AI Lung MAP`, and the `Combo`.
+- If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, the Chest CT dataset would trigger three workflows: `Hello World`, `AI Lung MAP`, and the `AI Lung + Liver MAP`.
+- If your system is running low on storage space, look into `.md/` directory. With the default configuration (in `.dev`), data uploaded to Orthanc can be found in `.md/orthanc/`. Data sent for workflow processing can be found in `.md/minio/`.
+- MONAI Deploy Lite includes MinIO as the default storage service and RabbitMQ as the default message broker service. To use different service providers, refer to these [instructions](./plug-ins/README.md).
 
 ### Enable NVIDIA Container Runtime for Docker
 
