@@ -40,17 +40,20 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 
 To use MONAI Deploy Lite, install all prerequisites & download this entire directory from [GitHub](https://github.com/Project-MONAI/monai-deploy/tree/main/docker-compose/deploy/docker-compos). 
 
-## Start the Services
+## Start/Stop the Services
 
 The [Docker compose file](docker-compose.yml) spins up the following services. Services are accessible at the IP addresses and ports listed below and may be modified in the [.env](.env) configuration file.
 
-Execute the following commands with `docker compose` as the current working directory to bring up all services. All services should spin up within 30 seconds to 60 seconds.
+Execute one of the following commands in the directory where the `docker-compose.yml` resides to start, stop all the services or to view the logs.
 
 ```bash
-docker compose up
+docker compose up # start all services
 docker compose up -d # or run detached
 docker compose logs -t -f # view output from all containers
+docker compose down # stop all services
 ```
+
+The first time calling `docker compose up` may take longer as it needs to pull all the container images. However, once all container images are pulled and available on the local system, all the services should spin up within 30 to 60 seconds.
 
 ### MONAI Deploy Services
 
