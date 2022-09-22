@@ -161,11 +161,6 @@ services:
       interval: 10s
       timeout: 30s
       retries: 10
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 8G
 
   configure-ig:
     image: $INFORMATICS_GATEWAY_CONFIG_IMAGE
