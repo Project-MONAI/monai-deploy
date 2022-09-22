@@ -62,7 +62,7 @@ The first time calling `docker compose up` may take longer as it needs to pull a
 | Informatics Gateway UI  | http://localhost:5000 | http://172.29.0.50:5000 |
 | Informatics Gateway SCP | 104                   | 104                     |
 | Workflow Manager        | http://localhost:5001 | http://172.29.0.60:5001 |
-| Task Manager            | http://localhost:5002 | http://172.29.0.70:5002 |
+| Task Manager            | N/A                   | N/A                     |
 
 ### Third-Party Services
 

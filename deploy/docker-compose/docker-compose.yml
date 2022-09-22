@@ -33,7 +33,7 @@ services:
       monaideploy:
           ipv4_address: $MINIO_IP
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://$MINIO_HOSTNAME:$MINIO_API_PORT/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 15s
       timeout: 30s
       retries: 3
@@ -99,7 +99,7 @@ services:
       monaideploy:
           ipv4_address: $MONGODB_IP
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo $MONGODB_HOSTNAME:$MONGODB_PORT/productiondb --quiet
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/productiondb --quiet
       interval: 10s
       timeout: 10s
       retries: 5
@@ -139,7 +139,7 @@ services:
       - $INFORMATICS_GATEWAY_PAYLOADS:/temp
       - $INFORMATICS_GATEWAY_DATABASE:/database/
     environment:
-      ASPNETCORE_URLS: http://+:$INFORMATICS_GATEWAY_API_PORT
+      ASPNETCORE_URLS: http://+:5000
     ports:
       - $INFORMATICS_GATEWAY_SCP_PORT:104
       - $INFORMATICS_GATEWAY_HL7_PORT:2575
@@ -156,11 +156,16 @@ services:
       - minio
       - rabbitmq
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://$INFORMATICS_GATEWAY_HOSTNAME:$INFORMATICS_GATEWAY_API_PORT/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       start_period: 10s
       interval: 10s
       timeout: 30s
       retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 8G
 
   configure-ig:
     image: $INFORMATICS_GATEWAY_CONFIG_IMAGE
@@ -179,10 +184,10 @@ services:
       - /bin/sh
       - ./init.sh 
       - $INFORMATICS_GATEWAY_API_IP
-      - $INFORMATICS_GATEWAY_API_PORT
+      - "5000"
       - $INFORMATICS_GATEWAY_AE_TITLE
       - $ORTHANC_IP
-      - $ORTHANC_SCP_PORT
+      - "4242"
     links:
       - informatics-gateway
 
@@ -207,6 +212,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      mongodb:
+        condition: service_healthy
     links:
       - minio
       - rabbitmq
@@ -223,14 +230,16 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
-      ASPNETCORE_URLS: http://+:5002
+      ASPNETCORE_URLS: http://+:5000
       HOST_TEMP_STORAGE : $TASK_MANAGER_DATA
     ports:
-      - $TASK_MANAGER_PORT:5002
+      - $TASK_MANAGER_PORT:5000
     networks:
       monaideploy:
           ipv4_address: $TASK_MANAGER_IP
     depends_on:
+      mongodb:
+        condition: service_healthy
       minio:
         condition: service_healthy
       rabbitmq:
