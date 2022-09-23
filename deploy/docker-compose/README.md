@@ -237,6 +237,9 @@ In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7
 - If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, the Chest CT dataset would trigger three workflows: `Hello World`, `AI Lung MAP`, and the `AI Lung + Liver MAP`.
 - If your system is running low on storage space, look into `.md/` directory. With the default configuration (in `.dev`), data uploaded to Orthanc can be found in `.md/orthanc/`. Data sent for workflow processing can be found in `.md/minio/`.
 - MONAI Deploy Lite includes MinIO as the default storage service and RabbitMQ as the default message broker service. To use different service providers, refer to these [instructions](./plug-ins/README.md).
+- Changes to the AE Titles, IPs, or port numbers require deleting the `.md/mdig/` directory.
+- The `configs/config-ig.sh` script configures the listening AE Title and configures Orthanc as a DICOM source & DICOM destination.  Avoid using `ORTHANC` as the name of the source & destination as the script resets them to the bundled Orthanc setup.
+
 
 ### Enable NVIDIA Container Runtime for Docker
 

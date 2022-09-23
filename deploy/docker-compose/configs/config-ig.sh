@@ -21,6 +21,13 @@ echo "Orthanc IP Address             = $4"
 echo "Orthanc SCP Port               = $5"
 echo -e "\n"
 
+printf "\nDeleting existing MONAI Deploy AE Title\n"
+curl --request DELETE "http://$1:$2/config/ae/MONAI-DEPLOY" | jq
+printf "\nDeleting existing DICOM Source\n"
+curl --request DELETE "http://$1:$2/config/source/ORTHANC" | jq
+printf "\nDeleting existing DICOM Destination\n"
+curl --request DELETE "http://$1:$2/config/destination/ORTHANC" | jq
+
 printf "\nAdding MONAI Deploy AE Title\n"
 curl --request POST "http://$1:$2/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\"}"  | jq
 printf "\nAdding DICOM Source\n"
