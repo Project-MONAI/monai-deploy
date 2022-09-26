@@ -18,17 +18,17 @@
 			"type": "router",
 			"task_destinations": [
 				{
-					"name": "liver",
-					"conditions": "{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'"
+					"name": "ailiver",
+					"conditions": ["{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'"]
 				},
 				{
-					"name": "lung",
-					"conditions": "{{context.dicom.series.any('0008','103E')}} == 'Axial Chest CT COVID-19'"
+					"name": "ailung",
+					"conditions": ["{{context.dicom.series.any('0008','103E')}} == 'Axial Chest CT COVID-19'"]
 				}
 			]
 		},
 		{
-			"id": "liver",
+			"id": "ailiver",
 			"description": "Execute Liver Segmentation MAP",
 			"type": "docker",
 			"args": {
@@ -59,12 +59,12 @@
 			},
 			"task_destinations": [
 				{
-					"name": "export-liver-seg"
+					"name": "export-ailiver-seg"
 				}
 			]
 		},
 		{
-			"id": "export-liver-seg",
+			"id": "export-ailiver-seg",
 			"description": "Export Segmentation Storage Object",
 			"type": "export",
 			"export_destinations": [
@@ -76,7 +76,7 @@
 				"input": [
 					{
 						"name": "export-dicom",
-						"value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}",
+						"value": "{{ context.executions.ailiver.artifacts.env_MONAI_OUTPUTPATH }}",
 						"mandatory": true
 					}
 				],
@@ -84,7 +84,7 @@
 			}
 		},
 		{
-			"id": "lung",
+			"id": "ailung",
 			"description": "Execute Lung Segmentation MAP",
 			"type": "docker",
 			"args": {
@@ -115,12 +115,12 @@
 			},
 			"task_destinations": [
 				{
-					"name": "export-lung-seg"
+					"name": "export-ailung-seg"
 				}
 			]
 		},
 		{
-			"id": "export-lung-seg",
+			"id": "export-ailung-seg",
 			"description": "Export Segmentation Storage Object",
 			"type": "export",
 			"export_destinations": [
@@ -132,7 +132,7 @@
 				"input": [
 					{
 						"name": "export-dicom",
-						"value": "{{ context.executions.lung.artifacts.env_MONAI_OUTPUTPATH }}",
+						"value": "{{ context.executions.ailung.artifacts.env_MONAI_OUTPUTPATH }}",
 						"mandatory": true
 					}
 				],

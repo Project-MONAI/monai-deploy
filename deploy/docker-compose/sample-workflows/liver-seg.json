@@ -19,7 +19,7 @@
 			"task_destinations": [
 				{
 					"name": "liver",
-					"conditions": "{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'"
+					"conditions": ["{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'"]
 				}
 			]
 		},
