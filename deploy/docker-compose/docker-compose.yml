@@ -1,0 +1,256 @@
+# Copyright 2022 MONAI Consortium
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: "3.9"
+
+services:
+  minio:
+    image: $MINIO_IMAGE
+    hostname: $MINIO_HOSTNAME
+    container_name: $MINIO_CONTAINERNAME
+    command: server --console-address ":9001" /data
+    volumes:
+      - $MINIO_DATA:/data
+      - $MINIO_CONFIG:/root/.minio
+    ports:
+      - $MINIO_API_PORT:9000
+      - $MINIO_CONSOLE_PORT:9001
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    networks:
+      monaideploy:
+          ipv4_address: $MINIO_IP
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      start_period: 10s
+      interval: 5s
+      timeout: 30s
+      retries: 5
+        
+  createbuckets:
+    image: $MINIO_MC_IMAGE
+    container_name: $MINIO_CONFIG_CONTAINERNAME
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      BUCKET_NAME: monaideploy
+      ENDPOINT: http://$MINIO_HOSTNAME:$MINIO_API_PORT
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      monaideploy:
+          ipv4_address: $MINIO_CONFIG_IP
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add monaideploy $$ENDPOINT $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb monaideploy/$$BUCKET_NAME;
+      /usr/bin/mc policy set public monaideploy/$$BUCKET_NAME;
+      /usr/bin/mc ls monaideploy;
+      # exit 0
+      "
+
+  rabbitmq:
+    image: $RABBITMQ_IMAGE
+    hostname: $RABBITMQ_HOSTNAME
+    container_name: $RABBITMQ_CONTAINERNAME
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+      RABBITMQ_DEFAULT_VHOST: "monaideploy"
+    ports:
+      - $RABBITMQ_PORT:5672
+      - $RABBITMQ_MGT_PORT:15672
+    volumes:
+      - $RABBITMQ_DATA:/var/lib/rabbitmq/mnesia/
+    networks:
+      monaideploy:
+          ipv4_address: $RABBITMQ_IP
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      start_period: 10s
+      interval: 5s
+      timeout: 30s
+      retries: 5
+
+  mongodb:
+    image: $MONGODB_IMAGE
+    hostname: $MONGODB_HOSTNAME
+    container_name: $MONGODB_CONTAINERNAME
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - $MONGODB_PORT:27017
+    volumes:
+      - $MONGODB_DATA:/data/db
+    networks:
+      monaideploy:
+          ipv4_address: $MONGODB_IP
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/productiondb --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+      
+  orthanc:
+    image: $ORTHANC_IMAGE
+    hostname: $ORTHANC_HOSTNAME
+    container_name: $ORTHANC_CONTAINERNAME
+    volumes:
+      - ./configs/orthanc.json:/etc/orthanc/orthanc.json
+      - $ORTHANC_DATA:/var/lib/orthanc/db/
+    ports:
+      - $ORTHANC_SCP_PORT:4242
+      - $ORTHANC_UI_PORT:8042
+    environment:
+      VERBOSE_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      CONNECTIVITY_CHECKS_PLUGIN_ENABLED: "true"
+    networks:
+      monaideploy:
+          ipv4_address: $ORTHANC_IP
+    healthcheck:
+      test: ["CMD", "/probes/test-aliveness.py"]
+      start_period: 10s
+      retries: 5
+      interval: 10s
+      timeout: 30s
+
+  informatics-gateway:
+    image: $INFORMATICS_GATEWAY_IMAGE
+    hostname: $INFORMATICS_GATEWAY_HOSTNAME
+    container_name: $INFORMATICS_GATEWAY_CONTAINERNAME
+    volumes:
+      - ./configs/informatics-gateway.json:/opt/monai/ig/appsettings.json
+      # - $MONAI_DEPLOY_PLUGINS:/opt/monai/ig/plug-ins/
+      - $INFORMATICS_GATEWAY_PAYLOADS:/temp
+      - $INFORMATICS_GATEWAY_DATABASE:/database/
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+    ports:
+      - $INFORMATICS_GATEWAY_SCP_PORT:104
+      - $INFORMATICS_GATEWAY_HL7_PORT:2575
+      - $INFORMATICS_GATEWAY_API_PORT:5000
+    networks:
+      monaideploy:
+          ipv4_address: $INFORMATICS_GATEWAY_API_IP
+    depends_on:
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - minio
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      start_period: 10s
+      interval: 5s
+      timeout: 30s
+      retries: 10
+
+  configure-ig:
+    image: $INFORMATICS_GATEWAY_CONFIG_IMAGE
+    container_name: $INFORMATICS_GATEWAY_CFG_CONTAINERNAME
+    networks:
+      monaideploy:
+          ipv4_address: $INFORMATICS_GATEWAY_API_CONFIG_IP
+    volumes:
+      - ./configs/config-ig.sh:/init.sh
+    depends_on:
+      informatics-gateway:
+        condition: service_healthy
+      orthanc:
+        condition: service_healthy
+    entrypoint: 
+      - /bin/sh
+      - ./init.sh 
+      - $INFORMATICS_GATEWAY_API_IP
+      - "5000"
+      - $INFORMATICS_GATEWAY_AE_TITLE
+      - $ORTHANC_IP
+      - "4242"
+    links:
+      - informatics-gateway
+
+  workflow-manager:
+    image: $WORKFLOW_MANAGER_IMAGE
+    hostname: $WORKFLOW_MANAGER_HOSTNAME
+    container_name: $WORKFLOW_MANAGER_CONTAINERNAME
+    volumes:
+      - ./configs/workflow-manager.json:/opt/monai/wm/appsettings.json
+      # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
+    environment:
+      ASPNETCORE_URLS: http://+:5001
+    ports:
+      - $WORKFLOW_MANAGER_PORT:5001
+    networks:
+      monaideploy:
+          ipv4_address: $WORKFLOW_MANAGER_IP
+    depends_on:
+      informatics-gateway:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    links:
+      - minio
+      - rabbitmq
+      - informatics-gateway
+      - mongodb
+  
+  task-manager:
+    image: $TASK_MANAGER_IMAGE
+    hostname: $TASK_MANAGER_HOSTNAME
+    container_name: $TASK_MANAGER_CONTAINERNAME
+    volumes:
+      - ./configs/task-manager.json:/opt/monai/wm/appsettings.json
+      - $TASK_MANAGER_DATA:/var/lib/monai/:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+      # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      HOST_TEMP_STORAGE : $TASK_MANAGER_DATA
+    ports:
+      - $TASK_MANAGER_PORT:5000
+    networks:
+      monaideploy:
+          ipv4_address: $TASK_MANAGER_IP
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - minio
+      - rabbitmq
+      - mongodb
+
+networks:
+  monaideploy:
+    name: monaideploy
+    driver: bridge
+    ipam:
+     config:
+       - subnet: $SUBNET
+         gateway: $GATEWAY

@@ -1,0 +1,110 @@
+{
+  "WorkloadManagerDatabase": {
+    "ConnectionString": "mongodb://root:rootpassword@mongodb:27017",
+    "DatabaseName": "WorkloadManager",
+    "WorkflowCollectionName": "Workflows",
+    "WorkflowInstanceCollectionName": "WorkflowInstances",
+    "PayloadCollectionName": "Payloads",
+    "TaskDispatchEventCollectionName": "TaskDispatchEvents"
+  },
+  "WorkflowManager": {
+    "endpointSettings": {
+      "defaultPageSize": 10,
+      "maxPageSize": 1000000
+    },
+    "TaskManager": {
+      "concurrency": 1,
+      "taskTimeoutMinutes": 60,
+      "plug-ins": {
+        "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker",
+      },
+      "meta-data": {
+      }
+    },
+    "messaging": {
+      "retries": {
+        "retryDelays": "5"
+      },
+      "topics": {
+        "workflowRequest": "md.workflow.request",
+        "exportComplete": "md.export.complete",
+        "exportRequestPrefix": "md.export.request"
+      },
+      "dicomAgents": {
+        "dicomWebAgentName": "monaidicomweb",
+        "scuAgentName": "monaiscu"
+      },
+      "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
+      "publisherSettings": {
+        "endpoint": "rabbitmq",
+        "username": "admin",
+        "password": "admin",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "deadLetterExchange": "deadLetterExchange",
+        "deliveryLimit": "5",
+        "requeueDelay": "0"
+      },
+      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+      "subscriberSettings": {
+        "endpoint": "rabbitmq",
+        "username": "admin",
+        "password": "admin",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "deadLetterExchange": "monaideploy-dead-letter",
+        "exportRequestQueue": "export_tasks",
+        "deliveryLimit": 3,
+        "requeueDelay": 30
+      }
+    },
+    "storage": {
+      "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
+      "settings": {
+        "endpoint": "minio:9000",
+        "accessKey": "minioadmin",
+        "accessToken": "minioadmin",
+        "region": "eu-west-2",
+        "bucket": "test-bucket",
+        "securedConnection": false,
+        "executableLocation": "mc",
+        "serviceName": "test"
+      }
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "System": "Warning",
+      "Microsoft": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information",
+      "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Error",
+      "Monai": "Debug"
+    },
+    "Console": {
+      "FormatterOptions": {
+        "ColorBehavior": "Enabled",
+        "IncludeScopes": true,
+        "SingleLine": false,
+        "TimestampFormat": " HH:mm:ss ",
+        "UseUtcTimestamp": true
+      }
+    },
+    "File": {
+      "BasePath": "Logs",
+      "FileEncodingName": "utf-8",
+      "DateFormat": "yyyyMMdd",
+      "CounterFormat": "000",
+      "MaxFileSize": 10485760,
+      "IncludeScopes": true,
+      "MaxQueueSize": 100,
+      "TextBuilderType": "Monai.Deploy.WorkflowManager.Configuration.Logging.FileLoggingTextFormatter, Monai.Deploy.WorkflowManager.Configuration",
+      "Files": [
+        {
+          "Path": "MWM-<date>-<counter>.log"
+        }
+      ]
+    }
+  }
+}

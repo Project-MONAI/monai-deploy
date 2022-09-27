@@ -1,0 +1,37 @@
+{
+	"name": "hello-world",
+	"version": "1.0.0",
+	"description": "Hello MONAI Deploy!",
+	"informatics_gateway": {
+		"ae_title": "MONAI-DEPLOY",
+		"data_origins": [
+			"ORTHANC"
+		],
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "print-file-list",
+			"description": "Print files from input directory",
+			"type": "docker",
+			"args": {
+				"container_image": "alpine:latest",
+				"server_url": "unix:///var/run/docker.sock",
+				"entrypoint": "/bin/sh,-c",
+				"command": "/usr/bin/find /var/monai/input -type f",
+				"temp_storage_container_path": "/var/lib/monai/",
+				"MYINPUT": "/var/monai/input/"
+			},
+			"artifacts": {
+				"input": [
+					{
+						"name": "MYINPUT",
+						"value": "{{ context.input.dicom }}"
+					}
+				]
+			}
+		}
+	]
+}
