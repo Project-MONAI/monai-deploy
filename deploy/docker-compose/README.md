@@ -1,5 +1,7 @@
 # MONAI Deploy Lite
 
+**This is NOT recommended for production environments**
+
 As described in the [MONAI Operating Environments guideline](https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/MONAI-Operating-Environments.md), the journey from development to production usually requires multiple steps across different environments, operated by different teams and with different requirements.
 
 MONAI Deploy Lite is designed to facilitate the testing and validation of MAPs in the early stages of this pipeline (i.e. workstation environment), where ease of use and time to get started are most important.
