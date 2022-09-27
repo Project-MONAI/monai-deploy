@@ -28,8 +28,8 @@ This document SHALL follow the guidance of [rfc
 
 1. [Desktop/Laptop Environment](#desktoplaptop-environment)
 2. [Workstation Environment](#workstation-environment)
-3. [Development/Integration Server
-Environment](#developmentintegration-server-environment)
+3. [Integration Server
+Environment](#integration-server-environment)
 4. [Staging Server Environment](#staging-server-environment)
 5. [Production Server Environment](#production-server-environment)
 6. [Cloud Environments](#cloud-environments)
@@ -101,7 +101,7 @@ and not get much support from centralized IT.
 **Availability:** best effort
 
 
-### Development/Integration Server Environment ###
+### Integration Server Environment ###
 
 A single, multi-user system, where developers, data scientists, and clinicians 
 are collaborating on experimental software versions and new algorithms. 
