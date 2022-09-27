@@ -133,6 +133,8 @@ The **sample-workflows** directory includes the following four sample workflow d
 
 This example uses the `alpine` container image instead of a MAP to print all files found in the input directory; this example demonstrates how data received by the Informatics Gateway travel through MONAI Deploy and how the data is made available to the application container.
 
+#### Steps
+
 1. Deploy the workflow definition to MONAI Deploy Workflow Manager:
    ```
    curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/hello-world.json"  http://localhost:5001/workflows
@@ -161,6 +163,8 @@ This example uses the `alpine` container image instead of a MAP to print all fil
 
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_livertumor_seg_app) from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
+
+#### Steps
 
 1. Download the [Abdomen CT dataset](#running-a-monai-deploy-workflow) dataset
 2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
@@ -192,6 +196,8 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
 
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the **Lung Segmentation MAP** from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
+
+#### Steps
 
 1. Download the [Chest CT dataset](#running-a-monai-deploy-workflow) dataset
 2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
@@ -435,6 +441,8 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
 ## Links
 
 - [MONAI Deploy](https://github.com/Project-MONAI/monai-deploy) 
+  - [Issues](https://github.com/Project-MONAI/monai-deploy/issues)
+  - [Discussions](https://github.com/Project-MONAI/monai-deploy/discussions)
 - [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk)
   - [Issues](https://github.com/Project-MONAI/monai-deploy-app-sdk/issues)
   - [User Guide](https://docs.monai.io/projects/monai-deploy-app-sdk/en/latest/introduction/index.html)
