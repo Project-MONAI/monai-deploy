@@ -458,4 +458,4 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
 
 Copyright (c) MONAI Consortium. All rights reserved. Licensed under the Apache-2.0 license.
 
-Refer to the license page for each service/component linked in the above section.
+Refer to the license page of each service/component linked in the above section for additional information.
