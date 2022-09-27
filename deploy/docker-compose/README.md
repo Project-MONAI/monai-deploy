@@ -413,14 +413,22 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
 
 ## Uninstallation
 
+- Stop all services (run inside the directory where docker-compose.yml resides)
+  
+  ```bash
+  docker compose down 
+  ```
+
 - Delete MONAI Deploy Docker images
+  
   ```bash
   docker rmi $(docker images | grep 'monai-deploy')
   ```
+
 - Delete this package & data directories. By default, all data are stored under the `.md` directory where the `docker-compose.yml` file is stored.
+  
   ```bash
   sudo rm -r DIR_TO_THE_PACKAGE
-
   ```
 
 
