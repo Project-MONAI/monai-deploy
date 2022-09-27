@@ -43,6 +43,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1.10.0
         with:
+          name: "MONAI Deploy Lite ${{ env.VERSION }}"
           artifacts: "monai-deploy-lite-${{ env.VERSION }}.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
