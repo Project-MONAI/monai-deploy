@@ -40,7 +40,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 
 ## Installation
 
-To use MONAI Deploy Express, install all prerequisites & download this entire directory from [GitHub](https://github.com/Project-MONAI/monai-deploy/tree/main/docker-compose/deploy/docker-compos). 
+To use MONAI Deploy Express, install all prerequisites & download this entire directory from [GitHub](https://github.com/Project-MONAI/monai-deploy/tree/main/deploy/monai-deploy-express) or from the [release page](https://github.com/Project-MONAI/monai-deploy/releases).
 
 ## Start/Stop the Services
 
