@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Release MONAI Deploy Lite
+name: Release MONAI Deploy Express
 
 # Controls when the workflow will run
 on:
@@ -9,7 +9,7 @@ on:
     inputs:
       tag:
         description: 'Tag for the release'
-        default: 'mona-deploy-lite-v'
+        default: 'mona-deploy-express-v'
         required: true
         type: string
 
@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Read Version
-        working-directory: ./deploy/docker-compose
+        working-directory: ./deploy/monai-deploy-express
         run: |
           VER=$(cat VERSION)
           echo "VERSION=$VER" >> $GITHUB_ENV
@@ -36,15 +36,15 @@ jobs:
         uses: TheDoctor0/zip-release@0.6.2
         with:
           type: 'zip'
-          path: ./deploy/docker-compose
-          filename: "monai-deploy-lite-${{ env.VERSION }}.zip"
+          path: ./deploy/monai-deploy-express
+          filename: "monai-deploy-express-${{ env.VERSION }}.zip"
           exclusions: '*.git'
           
       - name: Create Release
         uses: ncipollo/release-action@v1.10.0
         with:
-          name: "MONAI Deploy Lite ${{ env.VERSION }}"
-          artifacts: "monai-deploy-lite-${{ env.VERSION }}.zip"
+          name: "MONAI Deploy Express ${{ env.VERSION }}"
+          artifacts: "monai-deploy-express-${{ env.VERSION }}.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
           tag: ${{ inputs.tag }}

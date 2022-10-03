@@ -1,12 +1,12 @@
-# MONAI Deploy Lite
+# MONAI Deploy Express
 
 **This is NOT recommended for production environments**
 
 As described in the [MONAI Operating Environments guideline](https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/MONAI-Operating-Environments.md), the journey from development to production usually requires multiple steps across different environments, operated by different teams and with different requirements.
 
-MONAI Deploy Lite is designed to facilitate the testing and validation of MAPs in the early stages of this pipeline (i.e. workstation environment), where ease of use and time to get started are most important.
+MONAI Deploy Express is designed to facilitate the testing and validation of MAPs in the early stages of this pipeline (i.e. workstation environment), where ease of use and time to get started are most important.
 
-Users of MONAI Deploy Lite will be able to run their MAPs, connected to a test PACS, or their own test/research PACS, for further validation, confidently taking steps towards production.   
+Users of MONAI Deploy Express will be able to run their MAPs, connected to a test PACS, or their own test/research PACS, for further validation, confidently taking steps towards production.   
 
 Reusing the same essential core services for DICOM I/O and AI workflow orchestration provides the same functionality and consistent experience independently of where and how the applications are run, with minimal changes for the end user.
 
@@ -40,7 +40,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 
 ## Installation
 
-To use MONAI Deploy Lite, install all prerequisites & download this entire directory from [GitHub](https://github.com/Project-MONAI/monai-deploy/tree/main/docker-compose/deploy/docker-compos). 
+To use MONAI Deploy Express, install all prerequisites & download this entire directory from [GitHub](https://github.com/Project-MONAI/monai-deploy/tree/main/docker-compose/deploy/docker-compos). 
 
 ## Start/Stop the Services
 
@@ -76,7 +76,7 @@ The first time calling `docker compose up` may take longer as it needs to pull a
 | Orthanc UI (optional)                                           | http://localhost:8042  | http://172.29.0.100:8042 |
 | Orthanc SCP (optional)                                          | 4242                   | 4242                     |
 
-*Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Lite integrated with external Orthanc, PACS or other DICOM devices.*
+*Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Express integrated with external Orthanc, PACS or other DICOM devices.*
 
 *Note: The `172.29.0.0/16` subnet is for container communication. If the subnet is not available, please refer to the [Advanced Configuration](#advanced-configuration) on how to update the subnet.*
 
@@ -261,7 +261,7 @@ In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7
 - If you are using your DICOM dataset, please remove the router task or modify the routing conditions to meet your needs.
 - If all four sample workflow definitions are registered, and one of the provided DICOM studies is sent, then three workflows are executed. For example, the Chest CT dataset would trigger three workflows: `Hello World`, `AI Lung MAP`, and the `AI Lung + Liver MAP`.
 - If your system is running low on storage space, look into `.md/` directory. With the default configuration (in `.dev`), data uploaded to Orthanc can be found in `.md/orthanc/`. Data sent for workflow processing can be found in `.md/minio/`.
-- MONAI Deploy Lite includes MinIO as the default storage service and RabbitMQ as the default message broker service. To use different service providers, refer to these [instructions](./plug-ins/README.md).
+- MONAI Deploy Express includes MinIO as the default storage service and RabbitMQ as the default message broker service. To use different service providers, refer to these [instructions](./plug-ins/README.md).
 - Changes to the AE Titles, IPs, or port numbers require deleting the `.md/mdig/` directory.
 - The `configs/config-ig.sh` script configures the listening AE Title and configures Orthanc as a DICOM source & DICOM destination.  Avoid using `ORTHANC` as the name of the source & destination as the script resets them to the bundled Orthanc setup.
 
