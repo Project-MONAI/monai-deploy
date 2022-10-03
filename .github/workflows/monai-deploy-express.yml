@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Read Version
-        working-directory: ./deploy/docker-compose
+        working-directory: ./deploy/monai-deploy-express
         run: |
           VER=$(cat VERSION)
           echo "VERSION=$VER" >> $GITHUB_ENV
@@ -36,7 +36,7 @@ jobs:
         uses: TheDoctor0/zip-release@0.6.2
         with:
           type: 'zip'
-          path: ./deploy/docker-compose
+          path: ./deploy/monai-deploy-express
           filename: "monai-deploy-express-${{ env.VERSION }}.zip"
           exclusions: '*.git'
           
