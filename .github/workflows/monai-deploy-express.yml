@@ -9,7 +9,7 @@ on:
     inputs:
       tag:
         description: 'Tag for the release'
-        default: 'mona-deploy-express-v'
+        default: 'monai-deploy-express-v'
         required: true
         type: string
 
