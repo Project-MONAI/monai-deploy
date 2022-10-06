@@ -23,12 +23,9 @@ Where **MONAI** is focused on training and creating models, **MONAI Deploy** is 
 MONAI Deploy was released at **MICCAI 2021** and was part of the [**MONAI 2021 Bootcamp**](https://www.gpuhackathons.org/event/monai-miccai-bootcamp-2021). Since then we have released several versions of some of the sub-systems, while others are being actively developed. Please check out the next section.
 
 ## Sub-systems
-First versions include:
 - [**MONAI Application Package (MAP)**](https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/monai-application-package.md) - defines how applications can be packaged.
     and distributed amongst MONAI Working Group member organizations.
 - [**MONAI Deploy App SDK**](https://github.com/Project-MONAI/monai-deploy-app-sdk) - set of development tools to create MAPs out of MONAI / Pytorch models.
-
-Future versions will include:
 - [**MONAI Deploy Informatics Gateway**](https://github.com/Project-MONAI/monai-deploy-informatics-gateway) - I/0 for DICOM and FHIR.
 - [**MONAI Deploy Workflow Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on the [**clinical workflow specification**](https://github.com/Project-MONAI/monai-deploy-workflow-manager/blob/main/guidelines/mwm-workflow-spec.md) and incoming requests.
 - [**MONAI Deploy App Server**](https://github.com/Project-MONAI/monai-deploy-app-server) - Server environment which can run MONAI Applications (MAPs).
