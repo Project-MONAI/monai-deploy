@@ -48,3 +48,38 @@ jobs:
     - name: Build Solution
       run: dotnet build -c Release --nologo --no-restore dotnet-performance-app.sln
       working-directory: ./performance-testing/dotnet-performance-app
+
+  publish-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Build containers and publish
+      run: |
+        export VERSION=`cat VERSION`
+        ./performance-testing/build.sh
+        docker tag monai/performance-app:$VERSION monai/performance-app:${{ github.sha }}
+
+    - name: Scan Workflow Manager image with Azure Container Scan
+      uses: Azure/container-scan@v0
+      with:
+        image-name: monai/performance-app:${{ github.sha }}
+
+    - name: Scan Performance App image with Anchore
+      id: scan-performance-app
+      uses: anchore/scan-action@v3
+      with:
+        image: monai/performance-app:${{ github.sha }}
+        fail-build: false
+        acs-report-enable: true
+      if: always()
+
+    - name: upload Performance App Anchore scan SARIF report
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan-performance-app.outputs.sarif }}
+        category: performance-app
+      if: always()
