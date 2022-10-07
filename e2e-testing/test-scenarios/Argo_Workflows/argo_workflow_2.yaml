@@ -1,0 +1,53 @@
+# This example demonstrates the ability to pass artifacts
+# from one step to the next.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: argo-workflow-2
+  generateName: aide-pixel-mean-calc-
+spec:
+  entrypoint: demo-pipeline
+  imagePullSecrets:
+    - name: demo-pipeline-docker-registry-secret
+  templates:
+  - name: demo-pipeline
+    steps:
+    - - name: calculate-mean
+        template: mean-calc
+        arguments:
+          artifacts:
+            - name: input-dicom
+              s3:
+                key: argo/inputs/artifacts/input-dicom
+                accessKeySecret:
+                  name: my-minio-cred
+                  key: accesskey
+                secretKeySecret:
+                  name: my-minio-cred
+                  key: secretkey
+
+  - name: mean-calc
+    inputs:
+      artifacts:
+      - name: input-dicom
+        path: /tmp/dicom_input
+        s3:
+          key: argo/inputs/artifacts/input-dicom
+          accessKeySecret:
+            name: my-minio-cred
+            key: accesskey
+          secretKeySecret:
+            name: my-minio-cred
+            key: secretkey
+    container:
+      image: registry.gitlab.com/answerdigital/londonai/aide/demo_pipeline/test_model_operator:argo
+      command: [sh, -c]
+      args: ["python main.py"]
+    outputs:
+      artifacts:
+      - name: report-pdf
+        path: /tmp/pixel_mean_output/report.pdf
+        archive:
+          none: {}
+        s3:
+          key: report-pdf/pixel_mean_output/report.pdf

@@ -1,0 +1,134 @@
+{
+	"name": "router_1",
+	"version": "1.0.0",
+	"description": "Workflow with a router task that creates a diverging branch",
+	"informatics_gateway": {
+		"ae_title": "MONAI",
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "router-task",
+			"description": "router task to route MR and US studies",
+			"type": "router",
+			"task_destinations":[
+				{
+					"Name": "argo-task-mr",
+					"Conditions": ["{{ context.dicom.series.all('0008','0060') }} == 'MR'"]
+				},
+				{
+					"Name": "argo-task-us",
+					"Conditions": ["{{ context.dicom.series.all('0008','0060') }} == 'US'"]
+				}
+			]
+		},
+		{
+			"id": "argo-task-mr",
+			"description": "mean-pixel-calc for MR studies",
+			"type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-1",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+			"task_destinations":[
+				{
+					"Name": "export-task-mr"
+				}
+			],
+            "ref": "",
+			"artifacts":
+			{
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": [
+					{
+						"name": "report-dicom"
+					}
+				]
+			}
+		},
+		{
+			"id": "export-task-mr",
+			"description": "example export task",
+			"type": "export",
+			"args": {
+			},
+			"export_destinations":[
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "report-dicom",
+						"value": "{{ context.executions.argo-task-mr.artifacts.report-dicom }}",
+						"mandatory": true
+					}
+				]
+			}
+		},
+		{
+			"id": "argo-task-us",
+			"description": "mean-pixel-calc for US studies",
+			"type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-1",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+			"task_destinations":[
+				{
+					"Name": "export-task-us"
+				}
+			],
+            "ref": "",
+			"artifacts":
+			{
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": [
+					{
+						"name": "report-dicom"
+					}
+				]
+			}
+		},
+		{
+			"id": "export-task-us",
+			"description": "example export task",
+			"type": "export",
+			"args": {
+			},
+			"export_destinations":[
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "report-dicom",
+						"value": "{{ context.executions.argo-task-us.artifacts.report-dicom }}",
+						"mandatory": true
+					}
+				]
+			}
+		}
+	]
+}

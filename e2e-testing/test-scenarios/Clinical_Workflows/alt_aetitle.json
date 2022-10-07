@@ -1,0 +1,39 @@
+{
+	"name": "alt_aetitle",
+	"version": "1.0.0",
+	"description": "Workflow with AETitle that wont be triggered",
+	"informatics_gateway": {
+		"ae_title": "NOT_MONAI",
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "mean-pixel-calc",
+			"description": "mean-pixel-calc operator and reporter",
+			"type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-1",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+            "ref": "",
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": [
+					{
+						"name": "report-dicom"
+					}
+				]
+			}
+		}
+	]
+}
