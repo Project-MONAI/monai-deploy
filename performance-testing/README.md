@@ -32,13 +32,13 @@ Performance tests have been written to simulate real life load on the MONAI depl
 - Models
     - Dummy models created will simulate real model usage to stress the system.
 
-![link](./k6/static/Perf%20Architecture.png)
-
 | Name   | CPU Cores | RAM  | GPU  | Disk Space |
 | ------ | --------- | ---- | ---- | ---------- |
 | Small  | 2         | 1GB  | 1GB  | 2GB        |
 | Medium | 8         | 10GB | 6GB  | 15GB       |
 | Large  | 12        | 16GB | 12GB | 25GB       |
+
+![link](./k6/static/Perf%20Architecture.png)
 
 ### Clinical Workflow Example ##
 ```
