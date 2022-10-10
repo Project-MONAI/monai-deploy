@@ -1,0 +1,113 @@
+# This example demonstrates the ability to pass artifacts
+# from one step to the next.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: argo-workflow-1
+  generateName: mean-pixel-calc-
+spec:
+  entrypoint: demo-pipeline
+  imagePullSecrets:
+    - name: demo-pipeline-docker-registry-secret
+  templates:
+  - name: demo-pipeline
+    steps:
+    - - name: calculate-mean
+        template: mean-calc
+        arguments:
+          artifacts:
+            - name: input-dicom
+              s3:
+                key: argo/inputs/artifacts/input-dicom
+                accessKeySecret:
+                  name: my-minio-cred
+                  key: accesskey
+                secretKeySecret:
+                  name: my-minio-cred
+                  key: secretkey
+    - - name: generate-report
+        template: dicom-encapsulation
+        arguments:
+          artifacts:
+            - name: input-dicom
+              s3:
+                key: argo/inputs/artifacts/input-dicom
+                accessKeySecret:
+                  name: my-minio-cred
+                  key: accesskey
+                secretKeySecret:
+                  name: my-minio-cred
+                  key: secretkey
+            - name: report-pdf
+              from: "{{steps.calculate-mean.outputs.artifacts.report-pdf}}"
+
+  - name: mean-calc
+    inputs:
+      artifacts:
+      - name: input-dicom
+        path: /tmp/dicom_input
+        s3:
+          key: argo/inputs/artifacts/input-dicom
+          accessKeySecret:
+            name: my-minio-cred
+            key: accesskey
+          secretKeySecret:
+            name: my-minio-cred
+            key: secretkey
+    container:
+      image: registry.gitlab.com/answerdigital/londonai/aide/demo_pipeline/test_model_operator:argo
+      command: [sh, -c]
+      args: ["python main.py"]
+    outputs:
+      artifacts:
+      - name: report-pdf
+        path: /tmp/pixel_mean_output/report.pdf
+        s3:
+          bucket: bucket1
+          key: 00000000-1000-0000-0000-000000000000/report-pdf/pixel_mean_output/report.pdf
+          accessKeySecret:
+            name: my-minio-cred
+            key: accesskey
+          secretKeySecret:
+            name: my-minio-cred
+            key: secretkey
+
+  - name: dicom-encapsulation
+    inputs:
+      artifacts:
+      - name: input-dicom
+        path: /tmp/dicom_input
+        s3:
+          key: argo/inputs/artifacts/input-dicom
+          accessKeySecret:
+            name: my-minio-cred
+            key: accesskey
+          secretKeySecret:
+            name: my-minio-cred
+            key: secretkey
+      - name: report-pdf
+        path: /tmp/pixel_mean_output/report.pdf
+        s3:
+          key: report-pdf/pixel_mean_output/report.pdf
+          accessKeySecret:
+            name: my-minio-cred
+            key: accesskey
+          secretKeySecret:
+            name: my-minio-cred
+            key: secretkey
+    outputs:
+      artifacts:
+      - name: report
+        path: /tmp/reporter_output/output.dcm
+        s3:
+          key: 00000000-1000-0000-0000-000000000000/reporter_output/output.dcm
+          accessKeySecret:
+            name: my-minio-cred
+            key: accesskey
+          secretKeySecret:
+            name: my-minio-cred
+            key: secretkey
+    container:
+      image: registry.gitlab.com/answerdigital/londonai/aide/demo_pipeline/test_model_reporter:argo
+      command: [sh, -c]
+      args: ["python main.py"]

@@ -1,0 +1,34 @@
+{
+	"name": "export",
+	"version": "1.0.0",
+	"description": "Workflow with an export task which forwards on the study to another DICOM server",
+	"informatics_gateway": {
+		"ae_title": "MONAI",
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "export-study",
+			"description": "Export entire study to another destination",
+			"type": "export",
+			"args": {
+			},
+			"export_destinations":[
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "study",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				]
+			}
+		}
+	]
+}
