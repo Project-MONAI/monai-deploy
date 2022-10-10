@@ -29,9 +29,10 @@ Performance tests have been written to simulate real life load on the MONAI depl
     - A log aggregator (i.e ELK) will be used for capturing all logs so that investigation of run time metrics can be achieved.
 - Grafana and Prometheus
     - Monitoring and visualization platforms to monitor memory, CPU and GPU usage from the applications
-![link](./k6/static/Perf%20Architecture.png)
 - Models
     - Dummy models created will simulate real model usage to stress the system.
+
+![link](./k6/static/Perf%20Architecture.png)
 
 | Name   | CPU Cores | RAM  | GPU  | Disk Space |
 | ------ | --------- | ---- | ---- | ---------- |
