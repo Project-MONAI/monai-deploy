@@ -3,11 +3,11 @@ Performance tests have been written to simulate real life load on the MONAI depl
 
 # Getting Started #
 ## Dependencies ##
-- MWM and its dependencies
-- MIG and its dependencies
+- MONAI Workflow Manager (WM) and its dependencies
+- MONAI Informatics Gateway (IG) and its dependencies
 - Docker
 - Orthanc
-- Dummy models (to be included as part of MWM development)
+- Dummy models (to be included as part of WM development)
 - ELK Stack
 - Prometheus and Grafana
 - Test data (CT, MR, US, RF)
