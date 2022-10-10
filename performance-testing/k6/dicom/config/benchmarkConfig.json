@@ -6,24 +6,7 @@
         "workflow_modality": "monai",
         "no_workflow_modality": "monai_none"
     },
-    "lowerThinkTime": 10,
-    "upperThinkTime": 30,
-    "ct": {
-        "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
-    },
     "mr": {
-        "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
-    },
-    "us": {
-        "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
-    },
-    "rf": {
         "vus": 1,
         "iterations": 1,
         "maxDuration": "60s"

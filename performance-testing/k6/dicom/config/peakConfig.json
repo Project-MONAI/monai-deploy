@@ -1,26 +1,31 @@
 {
+    "orthanc":{
+        "url": "https://preprod-kch-aide.answerdigital.io:8042",
+        "username": "orthanc",
+        "password": "orthanc",
+        "workflow_modality": "monai",
+        "no_workflow_modality": "monai_none"
+    },
+    "lowerThinkTime": 10,
+    "upperThinkTime": 30,
     "ct": {
-        "rate": 30,
-        "timeUnit": "1h", 
-        "duration": "1h",
-        "preAllocatedVUs": 5 
+        "vus": 1,
+        "iterations": 1,
+        "maxDuration": "60s"
     },
-    "mri": {
-        "rate": 25,
-        "timeUnit": "1h", 
-        "duration": "1h",
-        "preAllocatedVUs": 5 
+    "mr": {
+        "vus": 1,
+        "iterations": 1,
+        "maxDuration": "60s"
     },
-    "ultrasound": {
-        "rate": 50,
-        "timeUnit": "1h", 
-        "duration": "1h",
-        "preAllocatedVUs": 5 
+    "us": {
+        "vus": 1,
+        "iterations": 1,
+        "maxDuration": "60s"
     },
-    "xray": {
-        "rate": 120,
-        "timeUnit": "1h", 
-        "duration": "1h",
-        "preAllocatedVUs": 5 
+    "rf": {
+        "vus": 1,
+        "iterations": 1,
+        "maxDuration": "60s"
     }
 }
