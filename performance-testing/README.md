@@ -1,5 +1,5 @@
 # Description #
-Performance tests have been written to simulate real life load on the MONAI deploy solution stack. This includes benchmark, average and peak load (soak) configuration. Because of the asynchronous architecture of MONAI Deploy, k6 will be used as the load generator but logs from elastic will be used to measure the performance of the individual components.
+Performance tests have been written to simulate real life load on the MONAI Deploy solution stack. This includes benchmark, average and peak load (soak) configuration. Because of the asynchronous architecture of MONAI Deploy, k6 will be used as the load generator but logs from elastic will be used to measure the performance of the individual components.
 
 # Getting Started #
 ## Dependencies ##
