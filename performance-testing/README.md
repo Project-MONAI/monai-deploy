@@ -87,7 +87,7 @@ Tasks [
 
 ## Tests ##
 ### Baseline/ Benchmark ###
-Baseline/ Benchmark tests will be used to measuring the best performance of the MONAI stack. Is this a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
+Baseline/ Benchmark tests will be used to measuring the best performance of the MONAI stack. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
 
 | Modality | Iterations | Typical Image Size | \# of Images / Study | Size (Raw) |
 | -------- | ---------- | ------------------ | -------------------- | ---------- |
