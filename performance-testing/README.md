@@ -13,6 +13,8 @@ Performance tests have been written to simulate real life load on the MONAI Depl
 - Test data (CT, MR, US, RF)
 
 ## Architecture ##
+![link](./k6/static/Perf%20Architecture.png)
+
 - k6
     - Load generator written in Go and can be executed via Docker.
     - Scripting is done in JS or TS.
@@ -37,8 +39,6 @@ Performance tests have been written to simulate real life load on the MONAI Depl
 | Small  | 2         | 1GB  | 1GB  | 2GB        |
 | Medium | 8         | 10GB | 6GB  | 15GB       |
 | Large  | 12        | 16GB | 12GB | 25GB       |
-
-![link](./k6/static/Perf%20Architecture.png)
 
 ### Clinical Workflow Example ##
 ```
