@@ -1,0 +1,117 @@
+{
+	"name": "task_destinations_conditions",
+	"version": "1.0.0",
+	"description": "Workflow with Argo tasks that cain if the input is a CT CHEST",
+	"informatics_gateway": {
+		"ae_title": "MONAI",
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "argo-task-ct",
+			"description": "mean-pixel-calc operator and reporter",
+			"type": "argo",
+			"args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-1",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+			"task_destinations":[
+				{
+					"Name": "argo-task-ct-chest",
+					"Conditions":"{{ context.dicom.series.any('0018','0015') }} == 'CHEST'"
+				},
+				{
+					"Name": "export-report-ct"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": [
+					{
+						"name": "report-dicom"
+					}
+				]
+			}
+		},
+		{
+			"id": "export-report-ct",
+			"description": "Export report for CT",
+			"type": "export",
+			"export_destinations":[
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "report-dicom",
+						"value": "{{ context.executions.argo-task-ct.artifacts.report-dicom }}",
+						"mandatory": true
+					}
+				]
+			}
+		},
+		{
+			"id": "argo-task-ct-chest",
+			"description": "mean-pixel-calc operator and reporter",
+			"type": "argo",
+			"args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-1",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+			"task_destinations":[
+				{
+					"Name": "export-report-ct-chest"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": [
+					{
+						"name": "report-dicom"
+					}
+				]
+			}
+		},
+		{
+			"id": "export-report-ct-chest",
+			"description": "Export report for CT Chest",
+			"type": "export",
+			"args": {
+			},
+			"export_destinations":[
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "report-dicom",
+						"value": "{{ context.executions.argo-task-ct-chest.artifacts.report-dicom }}",
+						"mandatory": true
+					}
+				]
+			}
+		}
+	]
+}
