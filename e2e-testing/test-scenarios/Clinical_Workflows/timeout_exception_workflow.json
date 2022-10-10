@@ -1,0 +1,73 @@
+{
+	"name": "workflow",
+	"version": "1.0.0",
+	"description": "Workflow with Argo task which runs longer than the timeout parameter",
+	"informatics_gateway": {
+		"ae_title": "MONAI",
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "argo-task-1",
+			"description": "mean-pixel-calc operator",
+			"type": "argo",
+			"timeout_minutes": 2,
+			"args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-sleep-a",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+			},
+			"task_destinations":[
+				{
+					"Name": "argo-task-2"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}"
+					}
+				],
+				"output": [
+					{
+						"name": "report-pdf",
+						"mandatory": true
+					}
+				]
+			}
+		},
+		{
+			"id": "argo-task-2",
+			"description": "mean-pixel-calc reporter",
+			"type": "argo",
+			"timeout_minutes": 2,
+			"args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-sleep-b",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+			},
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}"
+					},
+                    {
+						"name": "report-pdf",
+						"value": "{{ context.executions.argo-task-1.artifacts.report-pdf }}"
+					}
+				],
+				"output": [
+					{
+						"name": "report-dicom"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,70 @@
+{
+	"name": "workflow",
+	"version": "1.0.0",
+	"description": "Workflow with a router task that initiates 2 argo tasks in parallel",
+	"informatics_gateway": {
+		"ae_title": "MONAI",
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "router-task",
+			"description": "router task to route CT studies to 2 models",
+			"type": "router",
+			"task_destinations":[
+				{
+					"Name": "argo-task-ct-1",
+					"Conditions":["{{ context.input.dicom.series.any('0008','0060') }} == 'CT'"]
+				},
+				{
+					"Name": "argo-task-ct-2",
+					"Conditions":["{{ context.input.dicom.series.any('0008','0060') }} == 'CT'"]
+				}
+			]
+		},
+		{
+			"id": "argo-task-ct-1",
+			"description": "Operator with a sleep",
+			"type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-sleep-a",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": []
+			}
+		},
+		{
+			"id": "argo-task-ct-2",
+			"description": "Operator with a sleep",
+			"type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "argo-workflow-sleep-a",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+			"artifacts": {
+				"input": [
+					{
+						"name": "input-dicom",
+						"value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+				"output": []
+			}
+		}
+	]
+}
