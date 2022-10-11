@@ -66,7 +66,7 @@
 				],
 				"output": [
 					{
-						"name": "report"
+						"name": "report-dicom-new"
 					}
 				]
 			}
@@ -90,8 +90,8 @@
 						"mandatory": true
 					},
 					{
-						"name": "report",
-						"value": "{{ context.executions.argo-task-2.artifacts.report-pdf }}",
+						"name": "report-dicom-new",
+						"value": "{{ context.executions.argo-task-2.artifacts.report-dicom-new }}",
 						"mandatory": true
 					}
 				]
