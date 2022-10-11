@@ -1,0 +1,147 @@
+metadata:
+  name: argo-workflow-1-new
+  generateName: mean-pixel-calc-
+  namespace: argo
+  uid: 63a4c898-06b7-45a4-8081-8106ff40d09a
+  resourceVersion: '5502072'
+  generation: 4
+  creationTimestamp: '2022-09-23T13:52:45Z'
+  labels:
+    workflows.argoproj.io/creator: system-serviceaccount-argo-argo-server
+  managedFields:
+    - manager: argo
+      operation: Update
+      apiVersion: argoproj.io/v1alpha1
+      time: '2022-09-23T13:52:45Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:generateName: {}
+          f:labels:
+            .: {}
+            f:workflows.argoproj.io/creator: {}
+        f:spec: {}
+spec:
+  templates:
+    - name: demo-pipeline
+      inputs: {}
+      outputs: {}
+      metadata: {}
+      steps:
+        - - name: calculate-mean
+            template: mean-calc
+            arguments:
+              artifacts:
+                - name: input-dicom
+                  s3:
+                    accessKeySecret:
+                      name: my-minio-cred
+                      key: accesskey
+                    secretKeySecret:
+                      name: my-minio-cred
+                      key: secretkey
+                    key: argo/inputs/artifacts/input-dicom
+        - - name: generate-report
+            template: dicom-encapsulation
+            arguments:
+              artifacts:
+                - name: input-dicom
+                  s3:
+                    accessKeySecret:
+                      name: my-minio-cred
+                      key: accesskey
+                    secretKeySecret:
+                      name: my-minio-cred
+                      key: secretkey
+                    key: argo/inputs/artifacts/input-dicom
+                - name: report-pdf
+                  from: '{{steps.calculate-mean.outputs.artifacts.report-pdf}}'
+    - name: mean-calc
+      inputs:
+        artifacts:
+          - name: input-dicom
+            path: /tmp/dicom_input
+            s3:
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: argo/inputs/artifacts/input-dicom
+      outputs:
+        artifacts:
+          - name: report-pdf
+            path: /tmp/pixel_mean_output/report.pdf
+            s3:
+              bucket: bucket1
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: >-
+                00000000-1000-0000-0000-000000000000/report-pdf/pixel_mean_output/report.pdf
+      metadata: {}
+      container:
+        name: ''
+        image: >-
+          registry.gitlab.com/answerdigital/londonai/aide/demo_pipeline/test_model_operator:argo
+        command:
+          - sh
+          - '-c'
+        args:
+          - python main.py
+        resources: {}
+    - name: dicom-encapsulation
+      inputs:
+      inputs:
+        artifacts:
+          - name: input-dicom
+            path: /tmp/dicom_input
+            s3:
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: argo/inputs/artifacts/input-dicom
+          - name: report
+            path: /tmp/pixel_mean_output/report.pdf
+            s3:
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: report/pixel_mean_output/report.pdf
+      outputs:
+        artifacts:
+          - name: report-dicom-2
+            path: /tmp/reporter_output/output.dcm
+            s3:
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: 00000000-1000-0000-0000-000000000000/reporter_output/output.dcm
+      metadata: {}
+      container:
+        name: ''
+        image: >-
+          registry.gitlab.com/answerdigital/londonai/aide/demo_pipeline/test_model_reporter:argo
+        command:
+          - sh
+          - '-c'
+        args:
+          - python main.py
+        resources: {}
+  entrypoint: demo-pipeline
+  arguments: {}
+  imagePullSecrets:
+    - name: demo-pipeline-docker-registry-secret
