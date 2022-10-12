@@ -1,0 +1,63 @@
+{
+    "name": "liver-seg",
+    "version": "1.0.0",
+    "description": "MONAI AI Liver Seg",
+    "informatics_gateway": {
+        "ae_title": "MONAI",
+        "export_destinations": [
+            "ORTHANC"
+        ]
+    },
+    "tasks": [
+        {
+            "id": "liver-seg",
+            "description": "liver segmentation",
+            "type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "liver-seg-argo-template",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+            "task_destinations": [
+                {
+                    "name": "export-report"
+                }
+            ],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "input-dicom",
+                        "value": "{{ context.input.dicom }}",
+                        "mandatory": true
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "output"
+                    }
+                ]
+            },
+            "input_parameters": null
+        },
+        {
+            "id": "export-report",
+            "description": "export report",
+            "type": "export",
+            "export_destinations": [
+                {
+                    "name": "ORTHANC"
+                }
+            ],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "output",
+                        "value": "{{ context.executions.liver-seg.artifacts.output }}",
+                        "mandatory": true
+                    }
+                ]
+            }
+        }
+    ]
+}
