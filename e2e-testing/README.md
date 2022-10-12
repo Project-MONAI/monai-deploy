@@ -19,8 +19,8 @@ The below matrix was created to replicate and test real life scenarios.
 | MONAI\_E2E\_006 | argo                   | Execution of a workflow (US)                                                       | Workflow is triggered and report is exported to PACS.                                                                                                                                             | Study\_4    | argo\_export\_workflow.json                     | argo\_workflow\_1                            | Passed                                 |
 | MONAI\_E2E\_007 | argo                   | Execution of a workflow (Xray)                                                     | Workflow is triggered and report is exported to PACS.                                                                                                                                             | Study\_5    | argo\_export\_workflow.json                     | argo\_workflow\_1                            | Passed                                 |
 | MONAI\_E2E\_008 | argo                   | Execution of a workflow for a multi-series study                                   | Multi-series study is sent through as one association which results in a single report back to PACS.                                                                                              | Study\_6    | argo\_export\_workflow.json                     | argo\_workflow\_1                            | Passed                                 |
-| MONAI\_E2E\_009 | argo\_gpu              | Execution of a workflow where the Argo task requires GPU                           | Workflow is triggered with a model which required GPU access.                                                                                                                                     | Study\_1    | liver-seg.json                                  | argo\_workflow\_5                            | Not Yet Run                            |
-| MONAI\_E2E\_010 | argo\_map              | Execution of a workflow where the Argo task uses a MAP                             | Workflow is triggered with a model which is created as a MAP.                                                                                                                                     | Study\_1    | argo\_map\_workflow.json                        | argo\_workflow\_5                            | Not Yet Run                            |
+| MONAI\_E2E\_009 | argo\_gpu              | Execution of a workflow where the Argo task requires GPU                           | Workflow is triggered with a model which required GPU access.                                                                                                                                     | Study\_7    | liver-seg.json                                  | argo\_workflow\_5                            | Passed                                 |
+| MONAI\_E2E\_010 | argo\_map              | Execution of a workflow where the Argo task uses a MAP                             | Workflow is triggered with a model which is created as a MAP.                                                                                                                                     | Study\_7    | liver-seg.json                                  | argo\_workflow\_5                            | Passed                                 |
 | MONAI\_E2E\_011 | workflow\_execution    | No execution when there isnt a match on a workflow AETitle                         | No workflows are triggered when a workflow request does not match on AETitle.                                                                                                                     | Study\_3    | alt\_aetitle.json                               | argo\_workflow\_1                            | Passed                                 |
 | MONAI\_E2E\_012 | router                 | Router task filters out execution based on DICOM modality                          | Router task filters out payloads which should not be executed on.                                                                                                                                 | Study\_1    | router\_workflow\_1.json                        | argo\_workflow\_1                            | Passed                                 |
 | MONAI\_E2E\_013 | router                 | Router task forwards to correct Task Destination                                   | Router task directs study down the MR branch of the workflow                                                                                                                                      | Study\_3    | router\_workflow\_1.json                        | argo\_workflow\_1                            | Passed                                 |
@@ -65,15 +65,15 @@ TBC
 The [test-data](/e2e-testing/test-data) folder contains all the tests data to support the execution of the End to End tests. This includes Argo workflows Clinical Workflows and DICOM studies used.
 
 #### Argo Workflows
-| Name                      | Description                                                                                                                                                          |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| argo\_workflow\_1         | Both operators of the mean pixel calc (test\_operator & test\_reporter) can be executed as a single Argo Task                                                        |
-| argo\_workflow\_2         | test\_operator of the mean pixel calc can be executed in isolation as a single Argo Task                                                                             |
-| argo\_workflow\_3         | reporter\_operator of the mean pixel calc can be executed in isolation as a single Argo Task                                                                         |
-| argo\_workflow\_exception | Both operators of the mean pixel calc (test\_operator & test\_reporter) can be executed as a single Argo Task. Image used for test\_operator will throw an exception |
-| argo\_workflow\_4         | Both operators of the mean pixel calc (test\_operator & test\_reporter) can be executed as a single Argo Task. Hard coded [thread.sl](http://thread.sl/)eep(5 mins)  |
-| argo\_workflow\_5         | Argo Task with GPU enabled                                                                                                                                           |
-| argo\_workflow\_6         | Argo Task with MAP
+| Name                      | Description                                                                                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| argo\_workflow\_1         | Both operators of the mean pixel calc (test\_operator & test\_reporter) can be executed as a single Argo Task                                                       |
+| argo\_workflow\_1\_new    | Both operators of the mean pixel calc (test\_operator & test\_reporter) can be executed as a single Argo Task                                                       |
+| argo\_workflow\_2         | test\_operator of the mean pixel calc can be executed in isolation as a single Argo Task                                                                            |
+| argo\_workflow\_3         | reporter\_operator of the mean pixel calc can be executed in isolation as a single Argo Task                                                                        |
+| argo\_workflow\_exception | Image used for test\_operator will throw an exception                                                                                                               |
+| argo\_workflow\_sleep<br> | Both operators of the mean pixel calc (test\_operator & test\_reporter) can be executed as a single Argo Task. Hard coded [thread.sl](http://thread.sl/)eep(5 mins) |
+| argo\_workflow\_5         | Argo Task executed MAP on GPU 
 
 #### DICOM Studies
 | Name     | Description    |
@@ -84,6 +84,7 @@ The [test-data](/e2e-testing/test-data) folder contains all the tests data to su
 | Study\_4 | US Study       |
 | Study\_5 | Xray Study     |
 | Study\_6 | Multi-series   |
+| Study\_7 | Liver CT       |
 
 ### Deployment
 TBC

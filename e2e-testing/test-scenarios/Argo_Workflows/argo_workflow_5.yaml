@@ -1,0 +1,65 @@
+metadata:
+  name: liver-seg-argo-template
+  generateName: liver-seg-argo-template-
+  namespace: argo
+spec:
+  templates:
+    - name: demo-pipeline
+      inputs: {}
+      outputs: {}
+      metadata: {}
+      steps:
+        - - name: liver-segmentation
+            template: liver-seg
+            arguments:
+              artifacts:
+                - name: input-dicom
+                  s3:
+                    accessKeySecret:
+                      name: my-minio-cred
+                      key: accesskey
+                    secretKeySecret:
+                      name: my-minio-cred
+                      key: secretkey
+                    key: argo/inputs/artifacts/input-dicom
+    - name: liver-seg
+      inputs:
+        artifacts:
+          - name: input-dicom
+            path: /var/monai/input
+            s3:
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: argo/inputs/artifacts/input-dicom
+      outputs:
+        artifacts:
+          - name: output
+            path: /var/monai/output
+            s3:
+              bucket: bucket1
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: >-
+                00000000-1000-0000-0000-000000000000/report-pdf/liver-seg/report.pdf
+      metadata: {}
+      container:
+        name: ''
+        image: ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0
+        command:
+          - /bin/bash
+          - '-c'
+        args:
+          - python3 -u /opt/monai/app/app.py -m /opt/monai/models/model/model.ts
+        resources:
+          limits:
+            nvidia.com/gpu: '1'
+  entrypoint: demo-pipeline
+  arguments: {}
