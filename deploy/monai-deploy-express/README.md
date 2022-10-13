@@ -49,13 +49,23 @@ The [Docker compose file](docker-compose.yml) spins up the following services. S
 Execute one of the following commands in the directory where the `docker-compose.yml` resides to start, stop all the services or to view the logs.
 
 ```bash
-docker compose up # start all services
+docker compose up # start MONAI Deploy Express
 docker compose up -d # or run detached
 docker compose logs -t -f # view output from all containers
 docker compose down # stop all services
 ```
 
-The first time calling `docker compose up` may take longer as it needs to pull all the container images. However, once all container images are pulled and available on the local system, all the services should spin up within 20 to 60 seconds.
+Use the following commands to launch MONAI Deploy Express with ELK (ElasticSearch-LogStash-Kibana):
+
+```bash
+./init.sh # required to setup Elastic volume mapping permissions on Linux
+docker compose --profile elk up # start MONAI Deploy Express & ELK
+docker compose --profile elk up -d # or run detached
+docker compose logs -t -f # view output from all containers
+docker compose --profile elk down # stop all services
+```
+
+The first time calling `docker compose up` may take longer as it needs to pull all the container images. However, once all container images are pulled and available on the local system, all the services should spin up between 20 to 65 seconds.
 
 ### MONAI Deploy Services
 
@@ -75,6 +85,9 @@ The first time calling `docker compose up` may take longer as it needs to pull a
 | MongoDB (default database for Worklflow Manager & Task Manager) | http://localhost:27017 | http://172.29.0.30:27017 |
 | Orthanc UI (optional)                                           | http://localhost:8042  | http://172.29.0.100:8042 |
 | Orthanc SCP (optional)                                          | 4242                   | 4242                     |
+| Elastic Search                                                  | 9200, 9300             | 9200,9300                |
+| Log Stash                                                       | 9600, 50000            | 9600, 50000              |
+| Kibana                                                          | http://localhost:5601  | http://172.29.0.103:5601 |
 
 *Note: Orthanc is included for convenience and to demo end-to-end workflow execution. It may be disabled and have MONAI Deploy Express integrated with external Orthanc, PACS or other DICOM devices.*
 
@@ -166,12 +179,17 @@ This example uses the `alpine` container image instead of a MAP to print all fil
 In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_livertumor_seg_app) from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
 
+
 #### Steps
 
 1. Download the [Abdomen CT dataset](#running-a-monai-deploy-workflow) dataset
-2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
-3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
-4. 
+2. Download the AI Liver Tumor MAP
+   ```bash
+   docker pull ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0
+   ```
+3. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
+4. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+5. 
    ```bash
    curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/liver-seg.json"  http://localhost:5001/workflows
    ```
@@ -182,10 +200,10 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    {"workflow_id":"811620da-381f-4daa-854d-600948e67228"}
    ```
    
-5. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+6. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-6. Wait for the workflow to complete; the entire workflow takes roughly one minute and thirty seconds to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
-7. To see the output of the container, run the following commands:
+7. Wait for the workflow to complete; the entire workflow takes roughly one minute and thirty seconds to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
+8. To see the output of the container, run the following commands:
    ```bash
    > docker container list -a | grep monai_ai_livertumor_seg_app
    # locate the container ID and run the following
@@ -202,9 +220,13 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
 #### Steps
 
 1. Download the [Chest CT dataset](#running-a-monai-deploy-workflow) dataset
-2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
-3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
-4. 
+2. Download the AI Lung Segmentation MAP
+   ```bash
+   docker pull ghcr.io/mmelqin/monai_ai_lung_seg_app:1.0
+   ```
+3. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
+4. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+5. 
    ```
    curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/lung-seg.json"  http://localhost:5001/workflows
    ```
@@ -215,10 +237,10 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
    {"workflow_id":"811620da-381f-4daa-854d-600948e67228"}
    ```
 
-5. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+6. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
    In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-6. Wait for the workflow to complete; the entire workflow takes roughly one minute to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
-7. To see the output from the container, run the following commands:
+7. Wait for the workflow to complete; the entire workflow takes roughly one minute to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
+8. To see the output from the container, run the following commands:
    ```bash
    > docker container list -a | grep monai_ai_lung_seg_app
    # locate the container ID and run the following
@@ -230,9 +252,14 @@ In this section, we will download a DICOM dataset, upload it to Orthanc and then
 In the `liver-lung-seg.json` workflow definition, we combined the AI Lung MAP and the AI Liver MAP into one single workflow definition. With this workflow definition, the Workflow Manager would route the incoming data based on the routing rules defined.
 
    1. Download one or both of the [datasets](#running-a-monai-deploy-workflow) provided above
-   2. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
-   3. Deploy the workflow definition to MONAI Deploy Workflow Manager:
-   4. 
+   2. Download the AI Liver Tumor & the AI Lung Segmentation MAPs
+      ```bash
+      docker pull ghcr.io/mmelqin/monai_ai_lung_seg_app:1.0
+      docker pull ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0
+      ```
+   3. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
+   4. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+   5. 
       ```
       curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/liver-lung-seg.json"  http://localhost:5001/workflows
       ```
@@ -243,18 +270,23 @@ In the `liver-lung-seg.json` workflow definition, we combined the AI Lung MAP an
       {"workflow_id":"6d5e1e73-bd07-4e71-b1fa-b66408d43b82"}
       ```
 
-   5. Navigate to Orthanc, select one of the studies and then click *Send to DICOM Modality* from the menu on the left.
+   6. Navigate to Orthanc, select one of the studies and then click *Send to DICOM Modality* from the menu on the left.
       In the popup dialog, choose **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
-   6. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
-   7. To see the output from the container, run the following commands:
+   7. Wait for the workflow to complete and reload the Orthanc study page and expect a new series to be added.
+   8. To see the output from the container, run the following commands:
       ```bash
       > docker container list -a | grep monai_ai_
       # locate the container ID and run the following
       > docker logs {CONTAINER ID}
       ```
-   8. Repeat the steps with the other dataset.
+   9. Repeat the steps with the other dataset.
 
 In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) should only launch the AI Lung MAP, while the [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) would launch the AI Liver MAP.
+
+## Using Kibana
+
+A default dataview is imported to Kibana at startup. To load the saved search, navigate to http://localhost:5601/, click on Analytics > Discover from the 🍔 menu. From the top right click *Open* and select *MONAI-Default*.
+
 
 ## Tips
 
