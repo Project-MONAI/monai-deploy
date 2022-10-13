@@ -137,11 +137,13 @@ services:
     container_name: $INFORMATICS_GATEWAY_CONTAINERNAME
     volumes:
       - ./configs/informatics-gateway.json:/opt/monai/ig/appsettings.json
+      - ./configs/nlog.config:/opt/monai/ig/nlog.config
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/ig/plug-ins/
-      - $INFORMATICS_GATEWAY_PAYLOADS:/temp
+      - $INFORMATICS_GATEWAY_PAYLOADS:/payloads
       - $INFORMATICS_GATEWAY_DATABASE:/database/
     environment:
       ASPNETCORE_URLS: http://+:5000
+      LOGSTASH_URL: tcp://$LOGSTASH_HOSTNAME:$LOGSTASH_PORT
     ports:
       - $INFORMATICS_GATEWAY_SCP_PORT:104
       - $INFORMATICS_GATEWAY_HL7_PORT:2575
@@ -197,6 +199,7 @@ services:
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
       ASPNETCORE_URLS: http://+:5001
+      LOGSTASH_URL: tcp://$LOGSTASH_HOSTNAME:$LOGSTASH_PORT
     ports:
       - $WORKFLOW_MANAGER_PORT:5001
     networks:
@@ -229,6 +232,7 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:5000
       HOST_TEMP_STORAGE : $TASK_MANAGER_DATA
+      LOGSTASH_URL: tcp://$LOGSTASH_HOSTNAME:$LOGSTASH_PORT
     ports:
       - $TASK_MANAGER_PORT:5000
     networks:
@@ -245,6 +249,99 @@ services:
       - minio
       - rabbitmq
       - mongodb
+
+  elasticsearch:
+    profiles: [ 'elk', 'all' ]
+    image: $ELASTICSEARCH_IMAGE
+    hostname: $ELASTICSEARCH_HOSTNAME
+    container_name: $ELASTICSEARCH_CONTAINERNAME
+    volumes:
+      - ./configs/logging/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,z
+      - .md/esdata:/usr/share/elasticsearch/data:rw,z # update init.sh to initialize the host directory
+    ports:
+      - $ELASTIC_PORT:9200
+      - $ELASTIC_PORT_COMM:9300
+    environment:
+      ELASTIC_PASSWORD: ${ELASTICSEARCH_PASSWORD:-}
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+      ELASTIC_CLIENT_APIVERSIONING: "true"
+    networks:
+      monaideploy:
+          ipv4_address: $ELASTICSEARCH_IP
+    healthcheck:
+      test: curl -s http://$ELASTICSEARCH_HOSTNAME:9200 >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 50
+
+  logstash:
+    profiles: [ 'elk', 'all' ]
+    image: $LOGSTASH_IMAGE
+    hostname: $LOGSTASH_HOSTNAME
+    container_name: $LOGSTASH_CONTAINERNAME
+    volumes:
+      - ./configs/logging/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./configs/logging/pipeline.yml:/usr/share/logstash/config/pipeline.yml:ro,Z
+      - ./configs/logging/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      # - "5044:5044" 
+      - "$LOGSTASH_PORT:50000/tcp"
+      - "$LOGSTASH_PORT:50000/udp"
+      - "$LOGSTASH_PORT_API:9600"
+    environment:
+      LOGSTASH_INTERNAL_PASSWORD: ${ELASTICSEARCH_PASSWORD:-}
+      LS_JAVA_OPTS: "-Xmx2g -Xms2g"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    links:
+      - elasticsearch
+    networks:
+      monaideploy:
+          ipv4_address: $LOGSTASH_IP
+
+  kibana:
+    profiles: [ 'elk', 'all' ]
+    image: $KIBANA_IMAGE
+    hostname: $KIBANA_HOSTNAME
+    container_name: $KIBANA_CONTAINERNAME
+    volumes:
+      - ./configs/logging/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - $KIBANA_PORT:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${ELASTICSEARCH_PASSWORD:-}
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      monaideploy:
+          ipv4_address: $KIBANA_IP
+    healthcheck:
+      test: curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  kibana-setup:
+    profiles: [ 'elk', 'all' ]
+    image: $KIBANA_CONFIG_IMAGE
+    container_name: $KIBANA_CFG_CONTAINERNAME
+    volumes:
+      - ./configs/logging/kibana.ndjson:/usr/share/kibana.ndjson
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    networks:
+      monaideploy:
+          ipv4_address: $KIBANA_CFG_IP
+    entrypoint: >
+      /bin/sh -c "
+      curl -X POST http://$KIBANA_HOSTNAME:5601/api/saved_objects/_import?createNewCopies=true -H 'kbn-xsrf: true' --form file=@/usr/share/kibana.ndjson
+      "
 
 networks:
   monaideploy:
