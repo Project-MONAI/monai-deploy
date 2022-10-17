@@ -21,6 +21,10 @@ const no_workflow_modality = config.orthanc.workflow_modality;
 const encodedCredentials = encoding.b64encode(credentials);
 const lowerThinkTime = config.lowerThinkTime;
 const upperThinkTime = config.upperThinkTime;
+const ct_pacing = config.ct.pacing;
+const mr_pacing = config.mr.pacing;
+const us_pacing = config.us.pacing;
+const rf_pacing = config.rf.pacing;
 
 export function setup(){
   const ct = http.post(`${url}/tools/find`, JSON.stringify({
@@ -127,6 +131,7 @@ export const options = {
 
 export function ct_workflow(ct_data) {
   let ct_series_uids = ct_data["ct_data"]
+  var startTime = Date.now();
 
   if(ct_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -140,10 +145,13 @@ export function ct_workflow(ct_data) {
   {
     console.log("Series data does not exist for modality CT. Please check Orthanc")
   }
+
+  sleep(pacing(ct_pacing, startTime));
 }
 
 export function ct_no_workflow() {
   let ct_series_uids = ct_data["ct_data"]
+  var startTime = Date.now();
 
   if(ct_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -157,10 +165,13 @@ export function ct_no_workflow() {
   {
     console.log("Series data does not exist for modality CT. Please check Orthanc")
   }
+
+  sleep(pacing(ct_pacing, startTime));
 }
 
 export function mr_workflow(mr_data) {
   let mr_series_uids = mr_data["mr_data"]
+  var startTime = Date.now();
 
   if(mr_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -174,10 +185,13 @@ export function mr_workflow(mr_data) {
   {
     console.log("Series data does not exist for modality MR. Please check Orthanc")
   }
+
+  sleep(pacing(mr_pacing, startTime));
 }
 
 export function mr_no_workflow(mr_data) {
   let mr_series_uids = mr_data["mr_data"]
+  var startTime = Date.now();
 
   if(mr_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -191,10 +205,13 @@ export function mr_no_workflow(mr_data) {
   {
     console.log("Series data does not exist for modality MR. Please check Orthanc")
   }
+
+  sleep(pacing(mr_pacing, startTime));
 }
 
 export function us_workflow(us_data) {
   let us_series_uids = us_data["us_data"]
+  var startTime = Date.now();
 
   if(us_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -208,10 +225,13 @@ export function us_workflow(us_data) {
   {
     console.log("Series data does not exist for modality US. Please check Orthanc")
   }
+
+  sleep(pacing(us_pacing, startTime));
 }
 
 export function us_no_workflow(us_data) {
   let us_series_uids = us_data["us_data"]
+  var startTime = Date.now();
 
   if(us_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -225,10 +245,13 @@ export function us_no_workflow(us_data) {
   {
     console.log("Series data does not exist for modality US. Please check Orthanc")
   }
+
+  sleep(pacing(us_pacing, startTime));
 }
 
 export function rf_workflow(rf_data) {
   let rf_series_uids = rf_data["rf_data"]
+  var startTime = Date.now();
 
   if(rf_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -242,10 +265,13 @@ export function rf_workflow(rf_data) {
   {
     console.log("Series data does not exist for modality RF. Please check Orthanc")
   }
+
+  sleep(pacing(rf_pacing, startTime));
 }
 
 export function rf_no_workflow(rf_data) {
   let rf_series_uids = rf_data["rf_data"]
+  var startTime = Date.now();
 
   if(rf_series_uids.length > 0) {
     sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
@@ -259,6 +285,8 @@ export function rf_no_workflow(rf_data) {
   {
     console.log("Series data does not exist for modality RF. Please check Orthanc")
   }
+
+  sleep(pacing(rf_pacing, startTime));
 }
 
 export function set_request_header(){
@@ -275,3 +303,12 @@ export function get_request_body(uid){
     "Resources": [`${uid}`]
   })
 };
+
+export function pacing(cycleTime, startTime) {
+  let waitTime = 0;
+  var endTime = Date.now();
+  let duration = endTime - startTime;
+  waitTime = cycleTime - duration;
+  waitTime = waitTime / 1000;
+  return waitTime;
+}

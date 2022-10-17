@@ -49,8 +49,8 @@ export function mr_workflow(mr_data) {
   let mr_series_uids = mr_data["mr_data"]
 
   if(mr_series_uids.length > 0) {
-    sleep(2)
-    let uid = mr_series_uids[Math.floor(Math.random() * mr_series_uids.length)];
+    sleep(120)
+    let uid = mr_series_uids[0];
     console.log(`Sending MR series with uid ${uid}`)
     let res = http.post(`${url}/modalities/${workflow_modality}/store`, get_request_body(uid), set_request_header(), { tags: { my_custom_tag: 'mr_workflow' } });
     check(res, {
