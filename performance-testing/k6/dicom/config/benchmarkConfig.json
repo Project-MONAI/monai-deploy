@@ -9,6 +9,6 @@
     "mr": {
         "vus": 1,
         "iterations": 1,
-        "maxDuration": "60s"
+        "maxDuration": "30m"
     }
 }

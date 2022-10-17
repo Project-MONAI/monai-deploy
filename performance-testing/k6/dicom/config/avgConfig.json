@@ -6,26 +6,30 @@
         "workflow_modality": "monai",
         "no_workflow_modality": "monai_none"
     },
-    "lowerThinkTime": 10,
-    "upperThinkTime": 30,
+    "lowerThinkTime": 60,
+    "upperThinkTime": 120,
     "ct": {
         "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
+        "iterations": 10,
+        "maxDuration": "60m",
+        "pacing": 345
     },
     "mr": {
         "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
+        "iterations": 13,
+        "maxDuration": "60m",
+        "pacing": 262
     },
     "us": {
         "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
+        "iterations": 28,
+        "maxDuration": "60m",
+        "pacing": 114
     },
     "rf": {
-        "vus": 1,
-        "iterations": 1,
-        "maxDuration": "60s"
+        "vus": 2,
+        "iterations": 30,
+        "maxDuration": "60m",
+        "pacing": 225
     }
 }
