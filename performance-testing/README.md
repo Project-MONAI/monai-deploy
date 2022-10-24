@@ -110,7 +110,7 @@ cd k6
 ```
 
 ```bash
-k6 run -e CONFIG=config/benchmarkConfig.json dicom/dicom_benchmark.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/liverConfig.json dicom/liver_benchmark.js --insecure-skip-tls-verify
 ```
 
 ### Baseline/ Benchmark ###
