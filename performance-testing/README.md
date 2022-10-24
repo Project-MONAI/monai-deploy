@@ -86,6 +86,33 @@ Tasks [
 ```
 
 ## Tests ##
+### Liver Seg Baseline/ Benchmark ###
+Liver Seg Baseline/ Benchmark tests will be used to measuring the sue of a MAP within MONAI Deploy given a known resource limit. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
+
+| Modality | Iterations | Typical Image Size | \# of Images / Study | Size (Raw) |
+| -------- | ---------- | ------------------ | -------------------- | ---------- |
+| CT series for liver tumor       | 10         |   |                  | 15mb       |
+
+#### Set Up ####
+- Deploy MIG and MWM to an environment including all its dependencies.
+- Set up MIG with AET and Destinations scripts found [here](TBD)
+- Seed Orthanc with Test Data from [here](TBD)
+- Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
+    - MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
+- Seed MongoDB with Clinical Workflows found [here](TBD)
+- Seed Argo with the Argo Workflow Templates found [here](TBD)
+- Install k6 from [here](https://k6.io/docs/getting-started/installation/)
+- Update Orthanc details (i.e url) in the config/liverConfig.json
+
+#### Running Tests ####
+```bash
+cd k6
+```
+
+```bash
+k6 run -e CONFIG=config/liverConfig.json dicom/liver_benchmark.js --insecure-skip-tls-verify
+```
+
 ### Baseline/ Benchmark ###
 Baseline/ Benchmark tests will be used to measuring the best performance of the MONAI stack. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
 
@@ -94,7 +121,7 @@ Baseline/ Benchmark tests will be used to measuring the best performance of the 
 | MRI      | 10         | (256, 256, 30, 1)  | 200                  | 26mb       |
 
 #### Set Up ####
-- Deploy MIG and MWM to an envrironment including all its dependencies.
+- Deploy MIG and MWM to an environment including all its dependencies.
 - Set up MIG with AET and Destinations scripts found [here](TBD)
 - Seed Orthanc with Test Data from [here](TBD)
 - Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
@@ -140,7 +167,7 @@ Average and Peak load times are displayed as below. These tests are most valuabl
 | ALL (Inc. other modalities) | 250              | 140              | \-                 | \-                   | \-         |
 
 #### Set Up ####
-- Deploy MIG and MWM to an envrironment including all its dependencies.
+- Deploy MIG and MWM to an environment including all its dependencies.
 - Set up MIG with AET and Destinations scripts found [here](TBD)
 - Seed Orthanc with Test Data from [here](TBD)
 - Set up Orthanc with 2 Remote Modalities, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
