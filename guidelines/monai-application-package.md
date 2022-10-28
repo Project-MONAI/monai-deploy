@@ -421,6 +421,12 @@ The Executor SHOULD provide a customized set of environment variables and comman
 
     - When not provided the default path `/var/monai/` SHALL be assumed.
 
+  - `MONAI_MODELPATH`: The Application's working directory (default: `/opt/monai/models/`).
+
+    - The value provided must be an absolute path (first character is `/`).
+
+    - When not provided the default path `/opt/monai/models/` SHALL be assumed.
+
 #### Table of Environment Variables
 
 | Variable            | Default                                    | Format              | Description                                      |
@@ -433,6 +439,7 @@ The Executor SHOULD provide a customized set of environment variables and comman
 | `MONAI_OUTPUTPATH`  | `/var/monai/output/`                       | Folder Path         | Path to the output folder for the Application.   |
 | `MONAI_TIMEOUT`     | `/etc/monai/app.json#timeout`              | Integer             | Timeout, in seconds, applied to the Application. |
 | `MONAI_WORKDIR`     | `/var/monai/`                              | Folder Path         | Path to the Application's working directory.     |
+| `MONAI_MODELPATH`   | `/opt/monai/models/`                       | Folder Path         | Path to the Application's models directory.     |
 
 
 ### Manifest Export
