@@ -1,6 +1,6 @@
 {
     "orthanc":{
-        "url": "https://preprod-kch-aide.answerdigital.io:8042",
+        "url": "",
         "username": "orthanc",
         "password": "orthanc",
         "workflow_modality": "monai",

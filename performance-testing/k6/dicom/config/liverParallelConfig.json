@@ -1,0 +1,15 @@
+{
+    "orthanc":{
+        "url": "",
+        "username": "orthanc",
+        "password": "orthanc",
+        "workflow_modality": "monai",
+        "no_workflow_modality": "monai_none",
+        "liver_ct": ""
+    },
+    "ct": {
+        "vus": 1,
+        "iterations": 5,
+        "maxDuration": "30m"
+    }
+}

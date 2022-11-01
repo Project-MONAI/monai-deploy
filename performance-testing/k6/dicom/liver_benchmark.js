@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import encoding from 'k6/encoding';
 import { check, sleep } from 'k6';
+import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
 
 function getconfig() {
   try {
@@ -32,11 +33,11 @@ export const options = {
 };
 
 export function ct_workflow() {
-  sleep(120)
   let res = http.post(`${url}/modalities/${workflow_modality}/store`, get_request_body(liver_ct), set_request_header(), { tags: { my_custom_tag: 'liver_seg' } });
   check(res, {
     'is status 200': (r) => r.status === 200
   })
+  sleep(90)
 }
 
 export function set_request_header(){

@@ -86,21 +86,17 @@ Tasks [
 ```
 
 ## Tests ##
-### Liver Seg Baseline/ Benchmark ###
-Liver Seg Baseline/ Benchmark tests will be used to measuring the sue of a MAP within MONAI Deploy given a known resource limit. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
-
-| Modality | Iterations | Typical Image Size | \# of Images / Study | Size (Raw) |
-| -------- | ---------- | ------------------ | -------------------- | ---------- |
-| CT series for liver tumor       | 10         |   |                  | 15mb       |
+### Liver Seg Benchmark ###
+Liver Seg Benchmark tests will be used to measuring the use of a MAP within MONAI Deploy given a known resource limit. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
 
 #### Set Up ####
 - Deploy MIG and MWM to an environment including all its dependencies.
-- Set up MIG with AET and Destinations scripts found [here](TBD)
-- Seed Orthanc with Test Data from [here](TBD)
+- Set up MIG with AET and Destinations scripts found [here](/k6/dicom/testdata/liver/postman_collection/)
+- Seed Orthanc with Test Data from [here](/k6/dicom/testdata/liver/benchmark_dicoms/)
 - Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
     - MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
-- Seed MongoDB with Clinical Workflows found [here](TBD)
-- Seed Argo with the Argo Workflow Templates found [here](TBD)
+- Seed MongoDB with Clinical Workflows found [here](/k6/dicom/testdata/liver/clinical_workflow/liver_seg.json)
+- Seed Argo with the Argo Workflow Templates found [here](/k6/dicom/testdata/liver/argo_template/liver-seg-argo-template.yaml)
 - Install k6 from [here](https://k6.io/docs/getting-started/installation/)
 - Update Orthanc details (i.e url) in the config/liverConfig.json
 
@@ -113,8 +109,32 @@ cd k6
 k6 run -e CONFIG=config/liverConfig.json dicom/liver_benchmark.js --insecure-skip-tls-verify
 ```
 
-### Baseline/ Benchmark ###
-Baseline/ Benchmark tests will be used to measuring the best performance of the MONAI stack. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
+## Tests ##
+### Liver Seg Benchmark Parallel ###
+Liver Seg Benchmark parallel tests will be used to measuring the use of a MAP within MONAI Deploy given a known resource limit. This is a parallel execution of 5 concurrent associations to measure difference between sequential and parallel execution
+
+#### Set Up ####
+- Deploy MIG and MWM to an environment including all its dependencies.
+- Set up MIG with AET and Destinations scripts found [here](/k6/dicom/testdata/liver/postman_collection/)
+- Seed Orthanc with Test Data from [here](/k6/dicom/testdata/liver/benchmark_dicoms/)
+- Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
+- MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
+- Seed MongoDB with Clinical Workflows found [here](/k6/dicom/testdata/liver/clinical_workflow/liver_seg.json)
+- Seed Argo with the Argo Workflow Templates found [here](/k6/dicom/testdata/liver/argo_template/liver-seg-argo-template.yaml)
+- Install k6 from [here](https://k6.io/docs/getting-started/installation/)
+- Update Orthanc details (i.e url) in the config/liverConfig.json
+
+#### Running Tests ####
+```bash
+cd k6
+```
+
+```bash
+k6 run -e CONFIG=config/liverParallelConfig.json dicom/liver_benchmark_parallel.js --insecure-skip-tls-verify
+```
+
+### Benchmark ###
+Benchmark tests will be used to measuring the best performance of the MONAI stack. This is a low throughput test which put no stress on the system. These stats will be used to measure any degradation.
 
 | Modality | Iterations | Typical Image Size | \# of Images / Study | Size (Raw) |
 | -------- | ---------- | ------------------ | -------------------- | ---------- |

@@ -1,0 +1,44 @@
+{
+    "name": "lung-seg",
+    "version": "1.0.0",
+    "description": "MONAI AI Lung Seg",
+    "informatics_gateway": {
+        "ae_title": "MONAI",
+        "export_destinations": [
+            "ORTHANC"
+        ]
+    },
+    "tasks": [
+        {
+            "id": "lung-seg",
+            "description": "lung segmentation",
+            "type": "argo",
+            "args": {
+                "namespace": "argo",
+                "workflow_template_name": "lung-seg-argo-template",
+                "server_url": "https://argo-server.argo:2746",
+                "allow_insecure": "true"
+            },
+            "task_destinations": [
+                {
+                    "name": "export-report"
+                }
+            ],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "input-dicom",
+                        "value": "{{ context.input.dicom }}",
+                        "mandatory": true
+                    }
+                ],
+                "output": [
+                    {
+                        "name": "output"
+                    }
+                ]
+            },
+            "input_parameters": null
+        }
+    ]
+}
