@@ -1,14 +1,14 @@
 {
     "orthanc":{
-        "url": "https://preprod-kch-aide.answerdigital.io:8042",
+        "url": "",
         "username": "orthanc",
         "password": "orthanc",
         "workflow_modality": "monai",
         "no_workflow_modality": "monai_none",
-        "liver_ct": "8b807a1f-6ee56b0f-6f270abc-f6b8b581-e4f1cbff"
+        "liver_ct": ""
     },
     "ct": {
-        "vus": 1,
+        "vus": 5,
         "iterations": 1,
         "maxDuration": "30m"
     }

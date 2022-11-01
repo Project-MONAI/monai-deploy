@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "269593bd-89c7-4148-9633-718b65627bce",
+		"name": "MONAI_PERF",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "MIG",
+			"item": [
+				{
+					"name": "GET AETitles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{DNS}}:{{MIG_PORT}}/config/ae",
+							"protocol": "http",
+							"host": [
+								"{{DNS}}"
+							],
+							"port": "{{MIG_PORT}}",
+							"path": [
+								"config",
+								"ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST AETitles",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"aeTitle\": \"MONAI\", \"name\": \"MONAI\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{DNS}}:{{MIG_PORT}}/config/ae",
+							"protocol": "http",
+							"host": [
+								"{{DNS}}"
+							],
+							"port": "{{MIG_PORT}}",
+							"path": [
+								"config",
+								"ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE AETitle",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{IP}}:{{MIG_PORT}}/config/destination/MONAI",
+							"protocol": "http",
+							"host": [
+								"{{IP}}"
+							],
+							"port": "{{MIG_PORT}}",
+							"path": [
+								"config",
+								"destination",
+								"MONAI"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Destination",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"ORTHANC\",\r\n    \"hostIp\": \"internal-pacs.aide.svc.cluster.local\",\r\n    \"port\": 4242,\r\n    \"aeTitle\": \"ORTHANC\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{IP}}:{{MIG_PORT}}/config/destination",
+							"protocol": "http",
+							"host": [
+								"{{IP}}"
+							],
+							"port": "{{MIG_PORT}}",
+							"path": [
+								"config",
+								"destination"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Destinations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{IP}}:{{MIG_PORT}}/config/destination",
+							"protocol": "http",
+							"host": [
+								"{{IP}}"
+							],
+							"port": "{{MIG_PORT}}",
+							"path": [
+								"config",
+								"destination"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Destination",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{IP}}:{{MIG_PORT}}/config/destination/PACS",
+							"protocol": "http",
+							"host": [
+								"{{IP}}"
+							],
+							"port": "{{MIG_PORT}}",
+							"path": [
+								"config",
+								"destination",
+								"PACS"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MWM",
+			"item": [
+				{
+					"name": "POST Workflow",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\": \"argo_workflow\",\r\n\t\"version\": \"1.0.0\",\r\n\t\"description\": \"Workflow with Argo task\",\r\n\t\"informatics_gateway\": {\r\n\t\t\"ae_title\": \"MONAI\",\r\n\t\t\"export_destinations\": [\r\n\t\t\t\"ORTHANC\"\r\n\t\t]\r\n\t},\r\n\t\"tasks\": [\r\n\t\t{\r\n\t\t\t\"id\": \"mean-pixel-calc\",\r\n\t\t\t\"description\": \"mean-pixel-calc operator and reporter\",\r\n\t\t\t\"type\": \"argo\",\r\n            \"args\": {\r\n                \"namespace\": \"argo\",\r\n                \"workflow_template_name\": \"argo-workflow-1\",\r\n                \"server_url\": \"https://argo-argo-workflows-server.argo:2746\",\r\n                \"allow_insecure\": \"true\",\r\n                \"queue_name\": \"test\",\r\n                \"workflow_name\": \"test\",\r\n                \"reviewed_task_id\": \"test\"\r\n            },\r\n            \"ref\": \"\",\r\n\t\t\t\"artifacts\": {\r\n\t\t\t\t\"input\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"name\": \"input-dicom\",\r\n\t\t\t\t\t\t\"value\": \"{{ context.input.dicom }}\",\r\n                        \"mandatory\": true\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"output\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"name\": \"report-dicom\"\r\n\t\t\t\t\t}\r\n\t\t\t\t]\r\n\t\t\t}\r\n\t\t}\r\n\t]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{DNS}}:{{MWM_PORT}}/workflows",
+							"protocol": "http",
+							"host": [
+								"{{DNS}}"
+							],
+							"port": "{{MWM_PORT}}",
+							"path": [
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Workflow",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\": \"argo_export\",\r\n\t\"version\": \"1.0.0\",\r\n\t\"description\": \"Workflow with Argo and Export task\",\r\n\t\"informatics_gateway\": {\r\n\t\t\"ae_title\": \"MONAI\",\r\n\t\t\"export_destinations\": [\r\n\t\t\t\"ORTHANC\"\r\n\t\t]\r\n\t},\r\n\t\"tasks\": [\r\n\t\t{\r\n\t\t\t\"id\": \"mean-pixel-calc\",\r\n\t\t\t\"description\": \"mean-pixel-calc operator and reporter\",\r\n\t\t\t\"type\": \"argo\",\r\n            \"args\": {\r\n                \"namespace\": \"argo\",\r\n                \"workflow_template_name\": \"argo-workflow-1\",\r\n                \"server_url\": \"https://argo-server.argo:2746\",\r\n                \"allow_insecure\": \"true\"\r\n            },\r\n\t\t\t\"task_destinations\":[\r\n\t\t\t\t{\r\n\t\t\t\t\t\"Name\": \"export-report\"\r\n\t\t\t\t}\r\n\t\t\t],\r\n            \"ref\": \"\",\r\n\t\t\t\"artifacts\": {\r\n\t\t\t\t\"input\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"name\": \"input-dicom\",\r\n\t\t\t\t\t\t\"value\": \"{{ context.input.dicom }}\",\r\n                        \"mandatory\": true\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"output\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"name\": \"report-dicom\"\r\n\t\t\t\t\t}\r\n\t\t\t\t]\r\n\t\t\t}\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id\": \"export-report\",\r\n\t\t\t\"description\": \"Export encapsulated pdf for mean-pixel-calc\",\r\n\t\t\t\"type\": \"export\",\r\n\t\t\t\"args\": {\r\n\t\t\t},\r\n\t\t\t\"export_destinations\":[\r\n\t\t\t\t{\r\n\t\t\t\t\t\"Name\": \"ORTHANC\"\r\n\t\t\t\t}\r\n\t\t\t],\r\n\t\t\t\"artifacts\": {\r\n\t\t\t\t\"input\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"name\": \"report-dicom\",\r\n\t\t\t\t\t\t\"value\": \"{{ context.executions.mean-pixel-calc.report-dicom }}\",\r\n\t\t\t\t\t\t\"mandatory\": true\r\n\t\t\t\t\t}\r\n\t\t\t\t]\r\n\t\t\t}\r\n\t\t}\r\n\t]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{IP}}:{{MWM_PORT}}/workflows/0c262733-05a1-4811-9d9a-b5cadb5a475a",
+							"protocol": "http",
+							"host": [
+								"{{IP}}"
+							],
+							"port": "{{MWM_PORT}}",
+							"path": [
+								"workflows",
+								"0c262733-05a1-4811-9d9a-b5cadb5a475a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Workflow",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{DNS}}:{{MWM_PORT}}/workflows/928fd6b2-6305-45c5-8955-b9b6e0ed3967",
+							"protocol": "http",
+							"host": [
+								"{{DNS}}"
+							],
+							"port": "{{MWM_PORT}}",
+							"path": [
+								"workflows",
+								"928fd6b2-6305-45c5-8955-b9b6e0ed3967"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Workflows",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{DNS}}:{{MWM_PORT}}/workflows",
+							"protocol": "http",
+							"host": [
+								"{{DNS}}"
+							],
+							"port": "{{MWM_PORT}}",
+							"path": [
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

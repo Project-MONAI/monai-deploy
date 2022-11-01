@@ -4,9 +4,6 @@
     "description": "MONAI AI Liver Seg",
     "informatics_gateway": {
         "ae_title": "MONAI",
-        "data_origins": [
-            "test"
-        ],
         "export_destinations": [
             "ORTHANC"
         ]
@@ -22,14 +19,11 @@
                 "server_url": "https://argo-server.argo:2746",
                 "allow_insecure": "true"
             },
-            "ref": "",
             "task_destinations": [
                 {
-                    "name": "export-report",
-                    "conditions": ""
+                    "name": "export-report"
                 }
             ],
-            "export_destinations": [],
             "artifacts": {
                 "input": [
                     {
@@ -40,9 +34,7 @@
                 ],
                 "output": [
                     {
-                        "name": "output",
-                        "value": "{{ context.executions.liver-seg.output_dir }}",
-                        "mandatory": true
+                        "name": "output"
                     }
                 ]
             },
@@ -52,11 +44,6 @@
             "id": "export-report",
             "description": "export report",
             "type": "export",
-            "args": {
-                "test": "test1"
-            },
-            "ref": "",
-            "task_destinations": [],
             "export_destinations": [
                 {
                     "name": "ORTHANC"
@@ -65,14 +52,12 @@
             "artifacts": {
                 "input": [
                     {
-                        "name": "MONAI_OUTPUTPATH",
-                        "value": "{{ context.executions.liver-seg.artifacts.MONAI_OUTPUTPATH }}",
+                        "name": "output",
+                        "value": "{{ context.executions.liver-seg.artifacts.output }}",
                         "mandatory": true
                     }
-                ],
-                "output": []
-            },
-            "input_parameters": null
+                ]
+            }
         }
     ]
 }
