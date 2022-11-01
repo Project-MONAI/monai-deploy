@@ -2,6 +2,7 @@ import http from 'k6/http';
 import encoding from 'k6/encoding';
 import { check, sleep } from 'k6';
 import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
+import { vu } from 'k6/execution';
 
 function getconfig() {
   try {
@@ -18,7 +19,7 @@ const credentials = `${config.orthanc.username}:${config.orthanc.password}`;
 const url = config.orthanc.url;
 const workflow_modality = config.orthanc.workflow_modality;
 const encodedCredentials = encoding.b64encode(credentials);
-const liver_ct = config.orthanc.liver_ct;
+const liver_cts = config.orthanc.liver_cts;
 
 export const options = {
   scenarios: {
@@ -33,11 +34,11 @@ export const options = {
 };
 
 export function ct_workflow() {
+  let liver_ct = liver_cts[vu.idInTest - 1]
   let res = http.post(`${url}/modalities/${workflow_modality}/store`, get_request_body(liver_ct), set_request_header(), { tags: { my_custom_tag: 'liver_seg' } });
   check(res, {
     'is status 200': (r) => r.status === 200
   })
-  sleep(90)
 }
 
 export function set_request_header(){
