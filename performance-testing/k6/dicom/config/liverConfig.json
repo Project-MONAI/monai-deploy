@@ -8,8 +8,8 @@
         "liver_ct": ""
     },
     "ct": {
-        "vus": 5,
-        "iterations": 1,
+        "vus": 1,
+        "iterations": 5,
         "maxDuration": "30m"
     }
 }

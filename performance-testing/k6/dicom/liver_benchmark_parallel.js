@@ -35,6 +35,7 @@ export const options = {
 
 export function ct_workflow() {
   let liver_ct = liver_cts[vu.idInTest - 1]
+  console.log(liver_ct)
   let res = http.post(`${url}/modalities/${workflow_modality}/store`, get_request_body(liver_ct), set_request_header(), { tags: { my_custom_tag: 'liver_seg' } });
   check(res, {
     'is status 200': (r) => r.status === 200
