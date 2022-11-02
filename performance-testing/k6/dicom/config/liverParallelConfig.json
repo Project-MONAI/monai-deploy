@@ -5,11 +5,17 @@
         "password": "orthanc",
         "workflow_modality": "monai",
         "no_workflow_modality": "monai_none",
-        "liver_ct": ""
+        "liver_cts": [
+            "0e450d39-7ae17124-a21dab91-48387119-6ff9926c",
+            "90b41633-a038a05f-80891ef2-65dd475f-7007d4aa",
+            "1e33ee52-e6c311b9-8e9e40a2-3aa478f7-8ef3ac6c",
+            "e6823b0d-a12836d3-8cf0b714-38e7568f-5a685b09",
+            "f085e819-b73f23c3-bd94fb24-7e3b7008-e065e52e"
+        ]
     },
     "ct": {
-        "vus": 1,
-        "iterations": 5,
+        "vus": 5,
+        "iterations": 1,
         "maxDuration": "30m"
     }
 }

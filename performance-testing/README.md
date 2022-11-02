@@ -122,7 +122,7 @@ Liver Seg Benchmark parallel tests will be used to measuring the use of a MAP wi
 - Seed MongoDB with Clinical Workflows found [here](/k6/dicom/testdata/liver/clinical_workflow/liver_seg.json)
 - Seed Argo with the Argo Workflow Templates found [here](/k6/dicom/testdata/liver/argo_template/liver-seg-argo-template.yaml)
 - Install k6 from [here](https://k6.io/docs/getting-started/installation/)
-- Update Orthanc details (i.e url) in the config/liverConfig.json
+- Update Orthanc details (i.e url) in the config/liverParallelConfig.json
 
 #### Running Tests ####
 ```bash
