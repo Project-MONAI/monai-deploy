@@ -246,6 +246,41 @@ clinical image viewers.
 **Availability:** Highly available, varying from 99%
 availability to 99.999%
 
+**Dependencies:** Monai Deploy requires several open source dependencies to be in place to function. We have tested deployments of MONAI Deploy against the following dependency versions:
+
+- Kubernetes v1.24.6, deployed through [Kubespray v2.20.0](https://github.com/kubernetes-sigs/kubespray/releases/tag/v2.20.0)
+  - Kubernetes v1.24.6
+  - Etcd v3.5.4
+  - Docker v20.10 - Docker Runtime is required for MONAI Application Packages (MAPs)
+  - Calico v3.23.3
+
+- RabbitMQ
+  - [Cluster Operator 2.0.0](https://github.com/rabbitmq/cluster-operator/releases/tag/v2.0.0)
+  - RabbitMQ version: 3.10.2-management
+
+- MongoDB
+  - [Community Operator 0.7.6](https://github.com/mongodb/mongodb-kubernetes-operator)
+    - mongodb-kubernetes-operator:0.7.6
+    - mongodb-agent:12.0.10.7591-1
+    - mongodb-kubernetes-readinessprobe:1.0.11
+    - mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.5
+
+- MinIO
+  - Deployed through [Krew Kubernetes Kubectl Plugin](https://github.com/kubernetes-sigs/krew/)
+  - Tested against version: minio/minio:RELEASE.2022-09-07T22-25-02Z
+
+- ARGO Workflows
+  - Deployed through [Argo Community Helm Charts](https://github.com/argoproj/argo-helm)
+  - Tested against version v3.4.2
+
+- Postgres
+  - Postgres version 14
+  - Deployed through the use of the [PGO Operator](https://github.com/CrunchyData/postgres-operator) and tested against:
+    - cluster: [postgres-operator:ubi8-5.2.0-0](registry.developers.crunchydata.com/crunchydata/postgres-operator:ubi8-5.2.0-0)
+    - upgrade: [postgres-operator-upgrade:ubi8-5.2.0-0](registry.developers.crunchydata.com/crunchydata/postgres-operator-upgrade:ubi8-5.2.0-0)
+    - postgres_14: [crunchy-postgres:ubi8-14.5-1](registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.5-1)
+
+
 ### Cloud Environments ###
 
 Cloud service providers (Azure, AWS, GCP, ..?) MAY be used as an extension or as
