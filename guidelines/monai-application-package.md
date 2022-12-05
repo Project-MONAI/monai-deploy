@@ -62,7 +62,7 @@ The following are a set of assumptions related to MAP execution, inspection, and
 - Application packages will be deployed in a variety of environments.
 
   > [Note]
-  > See [MONAI Operating Environments](monai-operating-environments.md) for additional information about supported environments.
+  > See [MONAI Operating Environments](MONAI-Operating-Environments.md) for additional information about supported environments.
 
 
 ##  Requirements
@@ -82,7 +82,7 @@ A MAP SHALL be comprised of a single container which meets the minimum requireme
 
 ### Self-Describing
 
-A MAP MUST be self-describing and provide a mechanism for extracting the its description.
+A MAP MUST be self-describing and provide a mechanism for extracting its description.
 
 The method of description SHALL be a machine readable and writable format.
 
@@ -113,7 +113,7 @@ A MAP SHALL provide sufficient information about its outputs that an external ag
 A MAP MUST be in a format which supports local execution in a development environment.
 
 > [Note]
-> See [MONAI Operating Environments](monai-operating-environments.md) for additional information about supported environments.
+> See [MONAI Operating Environments](MONAI-Operating-Environments.md) for additional information about supported environments.
 
 
 ### Containerization
@@ -169,7 +169,7 @@ Provides information about the MAP's Application.
 
 - Application Manifest MUST define the command used to run the Application (`/etc/monai/app.json#command`).
 
-  - When not provided the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner and Server.
+  - When not provided the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner or MAP supported orchestrators.
 
 - Application Manifest SHOULD define the version of the manifest file schema (`/etc/monai/app.json#api-version`).
 
@@ -225,7 +225,7 @@ Provides information about the MAP's Application.
 
   - When not provided the default value `0` SHALL be assumed.
 
-  - This value can be overridden by the top level executor, such as MONAI Deploy Application Server.
+  - This value can be overridden by the top level executor.
 
 - Application Manifest MUST enable the specification of environment variables for the Application (`/etc/monai/app.json#environment`)
 
@@ -303,7 +303,7 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
 - Package Manifest SHOULD specify the resources required to execute the application.
 
-  This information is used to provision resources when running the application using the MONAI Application Server.
+  This information may be used to provision resources when running the application using a supported MAP orchestrator.
 
   - CPU requirements SHALL be denoted using decimal count of CPU cores (`/etc/monai/pkg.json#resources.cpu`).
 
@@ -391,7 +391,7 @@ The Executor SHOULD provide a customized set of environment variables and comman
 
     - The value is expected to be a string.
 
-    - Common values are `MONAI Application Runner` and `MONAI Application Server`.
+    - Common values are `MONAI Application Runner` and `MONAI Deploy Argo Plug-in`.
 
   - `MONAI_HOSTVERSION`: The version of the host running the map (default: `0.0.`).
 
