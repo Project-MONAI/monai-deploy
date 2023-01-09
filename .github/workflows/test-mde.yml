@@ -25,9 +25,9 @@ jobs:
         run: docker compose up -d
         
       - name: Sleep for 45 seconds
-        uses: jakejarvis/wait-action@master
+        uses: juliangruber/sleep-action@v2.0.0
         with:
-          time: '45s'
+          time: 40s
         
       - name: Informatics Gateway Health Check
         continue-on-error: true
