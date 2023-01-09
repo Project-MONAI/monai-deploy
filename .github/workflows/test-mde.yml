@@ -21,7 +21,12 @@ jobs:
       
       - name: Start MONAI Deploy Express
         working-directory: ./deploy/monai-deploy-express
-        run: docker compose up -d --wait
+        run: docker compose up -d
+        
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
         
       - name: Informatics Gateway Health Check
         continue-on-error: true
