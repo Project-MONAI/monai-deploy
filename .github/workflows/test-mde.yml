@@ -24,10 +24,10 @@ jobs:
         working-directory: ./deploy/monai-deploy-express
         run: docker compose up -d
         
-      - name: Sleep for 30 seconds
+      - name: Sleep for 45 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: '45s'
         
       - name: Informatics Gateway Health Check
         continue-on-error: true
@@ -37,4 +37,8 @@ jobs:
         continue-on-error: true
         run: |
           curl http://localhost:5001/health
+      - name: Workflow Manager Workflows API
+        continue-on-error: true
+        run: |
+          curl http://localhost:5001/workflows
         
