@@ -23,3 +23,12 @@ jobs:
         working-directory: ./deploy/monai-deploy-express
         run: docker compose up -d --wait
         
+      - name: Informatics Gateway Health Check
+        continue-on-error: true
+        run: |
+          curl http://localhost:5000/health
+      - name: Workflow Manager Health Check
+        continue-on-error: true
+        run: |
+          curl http://localhost:5001/workflows
+        
