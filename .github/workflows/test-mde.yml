@@ -2,6 +2,7 @@
 
 name: Test MONAI Deploy Express
 on:
+  push:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 # Controls when the workflow will run
@@ -35,5 +36,5 @@ jobs:
       - name: Workflow Manager Health Check
         continue-on-error: true
         run: |
-          curl http://localhost:5001/workflows
+          curl http://localhost:5001/health
         
