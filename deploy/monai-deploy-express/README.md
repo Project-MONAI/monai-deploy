@@ -28,6 +28,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 - [WSLv2](https://docs.microsoft.com/en-us/windows/wsl/install)
 - [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
   - With `Use the WSL 2 based engine` option enabled
+  - Make sure that the [Nvidia Container Runtime](https://github.com/Project-MONAI/monai-deploy/tree/main/deploy/monai-deploy-express#enable-nvidia-container-runtime-for-docker) is enabled
 - [Ubuntu 22.04](https://www.microsoft.com/store/productId/9PN20MSR04DW) for WSL 2
 - [NVIDIA Windows Driver](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) for WSL 2
 - [curl](https://curl.se/) - `sudo apt install curl`
