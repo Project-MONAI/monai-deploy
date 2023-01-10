@@ -22,23 +22,20 @@ jobs:
       
       - name: Start MONAI Deploy Express
         working-directory: ./deploy/monai-deploy-express
-        run: docker compose up -d
-        
-      - name: Sleep for 45 seconds
-        uses: juliangruber/sleep-action@v2.0.0
-        with:
-          time: 40s
+        run: docker compose up -d --wait
         
       - name: Informatics Gateway Health Check
         continue-on-error: true
         run: |
           curl http://localhost:5000/health
+
       - name: Workflow Manager Health Check
         continue-on-error: true
         run: |
           curl http://localhost:5001/health
-      - name: Workflow Manager Workflows API
+
+      - name: Task Manager Health Check
         continue-on-error: true
         run: |
-          curl http://localhost:5001/workflows
+          curl http://localhost:5002/health
         
