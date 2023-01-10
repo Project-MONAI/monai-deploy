@@ -38,29 +38,6 @@ services:
       interval: 5s
       timeout: 30s
       retries: 5
-        
-  createbuckets:
-    image: $MINIO_MC_IMAGE
-    container_name: $MINIO_CONFIG_CONTAINERNAME
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-      BUCKET_NAME: monaideploy
-      ENDPOINT: http://$MINIO_HOSTNAME:$MINIO_API_PORT
-    depends_on:
-      minio:
-        condition: service_healthy
-    networks:
-      monaideploy:
-          ipv4_address: $MINIO_CONFIG_IP
-    entrypoint: >
-      /bin/sh -c "
-      until (/usr/bin/mc config host add monaideploy $$ENDPOINT $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD) do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc mb monaideploy/$$BUCKET_NAME;
-      /usr/bin/mc policy set public monaideploy/$$BUCKET_NAME;
-      /usr/bin/mc ls monaideploy;
-      # exit 0
-      "
 
   rabbitmq:
     image: $RABBITMQ_IMAGE
@@ -219,6 +196,12 @@ services:
       - rabbitmq
       - informatics-gateway
       - mongodb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      start_period: 10s
+      interval: 5s
+      timeout: 30s
+      retries: 10
   
   task-manager:
     image: $TASK_MANAGER_IMAGE
@@ -230,11 +213,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:
-      ASPNETCORE_URLS: http://+:5000
+      ASPNETCORE_URLS: http://+:5002
       HOST_TEMP_STORAGE : $TASK_MANAGER_DATA
       LOGSTASH_URL: tcp://$LOGSTASH_HOSTNAME:$LOGSTASH_PORT
     ports:
-      - $TASK_MANAGER_PORT:5000
+      - $TASK_MANAGER_PORT:5002
     networks:
       monaideploy:
           ipv4_address: $TASK_MANAGER_IP
@@ -249,6 +232,12 @@ services:
       - minio
       - rabbitmq
       - mongodb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      start_period: 10s
+      interval: 5s
+      timeout: 30s
+      retries: 10
 
   elasticsearch:
     profiles: [ 'elk', 'all' ]
