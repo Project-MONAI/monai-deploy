@@ -22,7 +22,7 @@ jobs:
       
       - name: Start MONAI Deploy Express
         working-directory: ./deploy/monai-deploy-express
-        run: docker compose up -d --wait
+        run: docker compose up --wait
         
       - name: Informatics Gateway Health Check
         continue-on-error: true
@@ -38,4 +38,10 @@ jobs:
         continue-on-error: true
         run: |
           curl http://localhost:5002/health
+
+      - name: Stop MONAI Deploy Express
+        working-directory: ./deploy/monai-deploy-express
+        run: docker compose down
+        
+
         
