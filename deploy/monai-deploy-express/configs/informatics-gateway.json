@@ -1,6 +1,11 @@
 {
+  "MonaiDeployAuthentication": {
+    "bypassAuthentication": true
+  },
   "ConnectionStrings": {
-    "InformaticsGatewayDatabase": "Data Source=/database/mig.db"
+    "Type": "mongodb",
+    "InformaticsGatewayDatabase": "mongodb://root:rootpassword@mongodb:27017",
+    "DatabaseName": "InformaticsGateway"
   },
   "InformaticsGateway": {
     "dicom": {
@@ -53,8 +58,9 @@
         "accessToken": "minioadmin",
         "securedConnection": false,
         "region": "local",
-        "executableLocation": "/bin/mc",
-        "serviceName": "MinIO"
+        "executableLocation": "mc",
+        "serviceName": "MinIO",
+        "createBuckets": "monaideploy"
       }
     },
     "hl7": {
