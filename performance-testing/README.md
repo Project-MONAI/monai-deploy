@@ -157,7 +157,7 @@ cd k6
 ```
 
 ```bash
-k6 run -e CONFIG=config/benchmarkConfig.json dicom/dicom_benchmark.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/benchmarkConfig.json -e ORTHANC_URL={url} -e ORTHANC_USER={user} -e ORTHANC_PASS={pass} dicom/dicom_benchmark.js --insecure-skip-tls-verify
 ```
 
 #### Investigating Metrics ####
@@ -203,7 +203,7 @@ Average and Peak load times are displayed as below. These tests are most valuabl
 cd k6
 ```
 ```bash
-k6 run -e CONFIG=config/{config}.json dicom/dicom_peak_avg.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/{config}.json ORTHANC_URL={url} ORTHANC_USER={user} ORTHANC_PASS={pass} dicom/dicom_peak_avg.js --insecure-skip-tls-verify
 ```
 
 #### Investigating Metrics ####

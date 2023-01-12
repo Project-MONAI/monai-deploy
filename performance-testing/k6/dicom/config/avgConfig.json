@@ -1,10 +1,7 @@
 {
     "orthanc":{
-        "url": "",
-        "username": "orthanc",
-        "password": "orthanc",
-        "workflow_modality": "monai",
-        "no_workflow_modality": "monai_none"
+        "workflow_modality": "PERFWF",
+        "no_workflow_modality": "PERFNOWF"
     },
     "lowerThinkTime": 60,
     "upperThinkTime": 120,

@@ -14,8 +14,8 @@ function getconfig() {
 
 let config = getconfig();
 
-const credentials = `${config.orthanc.username}:${config.orthanc.password}`;
-const url = config.orthanc.url;
+const credentials = `${__ENV.ORTHANC_USER}:${__ENV.ORTHANC_USER}`;
+const url = __ENV.ORTHANC_URL;
 const workflow_modality = config.orthanc.workflow_modality;
 const no_workflow_modality = config.orthanc.workflow_modality;
 const encodedCredentials = encoding.b64encode(credentials);
@@ -77,13 +77,13 @@ export const options = {
       iterations: config.ct.iterations,
       maxDuration: config.ct.maxDuration,
     },
-    // ct_no_workflow: { // remote modality to be implemented in Orthanc
-    //   executor: 'per-vu-iterations',
-    //   exec: 'ct_workflow',
-    //   vus: config.ct.vus,
-    //   iterations: config.ct.iterations,
-    //   maxDuration: config.ct.maxDuration,
-    // },
+    ct_no_workflow: {
+      executor: 'per-vu-iterations',
+      exec: 'ct_workflow',
+      vus: config.ct.vus,
+      iterations: config.ct.iterations,
+      maxDuration: config.ct.maxDuration,
+    },
     mr_workflow: {
       executor: 'per-vu-iterations',
       exec: 'mr_workflow',
@@ -91,13 +91,13 @@ export const options = {
       iterations: config.mr.iterations,
       maxDuration: config.mr.maxDuration,
     },
-    // mr_no_workflow: { // remote modality to be implemented in Orthanc
-      // executor: 'per-vu-iterations',
-      // exec: 'mr_no_workflow',
-      // vus: config.mr.vus,
-      // iterations: config.mr.iterations,
-      // maxDuration: config.mr.maxDuration,
-    // },
+    mr_no_workflow: {
+      executor: 'per-vu-iterations',
+      exec: 'mr_no_workflow',
+      vus: config.mr.vus,
+      iterations: config.mr.iterations,
+      maxDuration: config.mr.maxDuration,
+    },
     us_workflow: {
       executor: 'per-vu-iterations',
       exec: 'us_workflow',
@@ -105,13 +105,13 @@ export const options = {
       iterations: config.us.iterations,
       maxDuration: config.us.maxDuration,
     },
-    // us_no_workflow: { // remote modality to be implemented in Orthanc
-    //   executor: 'per-vu-iterations',
-    //   exec: 'us_no_workflow',
-    //   vus: config.us.vus,
-    //   iterations: config.us.iterations,
-    //   maxDuration: config.us.maxDuration,
-    // },
+    us_no_workflow: {
+      executor: 'per-vu-iterations',
+      exec: 'us_no_workflow',
+      vus: config.us.vus,
+      iterations: config.us.iterations,
+      maxDuration: config.us.maxDuration,
+    },
     rf_workflow: {
       executor: 'per-vu-iterations',
       exec: 'rf_workflow',
@@ -119,13 +119,13 @@ export const options = {
       iterations: config.rf.iterations,
       maxDuration: config.rf.maxDuration,
     },
-    // rf_no_workflow: { // remote modality to be implemented in Orthanc
-    //   executor: 'per-vu-iterations',
-    //   exec: 'rf_no_workflow',
-    //   vus: config.rf.vus,
-    //   iterations: config.rf.iterations,
-    //   maxDuration: config.rf.maxDuration,
-    // }
+    rf_no_workflow: {
+      executor: 'per-vu-iterations',
+      exec: 'rf_no_workflow',
+      vus: config.rf.vus,
+      iterations: config.rf.iterations,
+      maxDuration: config.rf.maxDuration,
+    }
   },
 };
 
