@@ -13,8 +13,8 @@ function getconfig() {
 
 let config = getconfig();
 
-const credentials = `${config.orthanc.username}:${config.orthanc.password}`;
-const url = config.orthanc.url;
+const credentials = `${__ENV.ORTHANC_USER}:${__ENV.ORTHANC_USER}`;
+const url = __ENV.ORTHANC_URL;
 const workflow_modality = config.orthanc.workflow_modality;
 const encodedCredentials = encoding.b64encode(credentials);
 
