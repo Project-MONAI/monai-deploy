@@ -3,9 +3,9 @@
         "workflow_modality": "PERFWF",
         "no_workflow_modality": "PERFNOWF"
     },
-    "mr": {
+    "benchmark": {
         "vus": 1,
-        "iterations": 1,
-        "maxDuration": "30m"
+        "iterations": 5,
+        "maxDuration": "20m"
     }
 }
