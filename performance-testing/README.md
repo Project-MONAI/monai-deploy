@@ -157,7 +157,7 @@ cd k6
 ```
 
 ```bash
-k6 run -e CONFIG=config/benchmarkConfig.json -e ORTHANC_URL={url} -e ORTHANC_USER={user} -e ORTHANC_PASS={pass} dicom/dicom_benchmark.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/benchmarkConfig.json -e ORTHANC_URL={url} -e ORTHANC_USER={user} -e ORTHANC_PASS={pass} -e DICOM_MODALITY={modality} dicom/dicom_benchmark.js --insecure-skip-tls-verify
 ```
 
 #### Investigating Metrics ####
