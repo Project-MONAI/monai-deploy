@@ -22,11 +22,14 @@ namespace dotnet_performance_app.Controllers
         private DicomScu _dicomScu { get; }
 
         [HttpGet]
-        public async Task<IActionResult> DicomAssociation([FromQuery(Name = "modality")] string modality, [FromQuery(Name = "AET")] string AET)
+        public async Task<IActionResult> DicomAssociation(
+            [FromQuery(Name = "modality")] string modality, 
+            [FromQuery(Name = "CallingAET")] string CallingAET = "TEST",
+            [FromQuery(Name = "CalledAET")] string CalledAET = "TEST")
         {
             try
             {
-                var result = await _dicomScu.CStore(Host, Port, AET, AET, await GetDicoms(GetFolder(modality.ToUpper())), TimeSpan.FromSeconds(120));
+                var result = await _dicomScu.CStore(Host, Port, CallingAET, CalledAET, await GetDicoms(GetFolder(modality.ToUpper())), TimeSpan.FromSeconds(120));
                 if (result.State.Equals(DicomState.Success))
                 {
                     return Ok();
