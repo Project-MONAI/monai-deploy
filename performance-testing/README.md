@@ -92,9 +92,6 @@ Liver Seg Benchmark tests will be used to measuring the use of a MAP within MONA
 #### Set Up ####
 - Deploy MIG and MWM to an environment including all its dependencies.
 - Set up MIG with AET and Destinations scripts found [here](/k6/dicom/testdata/liver/postman_collection/)
-- Seed Orthanc with Test Data from [here](/k6/dicom/testdata/liver/benchmark_dicoms/)
-- Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
-    - MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
 - Seed MongoDB with Clinical Workflows found [here](/k6/dicom/testdata/liver/clinical_workflow/liver_seg.json)
 - Seed Argo with the Argo Workflow Templates found [here](/k6/dicom/testdata/liver/argo_template/liver-seg-argo-template.yaml)
 - Install k6 from [here](https://k6.io/docs/getting-started/installation/)

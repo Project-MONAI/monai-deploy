@@ -1,5 +1,6 @@
 ﻿using dotnet_performance_app.Support;
 using FellowOakDicom;
+using FellowOakDicom.Network;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
@@ -9,70 +10,36 @@ namespace dotnet_performance_app.Controllers
     [Route("dicom")]
     public class DicomController : ControllerBase
     {
-        public DicomController()
+        public DicomController(IConfiguration configuration)
         {
+            Host = configuration.GetValue<string>("InformaticsGateway:Host");
+            Port = configuration.GetValue<int>("InformaticsGateway:Port");
             _dicomScu = new DicomScu();
         }
 
+        private string? Host { get; set; }
+        private int Port { get; set; }
         private DicomScu _dicomScu { get; }
 
-        [Route("ct")]
         [HttpGet]
-        public async Task<IActionResult> PublishCt()
+        public async Task<IActionResult> DicomAssociation([FromQuery(Name = "modality")] string modality, [FromQuery(Name = "AET")] string AET)
         {
             try
             {
-                await _dicomScu.CStore("127.0.0.1", 4242, "TEST", "ORTHANC", await GetDicoms(GetFolder("CT")), TimeSpan.FromSeconds(100));
-                return Ok();
+                var dicoms = await GetDicoms(GetFolder(modality.ToUpper()));
+                var result = await _dicomScu.CStore(Host, Port, AET, AET, await GetDicoms(GetFolder(modality.ToUpper())), TimeSpan.FromSeconds(120));
+                if (result.State.Equals(DicomState.Success))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Description);
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest();
-            }
-        }
-
-        [Route("xray")]
-        [HttpGet]
-        public async Task<IActionResult> PublishXray()
-        {
-            try
-            {
-                await _dicomScu.CStore("127.0.0.1", 4242, "TEST", "ORTHANC", await GetDicoms(GetFolder("XRAY")), TimeSpan.FromSeconds(100));
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
-        [Route("mri")]
-        [HttpGet]
-        public async Task<IActionResult> PublishMri()
-        {
-            try
-            {
-                await _dicomScu.CStore("127.0.0.1", 4242, "TEST", "ORTHANC", await GetDicoms(GetFolder("MRI")), TimeSpan.FromSeconds(100));
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
-        [Route("ultrasound")]
-        [HttpGet]
-        public async Task<IActionResult> PublishUltrasound()
-        {
-            try
-            {
-                await _dicomScu.CStore("127.0.0.1", 4242, "TEST", "ORTHANC", await GetDicoms(GetFolder("ULTRASOUND")), TimeSpan.FromSeconds(100));
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
+                return BadRequest(e.InnerException);
             }
         }
 
