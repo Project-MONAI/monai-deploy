@@ -98,9 +98,9 @@ docker build -t dotnet-performance-app .
 ```
 
 ```bash
-docker run -it --rm -p 5000:80 -p 5001:443 -e InformaticsGateway__Host={url} dotnet-performance-app
+docker run -it --rm -p 5000:80 -p 5001:443 -e InformaticsGateway__Host={host} dotnet-performance-app
 ```
-> **url** is to be replaced with the the host that MIG is running on
+> **host** is to be replaced with the the host that MIG is running on
 
 ## Tests ##
 ### Liver Seg Benchmark ###
