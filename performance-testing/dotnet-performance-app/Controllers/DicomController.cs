@@ -26,7 +26,6 @@ namespace dotnet_performance_app.Controllers
         {
             try
             {
-                var dicoms = await GetDicoms(GetFolder(modality.ToUpper()));
                 var result = await _dicomScu.CStore(Host, Port, AET, AET, await GetDicoms(GetFolder(modality.ToUpper())), TimeSpan.FromSeconds(120));
                 if (result.State.Equals(DicomState.Success))
                 {
