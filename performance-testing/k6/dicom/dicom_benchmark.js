@@ -14,7 +14,7 @@ let config = getconfig();
 
 const url = __ENV.URL;
 const dicom_modality = __ENV.DICOM_MODALITY
-const workflow_AET = config.remote_modalities.workflow_AET;
+const workflow_AET = __ENV.WF_AET;
 
 export const options = {
   scenarios: {
@@ -30,7 +30,7 @@ export const options = {
 
 export function benchmark_workflow() {
 
-  let res = http.get(`${url}/dicom?modality=${dicom_modality}&CalledAET=${workflow_AET}`, { tags: { my_custom_tag: 'benchmark_workflow' } })
+  let res = http.get(`${url}/dicom?modality=${dicom_modality}&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'benchmark_workflow' } })
 
   check(res, {
     'is status 200': (r) => r.status === 200

@@ -1,8 +1,4 @@
 {
-    "orthanc":{
-        "workflow_modality": "monai",
-        "no_workflow_modality": "monai_none"
-    },
     "lowerThinkTime": 60,
     "upperThinkTime": 120,
     "ct": {

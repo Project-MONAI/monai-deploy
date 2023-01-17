@@ -1,8 +1,4 @@
 {
-    "remote_modalities":{
-        "workflow_AET": "PERFWF",
-        "no_workflow_AET": "PERFNOWF"
-    },
     "benchmark": {
         "vus": 1,
         "iterations": 5,
