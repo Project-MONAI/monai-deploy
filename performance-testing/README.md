@@ -6,8 +6,7 @@ Performance tests have been written to simulate real life load on the MONAI Depl
 - MONAI Workflow Manager (WM) and its dependencies
 - MONAI Informatics Gateway (IG) and its dependencies
 - Docker
-- Orthanc
-- Dummy models (to be included as part of WM development)
+- Dummy models
 - ELK Stack
 - Prometheus and Grafana
 - Test data (CT, MR, US, RF)
@@ -23,10 +22,8 @@ Performance tests have been written to simulate real life load on the MONAI Depl
 - k6 Scripts
     - dicom_benchmark.js - Sends MR study store requests with a 2 minute sleep between each iteration.
     - dicom_peak_avg.js - Sends CT, MR, US and RF study store requests based on the configuration
-- Orthanc
-    - is an open-source lightweight DICOM server.
-    - Will perform C-STORE requests to MIG.
-    - 2 modalities set up (MONAI, NOTMONAI) which will send C-STORE with an AET which will either trigger or workflow or wont depending on the Clinical Workflows set up.
+- dotnet-performance-app
+    - A lightweight .net 6 app which is used for sending C-STORE requests using fo-dicom
 - ELK Stack
     - A log aggregator (i.e ELK) will be used for capturing all logs so that investigation of run time metrics can be achieved.
 - Grafana and Prometheus
@@ -40,7 +37,7 @@ Performance tests have been written to simulate real life load on the MONAI Depl
 | Medium | 8         | 10GB | 6GB  | 15GB       |
 | Large  | 12        | 16GB | 12GB | 25GB       |
 
-### Clinical Workflow Example ##
+## Clinical Workflow Example #
 ```
 AET: MONAI
 Tasks [
@@ -84,6 +81,26 @@ Tasks [
     }
 ]
 ```
+## Running dotnet-performance-app
+### Building the app
+
+```bash
+cd performance-testing/dotnet-performance-app
+```
+
+```bash
+dotnet build
+```
+
+### Running as docker image
+```bash
+docker build -t dotnet-performance-app .
+```
+
+```bash
+docker run -it --rm -p 5000:80 -p 5001:443 -e InformaticsGateway__Host={host} dotnet-performance-app
+```
+> **host** is to be replaced with the the host that MIG is running on
 
 ## Tests ##
 ### Liver Seg Benchmark ###
@@ -92,17 +109,13 @@ Liver Seg Benchmark tests will be used to measuring the use of a MAP within MONA
 #### Set Up ####
 - Deploy MIG and MWM to an environment including all its dependencies.
 - Set up MIG with AET and Destinations scripts found [here](/k6/dicom/testdata/liver/postman_collection/)
-- Seed Orthanc with Test Data from [here](/k6/dicom/testdata/liver/benchmark_dicoms/)
-- Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
-    - MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
 - Seed MongoDB with Clinical Workflows found [here](/k6/dicom/testdata/liver/clinical_workflow/liver_seg.json)
 - Seed Argo with the Argo Workflow Templates found [here](/k6/dicom/testdata/liver/argo_template/liver-seg-argo-template.yaml)
 - Install k6 from [here](https://k6.io/docs/getting-started/installation/)
-- Update Orthanc details (i.e url) in the config/liverConfig.json
 
 #### Running Tests ####
 ```bash
-cd k6
+cd performance-testing/k6
 ```
 
 ```bash
@@ -126,7 +139,7 @@ Liver Seg Benchmark parallel tests will be used to measuring the use of a MAP wi
 
 #### Running Tests ####
 ```bash
-cd k6
+cd performance-testing/k6
 ```
 
 ```bash
@@ -143,22 +156,24 @@ Benchmark tests will be used to measuring the best performance of the MONAI stac
 #### Set Up ####
 - Deploy MIG and MWM to an environment including all its dependencies.
 - Set up MIG with AET and Destinations scripts found [here](TBD)
-- Seed Orthanc with Test Data from [here](TBD)
+- Run dotnet-performance-app
 - Set up Orthanc with a Remote Modality, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
     - MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
 - Seed MongoDB with Clinical Workflows found [here](TBD)
 - Seed Argo with the Argo Workflow Templates found [here](TBD)
 - Install k6 from [here](https://k6.io/docs/getting-started/installation/)
-- Update Orthanc details (i.e url) in the config/benchmarkConfig.json
 
 #### Running Tests ####
 ```bash
-cd k6
+cd performance-testing/k6
 ```
 
 ```bash
-k6 run -e CONFIG=config/benchmarkConfig.json -e ORTHANC_URL={url} -e ORTHANC_USER={user} -e ORTHANC_PASS={pass} -e DICOM_MODALITY={modality} dicom/dicom_benchmark.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/benchmarkConfig.json -e URL={url} -e DICOM_MODALITY={modality} dicom/dicom_benchmark.js --insecure-skip-tls-verify
 ```
+
+> **url** is to be replaced by dotnet-performance-app url
+> **modality** is to be replaced by either CT, RF, US or MR
 
 #### Investigating Metrics ####
 ##### MONAI Informatics Gateway #####
@@ -189,7 +204,7 @@ Average and Peak load times are displayed as below. These tests are most valuabl
 #### Set Up ####
 - Deploy MIG and MWM to an environment including all its dependencies.
 - Set up MIG with AET and Destinations scripts found [here](TBD)
-- Seed Orthanc with Test Data from [here](TBD)
+- Run dotnet-performance-app
 - Set up Orthanc with 2 Remote Modalities, configuration can be found [here](https://book.orthanc-server.com/users/configuration.html#configuration)
     - MONAI - This will be send C-STORE requests to MIG with an AET "MONAI"
     - NOTMONAI - This will be send C-STORE requests to MIG with an AET "NOTMONAI"
@@ -203,8 +218,10 @@ Average and Peak load times are displayed as below. These tests are most valuabl
 cd k6
 ```
 ```bash
-k6 run -e CONFIG=config/{config}.json ORTHANC_URL={url} ORTHANC_USER={user} ORTHANC_PASS={pass} dicom/dicom_peak_avg.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/{config}.json URL={url} dicom/dicom_peak_avg.js --insecure-skip-tls-verify
 ```
+> **url** is to be replaced by dotnet-performance-app url
+> **config** is to be replaced by either avgConfig.json or peakConfig.json
 
 #### Investigating Metrics ####
 ##### MONAI Informatics Gateway #####

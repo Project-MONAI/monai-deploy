@@ -1,7 +1,7 @@
 {
-    "orthanc":{
-        "workflow_modality": "PERFWF",
-        "no_workflow_modality": "PERFNOWF"
+    "remote_modalities":{
+        "workflow_AET": "PERFWF",
+        "no_workflow_AET": "PERFNOWF"
     },
     "lowerThinkTime": 60,
     "upperThinkTime": 120,
