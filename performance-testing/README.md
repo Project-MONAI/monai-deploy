@@ -169,11 +169,12 @@ cd performance-testing/k6
 ```
 
 ```bash
-k6 run -e CONFIG=config/benchmarkConfig.json -e URL={url} -e DICOM_MODALITY={modality} dicom/dicom_benchmark.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/benchmarkConfig.json -e URL={url} -e DICOM_MODALITY={modality} -e WF_AET={AET} dicom/dicom_benchmark.js --insecure-skip-tls-verify
 ```
 
 > **url** is to be replaced by dotnet-performance-app url
 > **modality** is to be replaced by either CT, RF, US or MR
+> **AET** is to be replaced by the Calling AET to be sent with the association. 1 triggers a workflow and 1 does not
 
 #### Investigating Metrics ####
 ##### MONAI Informatics Gateway #####
@@ -218,10 +219,11 @@ Average and Peak load times are displayed as below. These tests are most valuabl
 cd k6
 ```
 ```bash
-k6 run -e CONFIG=config/{config}.json URL={url} dicom/dicom_peak_avg.js --insecure-skip-tls-verify
+k6 run -e CONFIG=config/{config}.json -e URL={url} -e WF_AET={AET} -e NO_WF_AET{AET} dicom/dicom_peak_avg.js --insecure-skip-tls-verify
 ```
 > **url** is to be replaced by dotnet-performance-app url
 > **config** is to be replaced by either avgConfig.json or peakConfig.json
+> **AET** is to be replaced by the Calling AET to be sent with the association. 1 triggers a workflow and 1 does not
 
 #### Investigating Metrics ####
 ##### MONAI Informatics Gateway #####
