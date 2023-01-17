@@ -29,9 +29,12 @@ export const options = {
 };
 
 export function benchmark_workflow() {
-
   let res = http.get(`${url}/dicom?modality=${dicom_modality}&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'benchmark_workflow' } })
 
+  if(res.status != 200){
+    console.log(`status = ${res.status} and body = ${res.body}`)
+  }
+  
   check(res, {
     'is status 200': (r) => r.status === 200
   })
