@@ -19,8 +19,11 @@ const no_workflow_AET = __ENV.NO_WF_AET;
 const lowerThinkTime = config.lowerThinkTime;
 const upperThinkTime = config.upperThinkTime;
 const ct_pacing = config.ct.pacing;
+const ct_no_pacing = config.ct_no.pacing
 const mr_pacing = config.mr.pacing;
+const mr_no_pacing = config.mr_no.pacing
 const us_pacing = config.us.pacing;
+const us_no_pacing = config.us_no.pacing
 const rf_pacing = config.rf.pacing;
 
 export const options = {
@@ -35,9 +38,9 @@ export const options = {
     ct_no_workflow: {
       executor: 'per-vu-iterations',
       exec: 'ct_workflow',
-      vus: config.ct.vus,
-      iterations: config.ct.iterations,
-      maxDuration: config.ct.maxDuration,
+      vus: config.ct_no.vus,
+      iterations: config.ct_no.iterations,
+      maxDuration: config.ct_no.maxDuration,
     },
     mr_workflow: {
       executor: 'per-vu-iterations',
@@ -49,9 +52,9 @@ export const options = {
     mr_no_workflow: {
       executor: 'per-vu-iterations',
       exec: 'mr_no_workflow',
-      vus: config.mr.vus,
-      iterations: config.mr.iterations,
-      maxDuration: config.mr.maxDuration,
+      vus: config.mr_no.vus,
+      iterations: config.mr_no.iterations,
+      maxDuration: config.mr_no.maxDuration,
     },
     us_workflow: {
       executor: 'per-vu-iterations',
@@ -63,20 +66,13 @@ export const options = {
     us_no_workflow: {
       executor: 'per-vu-iterations',
       exec: 'us_no_workflow',
-      vus: config.us.vus,
-      iterations: config.us.iterations,
-      maxDuration: config.us.maxDuration,
+      vus: config.us_no.vus,
+      iterations: config.us_no.iterations,
+      maxDuration: config.us_no.maxDuration,
     },
     rf_workflow: {
       executor: 'per-vu-iterations',
       exec: 'rf_workflow',
-      vus: config.rf.vus,
-      iterations: config.rf.iterations,
-      maxDuration: config.rf.maxDuration,
-    },
-    rf_no_workflow: {
-      executor: 'per-vu-iterations',
-      exec: 'rf_no_workflow',
       vus: config.rf.vus,
       iterations: config.rf.iterations,
       maxDuration: config.rf.maxDuration,
@@ -101,7 +97,7 @@ export function ct_no_workflow() {
   check(res, {
     'is status 200': (r) => r.status === 200
   })
-  sleep(pacing(ct_pacing, startTime));
+  sleep(pacing(ct_no_pacing, startTime));
 }
 
 export function mr_workflow() {
@@ -121,7 +117,7 @@ export function mr_no_workflow() {
   check(res, {
     'is status 200': (r) => r.status === 200
   })
-  sleep(pacing(mr_pacing, startTime));
+  sleep(pacing(mr_no_pacing, startTime));
 }
 
 export function us_workflow() {
@@ -141,23 +137,13 @@ export function us_no_workflow() {
   check(res, {
     'is status 200': (r) => r.status === 200
   })
-  sleep(pacing(us_pacing, startTime));
+  sleep(pacing(us_no_pacing, startTime));
 }
 
 export function rf_workflow() {
   var startTime = Date.now();
   sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=RF&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'rf_workflow' } })
-  check(res, {
-    'is status 200': (r) => r.status === 200
-  })
-  sleep(pacing(rf_pacing, startTime));
-}
-
-export function rf_no_workflow() {
-  var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
-  let res = http.get(`${url}/dicom?modality=RF&CalledAET=${no_workflow_AET}&CallingAET=${no_workflow_AET}`, { tags: { my_custom_tag: 'rf_no_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
   })

@@ -2,27 +2,45 @@
     "lowerThinkTime": 60,
     "upperThinkTime": 120,
     "ct": {
-        "vus": 1,
-        "iterations": 30,
+        "vus": 2,
+        "iterations": 11,
         "maxDuration": "60m",
-        "pacing": 105
+        "pacing": 505
+    },
+    "ct_no": {
+        "vus": 1,
+        "iterations": 9,
+        "maxDuration": "60m",
+        "pacing": 250
     },
     "mr": {
         "vus": 1,
-        "iterations": 25,
+        "iterations": 17,
         "maxDuration": "60m",
-        "pacing": 129
+        "pacing": 62
+    },
+    "mr_no": {
+        "vus": 1,
+        "iterations": 8,
+        "maxDuration": "60m",
+        "pacing": 300
     },
     "us": {
         "vus": 1,
-        "iterations": 50,
+        "iterations": 5,
         "maxDuration": "60m",
-        "pacing": 57
+        "pacing": 570
+    },
+    "us_no": {
+        "vus": 3,
+        "iterations": 15,
+        "maxDuration": "60m",
+        "pacing": 570
     },
     "rf": {
-        "vus": 2,
-        "iterations": 60,
+        "vus": 4,
+        "iterations": 30,
         "maxDuration": "60m",
-        "pacing": 105
+        "pacing": 330
     }
 }
