@@ -176,7 +176,6 @@ export function pacing(cycleTime, startTime) {
   let waitTime = 0;
   var endTime = Date.now();
   let duration = endTime - startTime;
-  waitTime = cycleTime - duration;
-  waitTime = waitTime / 1000;
-  return waitTime;
+  waitTime = Math.round(cycleTime - (duration/1000));
+  return waitTime
 }
