@@ -1,4 +1,6 @@
-﻿namespace dotnet_performance_app.Support
+﻿using System.Net.Http.Headers;
+
+namespace dotnet_performance_app.Support
 {
     public class Stow
     {
@@ -9,7 +11,7 @@
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<HttpResponseMessage> SendStowRequest(string directory, string url)
+        public async Task<HttpResponseMessage> SendStowRequest(string directory, string url, string authenticationString)
         {
             var client = _httpClientFactory.CreateClient();
             var mimeType = "application/dicom";
@@ -19,7 +21,7 @@
             {
                 var sContent = new StreamContent(File.OpenRead(path));
 
-                sContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(mimeType);
+                sContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
 
                 multiContent.Add(sContent);
             }
@@ -27,6 +29,10 @@
             if (multiContent.Count() > 0)
             {
                 var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+                var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes(authenticationString));
+
+                request.Headers.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
 
                 request.Content = multiContent;
 

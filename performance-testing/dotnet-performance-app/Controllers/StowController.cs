@@ -12,19 +12,25 @@ namespace dotnet_performance_app.Controllers
         public StowController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             Host = configuration.GetValue<string>("InformaticsGateway:Host");
-            Port = configuration.GetValue<int>("InformaticsGateway:Port");
+            Port = configuration.GetValue<int>("InformaticsGateway:StowPort");
+            Endpoint = $"/dicomweb/{configuration.GetValue<string>("InformaticsGateway:StowWorkflowId")}/studies";
+            User = configuration.GetValue<string>("InformaticsGateway:StowUser");
+            Password = configuration.GetValue<string>("InformaticsGateway:StowPassword");
             Stow = new Stow(httpClientFactory);
         }
 
         private string? Host { get; set; }
+        private string? Endpoint { get; set; }
         private int Port { get; set; }
+        private string User { get; set; }
+        private string Password { get; set; }
         private Stow Stow { get; set; }
 
         [HttpGet]
         public async Task<IActionResult> DicomAssociation(
             [FromQuery(Name = "modality")] string modality)
         {
-            var result = Stow.SendStowRequest(GetFolder(modality.ToUpper()).ToString(), $"https://{Host}:{Port}").Result;
+            var result = Stow.SendStowRequest(GetFolder(modality.ToUpper()).ToString(), $"http://{Host}:{Port}{Endpoint}", $"{User}:{Password}").Result;
 
             if (result.StatusCode.Equals(HttpStatusCode.OK))
             {
