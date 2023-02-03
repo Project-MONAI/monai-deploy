@@ -11,21 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\DICOM\MR\**" />
-    <Compile Remove="Data\DICOM\ULTRASOUND\**" />
-    <Compile Remove="Data\DICOM\XRAY\**" />
-    <Content Remove="Data\DICOM\MRI\**" />
-    <Content Remove="Data\DICOM\ULTRASOUND\**" />
-    <Content Remove="Data\DICOM\XRAY\**" />
-    <EmbeddedResource Remove="Data\DICOM\MRI\**" />
-    <EmbeddedResource Remove="Data\DICOM\ULTRASOUND\**" />
-    <EmbeddedResource Remove="Data\DICOM\XRAY\**" />
-    <None Remove="Data\DICOM\MRI\**" />
-    <None Remove="Data\DICOM\ULTRASOUND\**" />
-    <None Remove="Data\DICOM\XRAY\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="fo-dicom" Version="5.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Monai.Deploy.Messaging" Version="0.1.0-rc0040" />
