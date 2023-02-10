@@ -80,7 +80,6 @@ export const options = {
 
 export function ct_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=CT&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'ct_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
