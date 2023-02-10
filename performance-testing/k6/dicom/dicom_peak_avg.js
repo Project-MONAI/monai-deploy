@@ -16,8 +16,6 @@ let config = getconfig();
 const url = __ENV.URL;
 const workflow_AET = __ENV.WF_AET;
 const no_workflow_AET = __ENV.NO_WF_AET;
-const lowerThinkTime = config.lowerThinkTime;
-const upperThinkTime = config.upperThinkTime;
 const ct_pacing = config.ct.pacing;
 const ct_no_pacing = config.ct_no.pacing
 const mr_pacing = config.mr.pacing;
@@ -92,7 +90,6 @@ export function ct_workflow() {
 
 export function ct_no_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=CT&CalledAET=${no_workflow_AET}&CallingAET=${no_workflow_AET}`, { tags: { my_custom_tag: 'ct_no_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
@@ -102,7 +99,6 @@ export function ct_no_workflow() {
 
 export function mr_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=MR&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'mr_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
@@ -112,7 +108,6 @@ export function mr_workflow() {
 
 export function mr_no_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=MR&CalledAET=${no_workflow_AET}&CallingAET=${no_workflow_AET}`, { tags: { my_custom_tag: 'mr_no_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
@@ -122,7 +117,6 @@ export function mr_no_workflow() {
 
 export function us_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=US&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'us_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
@@ -132,7 +126,6 @@ export function us_workflow() {
 
 export function us_no_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=US&CalledAET=${no_workflow_AET}&CallingAET=${no_workflow_AET}`, { tags: { my_custom_tag: 'us_no_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
@@ -142,7 +135,6 @@ export function us_no_workflow() {
 
 export function rf_workflow() {
   var startTime = Date.now();
-  sleep(randomIntBetween(lowerThinkTime, upperThinkTime)); // think time
   let res = http.get(`${url}/dicom?modality=RF&CalledAET=${workflow_AET}&CallingAET=${workflow_AET}`, { tags: { my_custom_tag: 'rf_workflow' } })
   check(res, {
     'is status 200': (r) => r.status === 200
