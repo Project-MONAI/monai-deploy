@@ -5,42 +5,42 @@
         "vus": 2,
         "iterations": 11,
         "maxDuration": "60m",
-        "pacing": 505
+        "pacing": 560
     },
     "ct_no": {
         "vus": 1,
         "iterations": 9,
         "maxDuration": "60m",
-        "pacing": 250
+        "pacing": 310
     },
     "mr": {
         "vus": 1,
         "iterations": 17,
         "maxDuration": "60m",
-        "pacing": 62
+        "pacing": 142
     },
     "mr_no": {
         "vus": 1,
         "iterations": 8,
         "maxDuration": "60m",
-        "pacing": 300
+        "pacing": 380
     },
     "us": {
         "vus": 1,
         "iterations": 5,
         "maxDuration": "60m",
-        "pacing": 570
+        "pacing": 650
     },
     "us_no": {
         "vus": 3,
         "iterations": 15,
         "maxDuration": "60m",
-        "pacing": 570
+        "pacing": 650
     },
     "rf": {
         "vus": 4,
         "iterations": 30,
         "maxDuration": "60m",
-        "pacing": 330
+        "pacing": 50
     }
 }
