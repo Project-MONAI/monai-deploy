@@ -38,9 +38,9 @@
         "pacing": 650
     },
     "rf": {
-        "vus": 4,
-        "iterations": 30,
+        "vus": 6,
+        "iterations": 120,
         "maxDuration": "60m",
-        "pacing": 50
+        "pacing": 120
     }
 }
