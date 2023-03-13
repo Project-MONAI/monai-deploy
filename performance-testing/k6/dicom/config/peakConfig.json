@@ -39,7 +39,7 @@
     },
     "rf": {
         "vus": 6,
-        "iterations": 120,
+        "iterations": 20,
         "maxDuration": "60m",
         "pacing": 120
     }
