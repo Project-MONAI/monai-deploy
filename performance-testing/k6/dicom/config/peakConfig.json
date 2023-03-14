@@ -3,44 +3,44 @@
     "upperThinkTime": 120,
     "ct": {
         "vus": 2,
-        "iterations": 11,
+        "iterations": 13,
         "maxDuration": "60m",
-        "pacing": 560
+        "pacing": 464
     },
     "ct_no": {
         "vus": 1,
-        "iterations": 9,
+        "iterations": 13,
         "maxDuration": "60m",
-        "pacing": 310
+        "pacing": 187
     },
     "mr": {
-        "vus": 1,
-        "iterations": 17,
+        "vus": 2,
+        "iterations": 16,
         "maxDuration": "60m",
-        "pacing": 142
+        "pacing": 360
     },
     "mr_no": {
         "vus": 1,
-        "iterations": 8,
+        "iterations": 11,
         "maxDuration": "60m",
-        "pacing": 380
+        "pacing": 237
     },
     "us": {
         "vus": 1,
-        "iterations": 5,
+        "iterations": 8,
         "maxDuration": "60m",
-        "pacing": 650
+        "pacing": 360
     },
     "us_no": {
-        "vus": 3,
-        "iterations": 15,
+        "vus": 2,
+        "iterations": 34,
         "maxDuration": "60m",
-        "pacing": 650
+        "pacing": 122
     },
     "rf": {
         "vus": 6,
-        "iterations": 20,
+        "iterations": 30,
         "maxDuration": "60m",
-        "pacing": 120
+        "pacing": 630
     }
 }
