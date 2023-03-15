@@ -1,0 +1,840 @@
+{
+ "Parameters": {
+  "monaiuserpassword": {
+   "Type": "String",
+   "AllowedPattern": "^.*(?=.{8,120})(?!.*\\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\¡\\£\\_\\+\\`\\~\\.\\,\\<\\>\\/\\?\\;\\:'\"\\\\|\\[\\]\\{\\}]).*$",
+   "ConstraintDescription": "Must be 8 charactersor or more, contain uper case, lower case and special characters.",
+   "Description": "Must be 8 charactersor or more, contain uper case, lower case and special characters.",
+   "MinLength": 8,
+   "NoEcho": true
+  },
+  "SsmParameterValueawsservicecanonicalubuntuserver2204stablecurrentamd64hvmebsgp2amiidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+   "Default": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id"
+  }
+ },
+ "Resources": {
+  "mdenetworkVpc3EA3033F": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/27",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MDE/mde-network/Vpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/Resource"
+   }
+  },
+  "mdenetworkVpcPublicSubnet1Subnet53190935": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.0.0/28",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "MDE/mde-network/Vpc/PublicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet1/Subnet"
+   }
+  },
+  "mdenetworkVpcPublicSubnet1RouteTableFDF26DC5": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MDE/mde-network/Vpc/PublicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet1/RouteTable"
+   }
+  },
+  "mdenetworkVpcPublicSubnet1RouteTableAssociationADFB2EB6": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "mdenetworkVpcPublicSubnet1RouteTableFDF26DC5"
+    },
+    "SubnetId": {
+     "Ref": "mdenetworkVpcPublicSubnet1Subnet53190935"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "mdenetworkVpcPublicSubnet1DefaultRoute484318EE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "mdenetworkVpcPublicSubnet1RouteTableFDF26DC5"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "mdenetworkVpcIGWB8FBDB2A"
+    }
+   },
+   "DependsOn": [
+    "mdenetworkVpcVPCGW7E6AA3E1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet1/DefaultRoute"
+   }
+  },
+  "mdenetworkVpcPublicSubnet2Subnet24E021C1": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.0.16/28",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "MDE/mde-network/Vpc/PublicSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet2/Subnet"
+   }
+  },
+  "mdenetworkVpcPublicSubnet2RouteTable0FFA3428": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MDE/mde-network/Vpc/PublicSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet2/RouteTable"
+   }
+  },
+  "mdenetworkVpcPublicSubnet2RouteTableAssociation73A509D9": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "mdenetworkVpcPublicSubnet2RouteTable0FFA3428"
+    },
+    "SubnetId": {
+     "Ref": "mdenetworkVpcPublicSubnet2Subnet24E021C1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "mdenetworkVpcPublicSubnet2DefaultRoute81734561": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "mdenetworkVpcPublicSubnet2RouteTable0FFA3428"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "mdenetworkVpcIGWB8FBDB2A"
+    }
+   },
+   "DependsOn": [
+    "mdenetworkVpcVPCGW7E6AA3E1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/PublicSubnet2/DefaultRoute"
+   }
+  },
+  "mdenetworkVpcIGWB8FBDB2A": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MDE/mde-network/Vpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/IGW"
+   }
+  },
+  "mdenetworkVpcVPCGW7E6AA3E1": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "VpcId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    },
+    "InternetGatewayId": {
+     "Ref": "mdenetworkVpcIGWB8FBDB2A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/Vpc/VPCGW"
+   }
+  },
+  "mdenetworkMONAIDeployExpressvpcLogsC1230904": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/MONAIDeployExpress-vpcLogs/Resource"
+   }
+  },
+  "mdenetworkMONAIDeployExpressFlowlogsrole04D9FCF0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "vpc-flow-logs.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/MONAIDeployExpress-Flowlogsrole/Resource"
+   }
+  },
+  "mdenetworkMONAIDeployExpressFlowlogsroleDefaultPolicy3A4F62D9": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "mdenetworkMONAIDeployExpressvpcLogsC1230904",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "iam:PassRole",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "mdenetworkMONAIDeployExpressFlowlogsrole04D9FCF0",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "mdenetworkMONAIDeployExpressFlowlogsroleDefaultPolicy3A4F62D9",
+    "Roles": [
+     {
+      "Ref": "mdenetworkMONAIDeployExpressFlowlogsrole04D9FCF0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/MONAIDeployExpress-Flowlogsrole/DefaultPolicy/Resource"
+   }
+  },
+  "mdenetworkFlowLogF8757F82": {
+   "Type": "AWS::EC2::FlowLog",
+   "Properties": {
+    "ResourceId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    },
+    "ResourceType": "VPC",
+    "DeliverLogsPermissionArn": {
+     "Fn::GetAtt": [
+      "mdenetworkMONAIDeployExpressFlowlogsrole04D9FCF0",
+      "Arn"
+     ]
+    },
+    "LogDestinationType": "cloud-watch-logs",
+    "LogGroupName": {
+     "Ref": "mdenetworkMONAIDeployExpressvpcLogsC1230904"
+    },
+    "TrafficType": "ALL"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/FlowLog/FlowLog"
+   }
+  },
+  "mdenetworkEIP8C4FCCBE": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MONAIDeployExpress-EIP"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/EIP"
+   }
+  },
+  "mdenetworkMONAIDeployExpressSecurityGroupA5BE5E30": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "MONAI Deploy Express security group. Allows SSH 22 and DICOM 5000",
+    "GroupName": "MONAIDeployExpress-SG",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "SSH access to the MONAI Deploy Express server",
+      "FromPort": 22,
+      "IpProtocol": "tcp",
+      "ToPort": 22
+     },
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "DICOM DIMSE to MONAI Informatic Gateway",
+      "FromPort": 104,
+      "IpProtocol": "tcp",
+      "ToPort": 104
+     },
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "Orthanc server UI access",
+      "FromPort": 8042,
+      "IpProtocol": "tcp",
+      "ToPort": 8042
+     },
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "DICOM DIMSE to Orthanc server",
+      "FromPort": 4242,
+      "IpProtocol": "tcp",
+      "ToPort": 4242
+     },
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "Kibana server UI access",
+      "FromPort": 5601,
+      "IpProtocol": "tcp",
+      "ToPort": 5601
+     }
+    ],
+    "VpcId": {
+     "Ref": "mdenetworkVpc3EA3033F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-network/MONAIDeployExpress-SecurityGroup/Resource"
+   }
+  },
+  "mdeinstanceMyCfnKeyPair65E5DB47": {
+   "Type": "AWS::EC2::KeyPair",
+   "Properties": {
+    "KeyName": {
+     "Fn::Join": [
+      "",
+      [
+       "MONAIDeployExpress-",
+       {
+        "Ref": "AWS::StackId"
+       }
+      ]
+     ]
+    },
+    "KeyType": "rsa",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MONAIDeployExpress-KeyPair"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-instance/MyCfnKeyPair"
+   }
+  },
+  "mdeinstanceRoleC47568E7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "MONAI Deploy Express EC2 instance role.",
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-instance/Role/Resource"
+   }
+  },
+  "mdeinstanceRoleDefaultPolicy8AEC83B5": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "cloudformation:DescribeStackResource",
+        "cloudformation:SignalResource"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "AWS::StackId"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "mdeinstanceRoleDefaultPolicy8AEC83B5",
+    "Roles": [
+     {
+      "Ref": "mdeinstanceRoleC47568E7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-instance/Role/DefaultPolicy/Resource"
+   }
+  },
+  "mdeinstanceMONAIDeployExpressinstanceInstanceProfile2DAF7C0B": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "mdeinstanceRoleC47568E7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-instance/MONAIDeployExpress-instance/InstanceProfile"
+   }
+  },
+  "mdeinstanceMONAIDeployExpressinstance6A24F225a39bd33c3e679bb9": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "BlockDeviceMappings": [
+     {
+      "DeviceName": "/dev/sda1",
+      "Ebs": {
+       "Encrypted": true,
+       "VolumeSize": 200,
+       "VolumeType": "gp3"
+      }
+     }
+    ],
+    "IamInstanceProfile": {
+     "Ref": "mdeinstanceMONAIDeployExpressinstanceInstanceProfile2DAF7C0B"
+    },
+    "ImageId": {
+     "Ref": "SsmParameterValueawsservicecanonicalubuntuserver2204stablecurrentamd64hvmebsgp2amiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "InstanceType": "g4dn.xlarge",
+    "KeyName": {
+     "Fn::Join": [
+      "",
+      [
+       "MONAIDeployExpress-",
+       {
+        "Ref": "AWS::StackId"
+       }
+      ]
+     ]
+    },
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "mdenetworkMONAIDeployExpressSecurityGroupA5BE5E30",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Ref": "mdenetworkVpcPublicSubnet1Subnet53190935"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MONAIDeployExpress"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": {
+      "Fn::Join": [
+       "",
+       [
+        "#!/bin/bash\ncd /tmp\napt-get update -y\napt install python3-pip -y\nwget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz\ntar -xvf aws-cfn-bootstrap-py3-latest.tar.gz\ncd /tmp/aws-cfn-bootstrap-2.0\npip install .\nmkdir -p /opt/aws/bin\ncd /opt/aws/bin\nln -s /usr/local/bin/cfn-* .\ntouch /tmp/needrestart_silenced\nadduser --gecos \"\" --disabled-password monaiuser\nchpasswd <<<'monaiuser:",
+        {
+         "Ref": "monaiuserpassword"
+        },
+        "'\nusermod -aG sudo monaiuser\ntouch /tmp/monaiuser_created\napt update -y\napt upgrade -y\ntouch /tmp/OS_upgraded\napt-get remove docker docker-engine docker.io containerd runc\napt-get install ca-certificates curl gnupg lsb-release\nmkdir -p /etc/apt/keyrings\ncurl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpgecho deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null\nsudo apt-get update -y\napt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin\ntouch /tmp/docker_installed\napt-get install docker-compose-plugin -y\ntouch /tmp/compose_plugin_installed\ncd /tmp\nwget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb\ndpkg -i cuda-keyring_1.0-1_all.deb\napt-get update\napt-get -y install cuda\ntouch /tmp/cuda_driver_installed\ncurl https://get.docker.com | sh && systemctl --now enable docker\ndistribution=$(. /etc/os-release;echo $ID$VERSION_ID)\ncurl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg\ncurl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | tee /etc/apt/sources.list.d/nvidia-container-toolkit.list\napt-get update -y\napt-get install -y nvidia-container-toolkit\nnvidia-ctk runtime configure --runtime=docker\nsystemctl restart docker\ndocker run --rm  --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi\ntouch /tmp/nvidia_toolkit_installed\napt install unzip -y\ncd /tmp\ncurl -LO https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases/download/0.3.7/mig-cli-0.3.7-linux-x64.zip\nunzip ./mig-cli-0.3.7-linux-x64.zip\nmv mig-cli /usr/local/bin\ntouch /tmp/MIG_installed\ncd /tmp\ncurl -LO https://github.com/Project-MONAI/monai-deploy/releases/download/monai-deploy-express-v0.2.0/monai-deploy-express-0.2.0.zip\nunzip ./monai-deploy-express-0.2.0.zip -d /home/monaiuser\nchown monaiuser:monaiuser /home/monaiuser/deploy -R\ntouch /tmp/mde_installed\n/home/monaiuser/deploy/monai-deploy-express/init.sh\ncd /home/monaiuser/deploy/monai-deploy-express\ndocker compose up -d\ngroupadd docker\nusermod -aG docker monaiuser\nnewgrp docker\ntouch /tmp/monaiuser_docker_granted\nsu -c \" echo \"@reboot sleep 60 && docker compose -f /home/monaiuser/deploy/monai-deploy-express/docker-compose.yml up -d\" > /tmp crontab.save\" monaiuser\nsu -c \" crontab /tmp/crontab.save\" monaiuserreboot\n# fingerprint: 80440783b4ce7ff8\n(\n  set +e\n  /opt/aws/bin/cfn-init -v --region ",
+        {
+         "Ref": "AWS::Region"
+        },
+        " --stack ",
+        {
+         "Ref": "AWS::StackName"
+        },
+        " --resource mdeinstanceMONAIDeployExpressinstance6A24F225a39bd33c3e679bb9 -c default\n  /opt/aws/bin/cfn-signal -e $? --region ",
+        {
+         "Ref": "AWS::Region"
+        },
+        " --stack ",
+        {
+         "Ref": "AWS::StackName"
+        },
+        " --resource mdeinstanceMONAIDeployExpressinstance6A24F225a39bd33c3e679bb9\n  cat /var/log/cfn-init.log >&2\n)"
+       ]
+      ]
+     }
+    }
+   },
+   "DependsOn": [
+    "mdeinstanceRoleDefaultPolicy8AEC83B5",
+    "mdeinstanceRoleC47568E7"
+   ],
+   "CreationPolicy": {
+    "ResourceSignal": {
+     "Count": 1,
+     "Timeout": "PT1H"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/mde-instance/MONAIDeployExpress-instance/Resource",
+    "AWS::CloudFormation::Init": {
+     "configSets": {
+      "default": [
+       "config"
+      ]
+     },
+     "config": {
+      "commands": {
+       "000": {
+        "command": "touch /tmp/Init_done"
+       }
+      }
+     }
+    }
+   }
+  },
+  "MONAIDeployExpressEIP": {
+   "Type": "AWS::EC2::EIPAssociation",
+   "Properties": {
+    "EIP": {
+     "Fn::GetAtt": [
+      "mdenetworkEIP8C4FCCBE",
+      "PublicIp"
+     ]
+    },
+    "InstanceId": {
+     "Ref": "mdeinstanceMONAIDeployExpressinstance6A24F225a39bd33c3e679bb9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/MONAIDeployExpress-EIP"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12Qy2rDMBBFvyV7WU0TKN0G0wbTLoRdsi2yMkkmkTVBD4wx/vfKj8SmKx3dGeaMtOFvW75eydol6nhLNJa8LbxUN5aejJBWVuDBslj/bUFteHu4q750ECkTodSoilAa8H02U07Bw48sNcz5nO2cI4XSI5lncw+ZiarYuZceatlMmum283GrSwXGs09N9Ted+/oCPzLBClDBom/2lsJ9UP8PvqAREi3LjPPSqMk7c5yyWK9jms6Ot1HxnPDgjqGseJvT+MjhFBQ/ZFh8psd0YemEGrqO5eAo2NG35JTMEUetaPyFzMuWv/PX9erqEBMbjMcKeD6efwdJD0e5AQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MDE/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -42,6 +42,7 @@ Reusing the same essential core services for DICOM I/O and AI workflow orchestra
 ## Installation
 
 To use MONAI Deploy Express, install all prerequisites & download this entire directory from [GitHub](https://github.com/Project-MONAI/monai-deploy/tree/main/deploy/monai-deploy-express) or from the [release page](https://github.com/Project-MONAI/monai-deploy/releases).
+You can also deploy MONAI Deploy Express automatically on AWS Cloud by using the automation package located in the [platforms/AWS directory](https://github.com/Project-MONAI/monai-deploy/tree/main/deploy/monai-deploy-express/platforms/AWS) of this GitHub repository.
 
 ## Start/Stop the Services
 
