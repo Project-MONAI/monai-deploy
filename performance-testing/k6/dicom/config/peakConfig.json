@@ -41,6 +41,6 @@
         "vus": 6,
         "iterations": 30,
         "maxDuration": "60m",
-        "pacing": 630
+        "pacing": 60
     }
 }
