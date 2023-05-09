@@ -5,7 +5,7 @@
   "ConnectionStrings": {
     "Type": "mongodb",
     "InformaticsGatewayDatabase": "mongodb://root:rootpassword@mongodb:27017",
-    "Databasename": "InformaticsGateway"
+    "DatabaseName": "InformaticsGateway"
   },
   "InformaticsGateway": {
     "dicom": {
