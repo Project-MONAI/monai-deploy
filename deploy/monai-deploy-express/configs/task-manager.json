@@ -65,7 +65,7 @@
         "accessKey": "minioadmin",
         "accessToken": "minioadmin",
         "region": "eu-west-2",
-        "bucket": "my-bucket",
+        "bucket": "monaideploy",
         "securedConnection": false,
         "executableLocation": "mc",
         "serviceName": "test"
