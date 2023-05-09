@@ -1,7 +1,6 @@
 {
   "MonaiDeployAuthentication": {
     "bypassAuthentication": true
-    }
   },
   "ConnectionStrings": {
     "Type": "mongodb",
