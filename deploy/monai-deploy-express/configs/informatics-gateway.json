@@ -1,11 +1,38 @@
 {
   "MonaiDeployAuthentication": {
-    "bypassAuthentication": true
+    "bypassAuthentication": true,
+    "openId": {
+      "realm": "http://localhost:8080/realms/monai-test/",
+      "realmKey": "G6GIR03BEJMlevUtAuZ1ao1SN6IHyUXR",
+      "clientId": "monai-app",
+      "audiences": [ "monai-app-test" ],
+      "roleClaimType": "roles",
+      "claimMappings": {
+        "userClaims": [
+          {
+            "claimType": "user-role",
+            "claimValues": [ "monai-deploy-user" ],
+            "endpoints": [ "Stow", "Fhir", "Inference" ]
+          },
+          {
+            "claimType": "user-role",
+            "claimValues": [ "pacs-admin" ],
+            "endpoints": [ "MonaiAeTitle", "SourceAeTitle", "DestinationAeTitle" ]
+          }
+        ],
+        "adminClaims": [
+          {
+            "claimType": "user-role",
+            "claimValues": [ "monai-role-admin" ]
+          }
+        ]
+      }
+    }
   },
   "ConnectionStrings": {
     "Type": "mongodb",
     "InformaticsGatewayDatabase": "mongodb://root:rootpassword@mongodb:27017",
-    "DatabaseName": "InformaticsGateway"
+    "Databasename": "InformaticsGateway"
   },
   "InformaticsGateway": {
     "dicom": {
@@ -43,15 +70,14 @@
       }
     },
     "storage": {
-      "bufferRootPath": "/payloads",
-      "tempStorageRootPath": "/incoming",
+      "localTemporaryStoragePath": "/payloads",
+      "remoteTemporaryStoragePath": "/incoming",
       "bucketName": "monaideploy",
       "storageRootPath": "/payloads",
       "temporaryBucketName": "monaideploy",
       "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
       "watermarkPercent": 75,
       "reserveSpaceGB": 5,
-      "concurrentUploads": 4,
       "settings": {
         "endpoint": "minio:9000",
         "accessKey": "minioadmin",
