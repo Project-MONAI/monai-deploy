@@ -52,9 +52,9 @@ The following is a set of assumptions about MAP execution, inspection, and gener
 
 - Developers and operations engineers want the application packages to be self-describing.
 
-- Applications might not be developed using the Holoscan Application SDK or an SDK based on it, e.g., MONAI Deploy Application SDK.
+- Applications might not be developed using the Holoscan SDK or an SDK based on it, e.g., MONAI Deploy App SDK.
 
-- MONAI Application Package may not be created using the Holoscan Application SDK nor the MONAI Deploy Application SDK.
+- MONAI Application Package may not be created using the Holoscan SDK nor the MONAI Deploy App SDK.
 
 - Pre-existing, containerized applications must be "converted" into MONAI Application Packages.
 
@@ -154,9 +154,9 @@ The MONAI Application Package (MAP) is a functional package designed to act on d
 
 ## Application
 
-The primary component of a MAP is the application. The application is provided by an application developer and incorporated into the MAP using the Holoscan Application Packager.
+The primary component of a MAP is the application. The application is provided by an application developer and incorporated into the MAP using the MONAI Deploy Application Packager.
 
-All application code and binaries SHALL be in the `/opt/holoscan/app/` folder, except for any dependencies installed by the Holoscan Application Packager during the creation of the MAP.
+All application code and binaries SHALL be in the `/opt/holoscan/app/` folder, except for any dependencies installed by the MONAI Deploy Packager during the creation of the MAP.
 
 All AI models (PyTorch, TensorFlow, TensorRT, etc.) SHOULD be in separate sub-folders of the `/opt/holoscan/models/` folder. In specific use cases where the app package developer is prevented from enclosing the model files in the package/container due to intellectual property concerns, the models can be supplied from the host system when the app package is run, e.g., via the volume mount mappings and the use of container env variables.
 
