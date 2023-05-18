@@ -141,6 +141,7 @@ A MAP SHALL contain the following environment variables and their default values
 | `HOLOSCAN_APP_MANIFEST_PATH` | `/etc/holoscan/app.config` | File Path   | Path to the Application’s configuration file.                         |
 | `HOLOSCAN_PKG_MANIFEST_PATH` | `/etc/holoscan/pkg.config` | File Path   | Path to the Application’s configuration file.                         |
 | `HOLOSCAN_DOCS`              | `/opt/holoscan/docs`       | Folder Path | Path to the folder containing application documentation and licenses. |
+| `HOLOSCAN_LOGS`              | `/var/holoscan/logs`       | Folder Path | Path to the Application's logs.                                       |
 
 # Architecture & Design
 
