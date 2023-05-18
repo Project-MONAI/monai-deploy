@@ -35,59 +35,55 @@ This proposal documents the specification of the MONAI Application Package (MAP)
 
 ### Goal
 
-The goal of this proposal is to provide the structure of a MAP, define the purpose of a MAP, and how it can be
-interacted with, and the required and optional components of a MAP.
+This proposal aims to define the structure and purpose of a MAP, including which parts are optional and which are required so that developers can easily create conformant MAPs.
 
 ### Assumptions, Constraints, Dependencies
 
-The following is a set of assumptions about MAP execution, inspection, and general usage.
+The following assumptions relate to MAP execution, inspection and general usage:
 
 - Containerized applications will be based on Linux x64 (AMD64) and/or ARM64 (aarch64).
 
-- Containerized application's host environment will be based on Linux x64 (AMD64) and/or ARM64 (aarch64) with container support.
+- Containerized applications' host environment will be based on Linux x64 (AMD64) and/or ARM64 (aarch64) with container support.
 
 - Developers expect the local execution of their applications to behave identically to the execution of the containerized version.
 
-- Developers expect local execution of their containerized applications to behave identically to execution in deployment.
+- Developers expect the local execution of their containerized applications to behave identically to execution in deployment.
 
 - Developers and operations engineers want the application packages to be self-describing.
 
-- Applications might not be developed using the Holoscan SDK or an SDK based on it, e.g., MONAI Deploy App SDK.
+- Applications might not be developed using the Holoscan SDK or the MONAI Deploy App SDK.
 
-- MONAI Application Package may not be created using the Holoscan SDK nor the MONAI Deploy App SDK.
+- MONAI Application Package may be created using a tool other than that provided in the Holoscan SDK or the MONAI Deploy App SDK.
 
 - Pre-existing, containerized applications must be "converted" into MONAI Application Packages.
 
 - The scalability of a multi-fragment application based on Holoscan SDK is outside the scope of this document.
 
-- A MONAI Application Package may contain a classical application (non-fragment based), a single-fragment application, or a multi-fragment application.
+- A MONAI Application Package may contain a classical application (non-fragment based), a single-fragment application, or a multi-fragment application. (Please refer to Holoscan documentation for more information on multi-fragment applications.)
 
-- Application packages are expected to be deployed in a variety of environments.
-
-  > [Note]
-  > See [MONAI Operating Environments](monai-operating-environments.md) for additional information about supported environments.
+- Application packages are expected to be deployed in one of the supported environments. For additional information, see [MONAI Operating Environments](monai-operating-environments.md).
 
 ## Requirements
 
-The following are requirements that need to be met by the MAP specification to be considered complete and approved.
+The following requirements MUST be met by the MAP specification to be considered complete and approved:
 
 ### Single Artifact
 
-- A MAP SHALL comprise a single container meeting the minimum requirements this document sets forth.
+- A MAP SHALL comprise a single container meeting the minimum requirements set forth by this document.
 - A MAP SHALL be a containerized application to maximize the portability of its application.
 
 ### Self-Describing
 
 - A MAP MUST be self-describing and provide a mechanism for extracting its description.
   - A MAP SHALL provide a method to print the metadata files to the console.
-  - A MAP SHALL provide a method to copy the metadata files to the user-specified directory.
+  - A MAP SHALL provide a method to copy the metadata files to a user-specified directory.
 - The method of description SHALL be in a machine-readable and writable format.
 - The method of description SHALL be in a human-readable format.
 - The method of description SHOULD be a human writable format.
 - The method of description SHALL be declarative and immutable.
 - The method of description SHALL provide the following information about the MAP:
   - Execution requirements such as dependencies and restrictions.
-  - Resource requirements include CPU cores, system memory, and GPU availability.
+  - Resource requirements include CPU cores, system memory, shared memory, GPU, and GPU memory.
 
 ### Runtime Characteristics of the MAP
 
@@ -133,7 +129,7 @@ The MAP Hosting Environment executes the MAP and provides the application with a
 
 #### Table of Environment Variables
 
-A MAP SHALL contain the following environment variables and their default values, if not specified by the user, in the application manifest `/etc/holoscan/app.json#environment`.
+A MAP SHALL contain the following environment variables and their default values, if not specified by the user, in the Application Manifest `/etc/holoscan/app.json#environment`.
 
 | Variable                     | Default                    | Format      | Description                                                           |
 | ---------------------------- | -------------------------- | ----------- | --------------------------------------------------------------------- |
@@ -162,39 +158,39 @@ All AI models (PyTorch, TensorFlow, TensorRT, etc.) SHOULD be in separate sub-fo
 
 ## Manifests
 
-A MAP SHALL contain two manifests: the application manifest and the package manifest. The package manifest shall be stored in `/etc/holoscan/pkg.json`, and the application manifest shall be stored in `/etc/holoscan/app.json`. Once a MAP is created, its manifests are immutable.
+A MAP SHALL contain two manifests: the Application Manifest and the Package Manifest. The Package Manifest shall be stored in `/etc/holoscan/pkg.json`, and the Application Manifest shall be stored in `/etc/holoscan/app.json`. Once a MAP is created, its manifests are expected to be immutable.
 
 ### Application Manifest
 
 The Application Manifest file provides information about the MAP's Application.
 
-- Application Manifest MUST define the type of the containerized application (`/etc/holoscan/app.json#type`).
+- The Application Manifest MUST define the type of the containerized application (`/etc/holoscan/app.json#type`).
 
   - Type SHALL have the value of either `service` or `application.`
 
-- Application Manifest MUST define the command used to run the Application (`/etc/holoscan/app.json#command`).
+- The Application Manifest MUST define the command used to run the Application (`/etc/holoscan/app.json#command`).
 
   - When not provided, the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner and hosting services that comply to MAP specification.
 
-- Application Manifest SHOULD define the version of the manifest file schema (`/etc/holoscan/app.json#api-version`).
+- The Application Manifest SHOULD define the version of the manifest file schema (`/etc/holoscan/app.json#api-version`).
 
-  - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
   - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/holoscan/app.json#sdk-version`).
+- The Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/holoscan/app.json#sdk-version`).
 
   - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
   - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- Application Manifest SHOULD define the version of the application itself (`/etc/holoscan/app.json#version`).
+- The Application Manifest SHOULD define the version of the application itself (`/etc/holoscan/app.json#version`).
 
-  - Application version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Application version SHALL be provided as a [semantic version](https://semver.org/) string.
 
   - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- Application Manifest SHOULD define the application's working directory (`/etc/holoscan/app.json#working-directory`).
+- The Application Manifest SHOULD define the application's working directory (`/etc/holoscan/app.json#working-directory`).
 
   - The Application will execute with its current directory set to this value.
 
@@ -202,7 +198,7 @@ The Application Manifest file provides information about the MAP's Application.
 
   - The default path `/var/holoscan/` SHALL be assumed when not provided.
 
-- Application Manifest SHOULD define the data input path, relative to the working directory, used by the Application (`/etc/holoscan/app.json#input.path`).
+- The Application Manifest SHOULD define the data input path, relative to the working directory, used by the Application (`/etc/holoscan/app.json#input.path`).
 
   - The input path SHOULD be a relative file-system path to a directory or folder.
 
@@ -212,11 +208,11 @@ The Application Manifest file provides information about the MAP's Application.
 
   - When not provided, the default value `input/` SHALL be assumed.
 
-- Application Manifest SHOULD define input data formats supported by the Application (`/etc/holoscan/app.json#input.formats`).
+- The Application Manifest SHOULD define input data formats supported by the Application (`/etc/holoscan/app.json#input.formats`).
 
   - Possible values include, but are not limited to, `none`, `network`, `file`.
 
-- Application Manifest SHOULD define the output path relative to the working directory used by the Application (`/etc/holoscan/app.json#output.path`).
+- The Application Manifest SHOULD define the output path relative to the working directory used by the Application (`/etc/holoscan/app.json#output.path`).
 
   - The output path SHOULD be a relative file-system path to a directory or folder.
 
@@ -226,85 +222,85 @@ The Application Manifest file provides information about the MAP's Application.
 
   - When not provided, the default value `output/` SHALL be assumed.
 
-- Application Manifest SHOULD define the output data format produced by the Application (`/etc/holoscan/app.json#output.format`).
+- The Application Manifest SHOULD define the output data format produced by the Application (`/etc/holoscan/app.json#output.format`).
 
   - Possible values include, but are not limited to, `none`, `screen`, `file`, `network`.
 
-- Application Manifest SHOULD configure a check to determine whether or not the application is "ready."
+- The Application Manifest SHOULD configure a check to determine whether or not the application is "ready."
 
-  - Application Manifest SHALL define the probe type to be performed (`/etc/holoscan/app.json#readiness.type`).
+  - The Application Manifest SHALL define the probe type to be performed (`/etc/holoscan/app.json#readiness.type`).
 
     - Possible values include `tcp`, `grpc`, `http-get`, and `command`.
 
-  - Application Manifest SHALL define the probe commands to execute when the type is `command` (`/etc/holoscan/app.json#readiness.command`).
+  - The Application Manifest SHALL define the probe commands to execute when the type is `command` (`/etc/holoscan/app.json#readiness.command`).
 
     - The data structure is expected to be an array of strings.
 
-  - Application Manifest SHALL define the port to perform the readiness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#readiness.port`)
+  - The Application Manifest SHALL define the port to perform the readiness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#readiness.port`)
 
     - The value provided must be a valid port number ranging from 1 through 65535.
 
-  - Application Manifest SHALL define the path to perform the readiness probe when the type is `http-get` (`/etc/holoscan/app.json#readiness.path`).
+  - The Application Manifest SHALL define the path to perform the readiness probe when the type is `http-get` (`/etc/holoscan/app.json#readiness.path`).
 
     - The value provided must be an absolute path (the first character is `/`).
 
-  - Application Manifest SHALL define the number of seconds after the container has started before the readiness probe is initiated. (`/etc/holoscan/app.json#readiness.initialDelaySeconds`).
+  - The Application Manifest SHALL define the number of seconds after the container has started before the readiness probe is initiated. (`/etc/holoscan/app.json#readiness.initialDelaySeconds`).
 
     - The default value `0` SHALL be assumed when not provided.
 
-  - Application Manifest SHALL define how often to perform the readiness probe (`/etc/holoscan/app.json#readiness.periodSeconds`).
+  - The Application Manifest SHALL define how often to perform the readiness probe (`/etc/holoscan/app.json#readiness.periodSeconds`).
 
     - When not provided, the default value `10` SHALL be assumed.
 
-  - Application Manifest SHALL define the number of seconds after which the probe times out (`/etc/holoscan/app.json#readiness.timeoutSeconds`)
+  - The Application Manifest SHALL define the number of seconds after which the probe times out (`/etc/holoscan/app.json#readiness.timeoutSeconds`)
 
     - When not provided, the default value `1` SHALL be assumed.
 
-  - Application Manifest SHALL define the number of times to perform the probe before considering the service is not ready (`/etc/holoscan/app.json#readiness.failureThreshold`)
+  - The Application Manifest SHALL define the number of times to perform the probe before considering the service is not ready (`/etc/holoscan/app.json#readiness.failureThreshold`)
 
     - The default value `3` SHALL be assumed when not provided.
 
-- Application Manifest SHOULD configure a check to determine whether or not the application is "live" or not.
+- The Application Manifest SHOULD configure a check to determine whether or not the application is "live" or not.
 
-  - Application Manifest SHALL define the type of probe to be performed (`/etc/holoscan/app.json#liveness.type`).
+  - The Application Manifest SHALL define the type of probe to be performed (`/etc/holoscan/app.json#liveness.type`).
 
     - Possible values include `tcp`, `grpc`, `http-get`, and `command`.
 
-  - Application Manifest SHALL define the probe commands to execute when the type is `command` (`/etc/holoscan/app.json#liveness.command`).
+  - The Application Manifest SHALL define the probe commands to execute when the type is `command` (`/etc/holoscan/app.json#liveness.command`).
 
     - The data structure is expected to be an array of strings.
 
-  - Application Manifest SHALL define the port to perform the liveness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#liveness.port`)
+  - The Application Manifest SHALL define the port to perform the liveness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#liveness.port`)
 
     - The value provided must be a valid port number ranging from 1 through 65535.
 
-  - Application Manifest SHALL define the path to perform the liveness probe when the type is `http-get` (`/etc/holoscan/app.json#liveness.path`).
+  - The Application Manifest SHALL define the path to perform the liveness probe when the type is `http-get` (`/etc/holoscan/app.json#liveness.path`).
 
     - The value provided must be an absolute path (the first character is `/`).
 
-  - Application Manifest SHALL define the number of seconds after the container has started before the liveness probe is initiated. (`/etc/holoscan/app.json#liveness.initialDelaySeconds`).
+  - The Application Manifest SHALL define the number of seconds after the container has started before the liveness probe is initiated. (`/etc/holoscan/app.json#liveness.initialDelaySeconds`).
 
     - The default value `0` SHALL be assumed when not provided.
 
-  - Application Manifest SHALL define how often to perform the liveness probe (`/etc/holoscan/app.json#liveness.periodSeconds`).
+  - The Application Manifest SHALL define how often to perform the liveness probe (`/etc/holoscan/app.json#liveness.periodSeconds`).
 
     - When not provided, the default value `10` SHALL be assumed.
 
-  - Application Manifest SHALL define the number of seconds after which the probe times out (`/etc/holoscan/app.json#liveness.timeoutSeconds`)
+  - The Application Manifest SHALL define the number of seconds after which the probe times out (`/etc/holoscan/app.json#liveness.timeoutSeconds`)
 
     - The default value `1` SHALL be assumed when not provided.
 
-  - Application Manifest SHALL define the number of times to perform the probe before considering the service is not live (`/etc/holoscan/app.json#liveness.failureThreshold`)
+  - The Application Manifest SHALL define the number of times to perform the probe before considering the service is not live (`/etc/holoscan/app.json#liveness.failureThreshold`)
 
     - When not provided, the default value `3` SHALL be assumed.
 
-- Application Manifest SHOULD define any timeout applied to the Application (`/etc/holoscan/app.json#timeout`).
+- The Application Manifest SHOULD define any timeout applied to the Application (`/etc/holoscan/app.json#timeout`).
 
   - When the value is `0`, timeout SHALL be disabled.
 
   - When not provided, the default value `0` SHALL be assumed.
 
-- Application Manifest MUST enable the specification of environment variables for the Application (`/etc/holoscan/app.json#environment`)
+- The Application Manifest MUST enable the specification of environment variables for the Application (`/etc/holoscan/app.json#environment`)
 
   - The data structure is expected to be in `"name": "value" ` members of the object.
 
@@ -352,33 +348,33 @@ The Application Manifest file provides information about the MAP's Application.
 
 The Package Manifest file provides information about the MAP's package layout. It is not intended as a mechanism for controlling how the MAP is used or how the MAP's Application is executed.
 
-- Package Manifest MUST be UTF-8 encoded and use the JavaScript Object Notation (JSON) format.
+- The Package Manifest MUST be UTF-8 encoded and use the JavaScript Object Notation (JSON) format.
 
-- Package Manifest SHOULD support either CRLF or LF style line endings.
+- The Package Manifest SHOULD support either CRLF or LF style line endings.
 
-- Package Manifest SHOULD specify the folder which contains the application (`/etc/holoscan/pkg.json#application-root`).
+- The Package Manifest SHOULD specify the folder which contains the application (`/etc/holoscan/pkg.json#application-root`).
 
   - When not provided, the default path `/opt/holoscan/app/` will be assumed.
 
-- Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/holoscan/pkg.json#api-version`).
+- The Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/holoscan/pkg.json#api-version`).
 
-  - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/holoscan/pkg.json#sdk-version`).
+- The Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/holoscan/pkg.json#sdk-version`).
 
-  - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- Package Manifest SHOULD provide the package version of itself (`/etc/holoscan/pkg.json#version`).
+- The Package Manifest SHOULD provide the package version of itself (`/etc/holoscan/pkg.json#version`).
 
-  - Package version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Package version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- Package Manifest SHOULD provide the directory path to the user-provided models. (`/etc/holoscan/pkg.json#model-root`).
+- The Package Manifest SHOULD provide the directory path to the user-provided models. (`/etc/holoscan/pkg.json#model-root`).
 
   - The value provided must be an absolute path (the first character is `/`).
 
   - When not provided, the default path `/opt/holoscan/models/` SHALL be assumed.
 
-- Package Manifest SHOULD list the models used by the application (`/etc/holoscan/pkg.json#models`).
+- The Package Manifest SHOULD list the models used by the application (`/etc/holoscan/pkg.json#models`).
 
   - Models SHALL be defined by name (`/etc/holoscan/pkg.json#models[*].name`).
 
@@ -394,7 +390,7 @@ The Package Manifest file provides information about the MAP's package layout. I
 
     - Whe no value is provided, the name is assumed as the name of the directory relative to the model root directory defined in `/etc/holoscan/pkg.json#model-root`.
 
-- Package Manifest SHOULD specify the resources required to execute the Application and the fragments for a Multi-Fragment Application.
+- The Package Manifest SHOULD specify the resources required to execute the Application and the fragments for a Multi-Fragment Application.
 
   This information is used to provision resources when running the containerized application using a compatible application deployment service.
 
@@ -544,15 +540,15 @@ A MAP SHALL provide at least one method to access the _embedded application_, _m
 
 - The Method SHALL have the option to copy one or more manifest files to a mounted volume path.
 
-  - `/var/run/holoscan/export/app/`: when detected, the Script copies the contents of `/opt/holoscan/app/` to the folder.
+  - `/var/run/holoscan/export/app/`: when detected, the Method copies the contents of `/opt/holoscan/app/` to the folder.
 
-  - `/var/run/holoscan/export/config/`: when detected, the Script copies `/var/holoscan/app.yaml`, `/etc/holoscan/app.json` and `/etc/holoscan/pkg.json` to the folder.
+  - `/var/run/holoscan/export/config/`: when detected, the Method copies `/var/holoscan/app.yaml`, `/etc/holoscan/app.json` and `/etc/holoscan/pkg.json` to the folder.
 
-  - `/var/run/holoscan/export/models/`: when detected, the Script copies the contents of `/opt/holoscan/models/` to the folder.
+  - `/var/run/holoscan/export/models/`: when detected, the Method copies the contents of `/opt/holoscan/models/` to the folder.
 
-  - `/var/run/holoscan/export/docs/`: when detected, the Script copies the contents of `/opt/holoscan/docs/` to the folder.
+  - `/var/run/holoscan/export/docs/`: when detected, the Method copies the contents of `/opt/holoscan/docs/` to the folder.
 
-  - `/var/run/holoscan/export/`: when detected without any of the above being detected, the Script SHALL copy all of the above.
+  - `/var/run/holoscan/export/`: when detected without any of the above being detected, the Method SHALL copy all of the above.
 
 ### Table of Important Paths
 
