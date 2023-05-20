@@ -31,11 +31,11 @@
 
 ## Overview
 
-This proposal documents the specification of the MONAI Application Package (MAP).
+This document includes the specification of the MONAI Application Package (MAP).
 
 ### Goal
 
-This proposal aims to define the structure and purpose of a MAP, including which parts are optional and which are required so that developers can easily create conformant MAPs.
+This document aims to define the structure and purpose of a MAP, including which parts are optional and which are required so that developers can easily create conformant MAPs.
 
 ### Assumptions, Constraints, Dependencies
 
@@ -57,9 +57,9 @@ The following assumptions relate to MAP execution, inspection and general usage:
 
 - Pre-existing, containerized applications must be "converted" into MONAI Application Packages.
 
-- The scalability of a multi-fragment application based on Holoscan SDK is outside the scope of this document.
-
 - A MONAI Application Package may contain a classical application (non-fragment based), a single-fragment application, or a multi-fragment application. (Please refer to Holoscan documentation for more information on multi-fragment applications.)
+
+- The scalability of a multi-fragment application based on Holoscan SDK is outside the scope of this document.
 
 - Application packages are expected to be deployed in one of the supported environments. For additional information, see [MONAI Operating Environments](monai-operating-environments.md).
 
@@ -69,7 +69,7 @@ The following requirements MUST be met by the MAP specification to be considered
 
 ### Single Artifact
 
-- A MAP SHALL comprise a single container meeting the minimum requirements set forth by this document.
+- A MAP SHALL comprise a single container, meeting the minimum requirements set forth by this document.
 - A MAP SHALL be a containerized application to maximize the portability of its application.
 
 ### Self-Describing
@@ -87,8 +87,8 @@ The following requirements MUST be met by the MAP specification to be considered
 
 ### Runtime Characteristics of the MAP
 
-- A MAP SHALL execute the application packaged within when it is started with no specific arguments.
-- A MAP SHALL be a service or an application so an external agent can manage its lifecycle.
+- A MAP SHALL start the packaged Application when it is executed by the users when arguments are specified.
+- A MAP SHALL describe the packaged Application as a long-running service or an application so an external agent can manage its lifecycle.
 
 ### IO Specification
 
