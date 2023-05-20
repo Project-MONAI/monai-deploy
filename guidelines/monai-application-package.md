@@ -173,13 +173,13 @@ The Application Manifest file provides information about the MAP's Application.
 
   - When not provided, the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner and hosting services that comply to MAP specification.
 
-- The Application Manifest SHOULD define the version of the manifest file schema (`/etc/holoscan/app.json#api-version`).
+- The Application Manifest SHOULD define the version of the manifest file schema (`/etc/holoscan/app.json#apiVersion`).
 
   - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
   - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- The Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/holoscan/app.json#sdk-version`).
+- The Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/holoscan/app.json#sdkVersion`).
 
   - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
@@ -191,7 +191,7 @@ The Application Manifest file provides information about the MAP's Application.
 
   - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- The Application Manifest SHOULD define the application's working directory (`/etc/holoscan/app.json#working-directory`).
+- The Application Manifest SHOULD define the application's working directory (`/etc/holoscan/app.json#workingDirectory`).
 
   - The Application will execute with its current directory set to this value.
 
@@ -291,7 +291,7 @@ The Application Manifest file provides information about the MAP's Application.
 
     - The default value `1` SHALL be assumed when not provided.
 
-  - The Application Manifest SHALL define the number of times to perform the probe before considering the service is not live (`/etc/holoscan/app.json#liveness.failureThreshold`)
+  - The Application Manifest SHALL define the number of times to perform the probe before considering the service is not alive (`/etc/holoscan/app.json#liveness.failureThreshold`)
 
     - When not provided, the default value `3` SHALL be assumed.
 
@@ -313,7 +313,7 @@ The Application Manifest file provides information about the MAP's Application.
 
 | Name                            | Required                                            | Default        | Type    | Format                     | Description                                                                                                |
 | ------------------------------- | --------------------------------------------------- | -------------- | ------- | -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `api-version`                   | No                                                  | 0.0.0          | string  | semantic version           | Version of the manifest file schema.                                                                       |
+| `apiVersion`                    | No                                                  | 0.0.0          | string  | semantic version           | Version of the manifest file schema.                                                                       |
 | `command`                       | **Yes**                                             | N/A            | string  | shell command              | Shell command used to run the Application.                                                                 |
 | `environment`                   | **No**                                              | N/A            | object  | object w/ name-value pairs | An object of name-value pairs that will be passed to the application during execution.                     |
 | `input`                         | **Yes**                                             | N/A            | object  | object                     | Data structure which provides information about Application inputs.                                        |
@@ -340,10 +340,10 @@ The Application Manifest file provides information about the MAP's Application.
 | `output`                        | **Yes**                                             | N/A            | object  | object                     | Data structure which provides information about Application output.                                        |
 | `output.format`                 | **Yes**                                             | N/A            | object  | object                     | Details about the format of the outputs produced by the application.                                       |
 | `output.path`                   | No                                                  | output/        | string  | relative file-system path  | Folder path relative to the working directory to which the application will write outputs.                 |
-| `sdk-version`                   | No                                                  | 0.0.0          | string  | semantic version           | Version of the SDK used to generate the manifest.                                                          |
+| `sdkVersion`                    | No                                                  | 0.0.0          | string  | semantic version           | Version of the SDK used to generate the manifest.                                                          |
 | `timeout`                       | No                                                  | 0              | integer | number                     | The maximum number of seconds the application should execute before being timed out and terminated.        |
 | `version`                       | No                                                  | 0.0.0          | string  | semantic version           | Version of the Application.                                                                                |
-| `working-directory`             | No                                                  | /var/holoscan/ | string  | absolute file-system path  | Folder, or directory, in which the application will be executed.                                           |
+| `workingDirectory`              | No                                                  | /var/holoscan/ | string  | absolute file-system path  | Folder, or directory, in which the application will be executed.                                           |
 
 ### Package Manifest
 
@@ -353,15 +353,15 @@ The Package Manifest file provides information about the MAP's package layout. I
 
 - The Package Manifest SHOULD support either CRLF or LF style line endings.
 
-- The Package Manifest SHOULD specify the folder which contains the application (`/etc/holoscan/pkg.json#application-root`).
+- The Package Manifest SHOULD specify the folder which contains the application (`/etc/holoscan/pkg.json#applicationRoot`).
 
   - When not provided, the default path `/opt/holoscan/app/` will be assumed.
 
-- The Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/holoscan/pkg.json#api-version`).
+- The Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/holoscan/pkg.json#apiVersion`).
 
   - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- The Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/holoscan/pkg.json#sdk-version`).
+- The Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/holoscan/pkg.json#sdkVersion`).
 
   - The SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
@@ -369,7 +369,7 @@ The Package Manifest file provides information about the MAP's package layout. I
 
   - The Package version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- The Package Manifest SHOULD provide the directory path to the user-provided models. (`/etc/holoscan/pkg.json#model-root`).
+- The Package Manifest SHOULD provide the directory path to the user-provided models. (`/etc/holoscan/pkg.json#modelRoot`).
 
   - The value provided must be an absolute path (the first character is `/`).
 
@@ -385,11 +385,11 @@ The Package Manifest file provides information about the MAP's package layout. I
 
   - Models SHOULD provide a file-system path if they're included in the MAP itself (`/etc/holoscan/pkg.json#models[*].path`).
 
-    - When the value is a relative file-system path (the first character is not `/`), it is relative to the model root directory defined in `/etc/holoscan/pkg.json#model-root`.
+    - When the value is a relative file-system path (the first character is not `/`), it is relative to the model root directory defined in `/etc/holoscan/pkg.json#modelRoot`.
 
     - When the value is an absolute file-system path (the first character is `/`), the file-system path is used as-is.
 
-    - Whe no value is provided, the name is assumed as the name of the directory relative to the model root directory defined in `/etc/holoscan/pkg.json#model-root`.
+    - Whe no value is provided, the name is assumed as the name of the directory relative to the model root directory defined in `/etc/holoscan/pkg.json#modelRoot`.
 
 - The Package Manifest SHOULD specify the resources required to execute the Application and the fragments for a Multi-Fragment Application.
 
@@ -401,11 +401,11 @@ The Package Manifest file provides information about the MAP's package layout. I
 
   - CPU requirements SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.cpu`).
 
-  - Optional CPU limits SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.cpu-limit`)
+  - Optional CPU limits SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.cpuLimit`)
 
   - GPU requirements SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.gpu`).
 
-  - Optional GPU limits SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.gpu-limit`)
+  - Optional GPU limits SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.gpuLimit`)
 
   - Memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memory`).
 
@@ -413,31 +413,31 @@ The Package Manifest file provides information about the MAP's package layout. I
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Optional memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memory-limit`).
+  - Optional memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memoryLimit`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - GPU memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpu-memory`).
+  - GPU memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpuMemory`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Optional GPU memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpu-memory-limit`).
+  - Optional GPU memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpuMemoryLimit`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Shared memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.shared-memory`).
+  - Shared memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.sharedMemory`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Optional shared memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.shared-memory-limit`).
+  - Optional shared memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.sharedMemoryLimit`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
@@ -455,7 +455,7 @@ The Package Manifest file provides information about the MAP's package layout. I
 
     - Example illegal values: `1,024`, `-1.0`, `3.14`
 
-  - When not provided, the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `shared-memory="64Mi"` will be assumed.
+  - When not provided, the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `sharedMemory="64Mi"` will be assumed.
 
 - A Multi-Fragment Application SHOULD define its resources in the `/etc/holoscan/pkg.json#resource.fragments.[fragment-name]` object.
 
@@ -467,11 +467,11 @@ The Package Manifest file provides information about the MAP's package layout. I
 
   - CPU requirements for fragments SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].cpu`).
 
-  - Optional CPU limits for fragments SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].cpu-limit`).
+  - Optional CPU limits for fragments SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].cpuLimit`).
 
   - GPU requirements for fragments SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpu`).
 
-  - Optional GPU limits for fragments SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpu-limit`).
+  - Optional GPU limits for fragments SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpuLimit`).
 
   - Memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].memory`).
 
@@ -479,31 +479,31 @@ The Package Manifest file provides information about the MAP's package layout. I
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Optional memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].memory-limit`).
+  - Optional memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].memoryLimit`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - GPU memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpu-memory`).
+  - GPU memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpuMemory`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Optional GPU memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpu-memory-limit`).
+  - Optional GPU memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].gpuMemoryLimit`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Shared memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].shared-memory`).
+  - Shared memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].sharedMemory`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
       - Example: `1.5Gi`, `2048Mi`
 
-  - Optional shared memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].shared-memory-limit`).
+  - Optional shared memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.[fragment-name].sharedMemoryLimit`).
 
     - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
 
@@ -521,43 +521,43 @@ The Package Manifest file provides information about the MAP's package layout. I
 
     - Example illegal values: `1,024`, `-1.0`, `3.14`
 
-  - When not provided, the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `shared-memory="64Mi"` will be assumed.
+  - When not provided, the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `sharedMemory="64Mi"` will be assumed.
 
 #### Table of Package Manifest Fields
 
-| Name                                        | Required | Default                 | Type        | Format                    | Description                                                                                                  |
-| ------------------------------------------- | -------- | ----------------------- | ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `api-version`                               | No       | `0.0.0`                 | string      | semantic version          | Version of the manifest file schema.                                                                         |
-| `application-root`                          | **Yes**  | `/opt/holoscan/app/`    | string      | absolute file-system path | Absolute file-system path to the folder which contains the Application                                       |
-| `models-root`                               | No       | `/opt/holoscan/models/` | string      | absolute file-system path | Absolute file-system path to the folder which contains the model(s).                                         |
-| `models`                                    | No       | N/A                     | array       | array of objects          | Array of objects which describe models in the package.                                                       |
-| `models[*].name`                            | **Yes**  | N/A                     | string      | string                    | Name of the model.                                                                                           |
-| `models[*].path`                            | No       | N/A                     | string      | Relative file-system path | File-system path to the folder which contains the model that is relative to the value defined in model-root. |
-| `resources`                                 | No       | N/A                     | object      | object                    | Object describing resource requirements for the Application.                                                 |
-| `resources.cpu`                             | No       | `1`                     | decimal (2) | number                    | Number of CPU cores required by the Application or the Fragment.                                             |
-| `resources.cpu-limit`                       | No       | N/A                     | decimal (2) | number                    | The CPU core limit for the Application or the Fragment. (1)                                                  |
-| `resources.gpu`                             | No       | `0`                     | decimal (2) | number                    | Number of GPU devices required by the Application or the Fragment.                                           |
-| `resources.gpu-limit`                       | No       | N/A                     | decimal (2) | number                    | The GPU device limit for the Application or the Fragment. (1)                                                |
-| `resource.memory`                           | No       | `1Gi`                   | string      | memory size               | The memory required by the Application or the Fragment.                                                      |
-| `resource.memory-limit`                     | No       | N/A                     | string      | memory size               | The memory limit for the Application or the Fragment. (1)                                                    |
-| `resource.gpu-memory`                       | No       | `1Gi`                   | string      | memory size               | The GPU memory required by the Application or the Fragment.                                                  |
-| `resource.gpu-memory-limit`                 | No       | N/A                     | string      | memory size               | The GPU memory limit for the Application or the Fragment. (1)                                                |
-| `resource.shared-memory`                    | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Application or the Fragment.                                               |
-| `resource.shared-memory-limit`              | No       | N/A                     | string      | memory size               | The shared memory limit for the Application or the Fragment. (1)                                             |
-| `resource.fragments`                        | No       | N/A                     | array       | array of objects          | Array of objects which describe resources for a Multi-Fragment Application.                                  |
-| `resource.fragments[*].name`                | **Yes**  | N/A                     | string      | string                    | Name of the fragment.                                                                                        |
-| `resource.fragments[*].cpu`                 | No       | `1`                     | decimal (2) | number                    | Number of CPU cores required by the Fragment.                                                                |
-| `resource.fragments[*].cpu-limit`           | No       | N/A                     | decimal (2) | number                    | The CPU core limit for the Fragment. (1)                                                                     |
-| `resource.fragments[*].gpu`                 | No       | `0`                     | decimal (2) | number                    | Number of GPU devices required by the Fragment.                                                              |
-| `resource.fragments[*].gpu-limit`           | No       | N/A                     | decimal (2) | number                    | The GPU device limit for the Fragment. (1)                                                                   |
-| `resource.fragments[*].memory`              | No       | `1Gi`                   | string      | memory size               | The memory required by the Fragment.                                                                         |
-| `resource.fragments[*].memory-limit`        | No       | N/A                     | string      | memory size               | The memory limit for the Fragment. (1)                                                                       |
-| `resource.fragments[*].gpu-memory`          | No       | `1Gi`                   | string      | memory size               | The GPU memory required by the Fragment.                                                                     |
-| `resource.fragments[*].gpu-memory-limit`    | No       | N/A                     | string      | memory size               | The GPU memory limit for the Fragment. (1)                                                                   |
-| `resource.fragments[*].shared-memory`       | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Fragment.                                                                  |
-| `resource.fragments[*].shared-memory-limit` | No       | N/A                     | string      | memory size               | The shared memory limit for the Fragment. (1)                                                                |
-| `sdk-version`                               | No       | 0.0.0                   | string      | semantic version          | Version of the SDK used to generate the manifest.                                                            |
-| `version`                                   | No       | 0.0.0                   | string      | semantic version          | Version of the package.                                                                                      |
+| Name                                      | Required | Default                 | Type        | Format                    | Description                                                                                                   |
+| ----------------------------------------- | -------- | ----------------------- | ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `apiVersion`                              | No       | `0.0.0`                 | string      | semantic version          | Version of the manifest file schema.                                                                          |
+| `applicationRoot`                         | **Yes**  | `/opt/holoscan/app/`    | string      | absolute file-system path | Absolute file-system path to the folder which contains the Application                                        |
+| `modelRoot`                               | No       | `/opt/holoscan/models/` | string      | absolute file-system path | Absolute file-system path to the folder which contains the model(s).                                          |
+| `models`                                  | No       | N/A                     | array       | array of objects          | Array of objects which describe models in the package.                                                        |
+| `models[*].name`                          | **Yes**  | N/A                     | string      | string                    | Name of the model.                                                                                            |
+| `models[*].path`                          | No       | N/A                     | string      | Relative file-system path | File-system path to the folder which contains the model that is relative to the value defined in `modelRoot`. |
+| `resources`                               | No       | N/A                     | object      | object                    | Object describing resource requirements for the Application.                                                  |
+| `resources.cpu`                           | No       | `1`                     | decimal (2) | number                    | Number of CPU cores required by the Application or the Fragment.                                              |
+| `resources.cpuLimit`                      | No       | N/A                     | decimal (2) | number                    | The CPU core limit for the Application or the Fragment. (1)                                                   |
+| `resources.gpu`                           | No       | `0`                     | decimal (2) | number                    | Number of GPU devices required by the Application or the Fragment.                                            |
+| `resources.gpuLimit`                      | No       | N/A                     | decimal (2) | number                    | The GPU device limit for the Application or the Fragment. (1)                                                 |
+| `resource.memory`                         | No       | `1Gi`                   | string      | memory size               | The memory required by the Application or the Fragment.                                                       |
+| `resource.memoryLimit`                    | No       | N/A                     | string      | memory size               | The memory limit for the Application or the Fragment. (1)                                                     |
+| `resource.gpuMemory`                      | No       | `1Gi`                   | string      | memory size               | The GPU memory required by the Application or the Fragment.                                                   |
+| `resource.gpuMemoryLimit`                 | No       | N/A                     | string      | memory size               | The GPU memory limit for the Application or the Fragment. (1)                                                 |
+| `resource.sharedMemory`                   | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Application or the Fragment.                                                |
+| `resource.sharedMemoryLimit`              | No       | N/A                     | string      | memory size               | The shared memory limit for the Application or the Fragment. (1)                                              |
+| `resource.fragments`                      | No       | N/A                     | array       | array of objects          | Array of objects which describe resources for a Multi-Fragment Application.                                   |
+| `resource.fragments[*].name`              | **Yes**  | N/A                     | string      | string                    | Name of the fragment.                                                                                         |
+| `resource.fragments[*].cpu`               | No       | `1`                     | decimal (2) | number                    | Number of CPU cores required by the Fragment.                                                                 |
+| `resource.fragments[*].cpuLimit`          | No       | N/A                     | decimal (2) | number                    | The CPU core limit for the Fragment. (1)                                                                      |
+| `resource.fragments[*].gpu`               | No       | `0`                     | decimal (2) | number                    | Number of GPU devices required by the Fragment.                                                               |
+| `resource.fragments[*].gpuLimit`          | No       | N/A                     | decimal (2) | number                    | The GPU device limit for the Fragment. (1)                                                                    |
+| `resource.fragments[*].memory`            | No       | `1Gi`                   | string      | memory size               | The memory required by the Fragment.                                                                          |
+| `resource.fragments[*].memoryLimit`       | No       | N/A                     | string      | memory size               | The memory limit for the Fragment. (1)                                                                        |
+| `resource.fragments[*].gpuMemory`         | No       | `1Gi`                   | string      | memory size               | The GPU memory required by the Fragment.                                                                      |
+| `resource.fragments[*].gpuMemoryLimit`    | No       | N/A                     | string      | memory size               | The GPU memory limit for the Fragment. (1)                                                                    |
+| `resource.fragments[*].sharedMemory`      | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Fragment.                                                                   |
+| `resource.fragments[*].sharedMemoryLimit` | No       | N/A                     | string      | memory size               | The shared memory limit for the Fragment. (1)                                                                 |
+| `sdkVersion`                              | No       | 0.0.0                   | string      | semantic version          | Version of the SDK used to generate the manifest.                                                             |
+| `version`                                 | No       | 0.0.0                   | string      | semantic version          | Version of the package.                                                                                       |
 
 > [Notes]
 > (1) Use of resource limits depend on the orchestration service or the hosting environement's configuration and implementation.
@@ -641,3 +641,16 @@ A MAP SHALL provide at least one method to access the _embedded application_, _m
                              ║            Model(s)                             ║ <-- Optional pre-trained models.
                              ╚═════════════════════════════════════════════════╝
 ```
+
+
+## Release Notes
+
+### 1.0.0
+
+- Add support for Holoscan applications.
+- Change all manifest key names from `kebab-case` to `camelCase` .
+
+### 0.1.0
+
+- The first release of MONAI Application Package specification
+
