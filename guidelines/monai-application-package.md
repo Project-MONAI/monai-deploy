@@ -179,7 +179,9 @@ The Application Manifest file provides information about the MAP's Application.
 
   - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- The Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/holoscan/app.json#sdkVersion`).
+- The Application Manifest SHOULD define the SDK used to create the Application (`/etc/holoscan/app.json#sdk`).
+
+- The Application Manifest SHOULD define the version of the SDK used to create the Application (`/etc/holoscan/app.json#sdkVersion`).
 
   - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
@@ -340,7 +342,8 @@ The Application Manifest file provides information about the MAP's Application.
 | `output`                        | **Yes**                                             | N/A            | object  | object                     | Data structure which provides information about Application output.                                        |
 | `output.format`                 | **Yes**                                             | N/A            | object  | object                     | Details about the format of the outputs produced by the application.                                       |
 | `output.path`                   | No                                                  | output/        | string  | relative file-system path  | Folder path relative to the working directory to which the application will write outputs.                 |
-| `sdkVersion`                    | No                                                  | 0.0.0          | string  | semantic version           | Version of the SDK used to generate the manifest.                                                          |
+| `sdk`                           | No                                                  | N/A            | string  | string                     | SDK used for the Application.                                                                              |
+| `sdkVersion`                    | No                                                  | 0.0.0          | string  | semantic version           | Version of the SDK used the Application.                                                                   |
 | `timeout`                       | No                                                  | 0              | integer | number                     | The maximum number of seconds the application should execute before being timed out and terminated.        |
 | `version`                       | No                                                  | 0.0.0          | string  | semantic version           | Version of the Application.                                                                                |
 | `workingDirectory`              | No                                                  | /var/holoscan/ | string  | absolute file-system path  | Folder, or directory, in which the application will be executed.                                           |
@@ -360,10 +363,6 @@ The Package Manifest file provides information about the MAP's package layout. I
 - The Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/holoscan/pkg.json#apiVersion`).
 
   - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
-
-- The Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/holoscan/pkg.json#sdkVersion`).
-
-  - The SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
 - The Package Manifest SHOULD provide the package version of itself (`/etc/holoscan/pkg.json#version`).
 
@@ -556,7 +555,6 @@ The Package Manifest file provides information about the MAP's package layout. I
 | `resources.fragments.<fragment-name>.gpuMemoryLimit`    | No       | N/A                     | string      | memory size               | The GPU memory limit for the Fragment. (1)                                                                    |
 | `resources.fragments.<fragment-name>.sharedMemory`      | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Fragment.                                                                   |
 | `resources.fragments.<fragment-name>.sharedMemoryLimit` | No       | N/A                     | string      | memory size               | The shared memory limit for the Fragment. (1)                                                                 |
-| `sdkVersion`                                            | No       | 0.0.0                   | string      | semantic version          | Version of the SDK used to generate the manifest.                                                             |
 | `version`                                               | No       | 0.0.0                   | string      | semantic version          | Version of the package.                                                                                       |
 
 > [Notes]
