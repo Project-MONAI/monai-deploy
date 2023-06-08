@@ -1,11 +1,10 @@
 {
+  "MonaiDeployAuthentication": {
+    "BypassAuthentication": true
+  },
   "WorkloadManagerDatabase": {
     "ConnectionString": "mongodb://root:rootpassword@mongodb:27017",
-    "DatabaseName": "WorkloadManager",
-    "WorkflowCollectionName": "Workflows",
-    "WorkflowInstanceCollectionName": "WorkflowInstances",
-    "PayloadCollectionName": "Payloads",
-    "TaskDispatchEventCollectionName": "TaskDispatchEvents"
+    "DatabaseName": "WorkloadManager"
   },
   "WorkflowManager": {
     "taskTimeoutMinutes": 60,
@@ -19,7 +18,7 @@
         "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker"
       },
       "meta-data": {
-      }
+      },
     },
     "messaging": {
       "retries": {
@@ -34,10 +33,6 @@
       "dicomAgents": {
         "dicomWebAgentName": "monaidicomweb",
         "scuAgentName": "monaiscu"
-      },
-      "argoCallback": {
-        "argoRabbitOverrideEnabled": false,
-        "argoRabbitOverrideEndpoint": "localhost"
       },
       "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
       "publisherSettings": {
@@ -77,7 +72,7 @@
       }
     }
   },
-  "Logging": {
+   "Logging": {
     "LogLevel": {
       "Default": "Information",
       "System": "Warning",

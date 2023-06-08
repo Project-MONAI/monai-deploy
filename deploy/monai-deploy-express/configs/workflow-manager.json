@@ -1,11 +1,7 @@
 {
   "WorkloadManagerDatabase": {
     "ConnectionString": "mongodb://root:rootpassword@mongodb:27017",
-    "DatabaseName": "WorkloadManager",
-    "WorkflowCollectionName": "Workflows",
-    "WorkflowInstanceCollectionName": "WorkflowInstances",
-    "PayloadCollectionName": "Payloads",
-    "TaskDispatchEventCollectionName": "TaskDispatchEvents"
+    "DatabaseName": "WorkloadManager"
   },
   "MonaiDeployAuthentication": {
     "BypassAuthentication": true

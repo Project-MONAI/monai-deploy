@@ -43,8 +43,8 @@
       }
     },
     "storage": {
-      "bufferRootPath": "/payloads",
-      "tempStorageRootPath": "/incoming",
+      "localTemporaryStoragePath": "/payloads",
+      "remoteTemporaryStoragePath": "/incoming",
       "bucketName": "monaideploy",
       "storageRootPath": "/payloads",
       "temporaryBucketName": "monaideploy",
