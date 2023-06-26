@@ -70,7 +70,13 @@
         "executableLocation": "mc.exe",
         "serviceName": "test"
       }
-    }
+    },
+    "dicomTagsDisallowed": "PatientName,PatientID,IssuerOfPatientID,TypeOfPatientID,IssuerOfPatientIDQualifiersSequence,SourcePatientGroupIdentificationSequence,GroupOfPatientsIdentificationSequence,SubjectRelativePositionInImage,PatientBirthDate,PatientBirthTime,PatientBirthDateInAlternativeCalendar,PatientDeathDateInAlternativeCalendar,PatientAlternativeCalendar,PatientSex,PatientInsurancePlanCodeSequence,PatientPrimaryLanguageCodeSequence,PatientPrimaryLanguageModifierCodeSequence,QualityControlSubject,QualityControlSubjectTypeCodeSequence,StrainDescription,StrainNomenclature,StrainStockNumber,StrainSourceRegistryCodeSequence,StrainStockSequence,StrainSource,StrainAdditionalInformation,StrainCodeSequence,GeneticModificationsSequence,GeneticModificationsDescription,GeneticModificationsNomenclature,GeneticModificationsCodeSequence,OtherPatientIDsRETIRED,OtherPatientNames,OtherPatientIDsSequence,PatientBirthName,PatientAge,PatientSize,PatientSizeCodeSequence,PatientBodyMassIndex,MeasuredAPDimension,MeasuredLateralDimension,PatientWeight,PatientAddress,InsurancePlanIdentificationRETIRED,PatientMotherBirthName,MilitaryRank,BranchOfService,MedicalRecordLocatorRETIRED,ReferencedPatientPhotoSequence,MedicalAlerts,Allergies,CountryOfResidence,RegionOfResidence,PatientTelephoneNumbers,PatientTelecomInformation,EthnicGroup,Occupation,SmokingStatus,AdditionalPatientHistory,PregnancyStatus,LastMenstrualDate,PatientReligiousPreference,PatientSpeciesDescription,PatientSpeciesCodeSequence,PatientSexNeutered,AnatomicalOrientationType,PatientBreedDescription,PatientBreedCodeSequence,BreedRegistrationSequence,BreedRegistrationNumber,BreedRegistryCodeSequence,ResponsiblePerson,ResponsiblePersonRole,ResponsibleOrganization,PatientComments,ExaminedBodyThickness"
+  },
+  "InformaticsGateway": {
+    "apiHost": "http://informatics-gateway:5000",
+    "username": "",
+    "password": ""
   },
   "Kestrel": {
     "EndPoints": {
