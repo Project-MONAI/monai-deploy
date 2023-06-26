@@ -31,7 +31,8 @@
 
 ## Overview
 
-This document includes the specification of the MONAI Application Package (MAP).
+This document includes the specification of the MONAI Application Package (MAP). A MAP is a containerized application
+or service which is self-descriptive, as defined by this document.
 
 ### Goal
 
@@ -63,9 +64,26 @@ The following assumptions relate to MAP execution, inspection and general usage:
 
 - Application packages are expected to be deployed in one of the supported environments. For additional information, see [MONAI Operating Environments](monai-operating-environments.md).
 
+## Definitions, Acronyms, Abbreviations
+
+| Term             | Definition                                                                                                                                                                       |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ARM64            | Or, AARCH64. See [Wikipedia](https://en.wikipedia.org/wiki/AArch64) for details.                                                                                                 |
+| Container        | See [What's a container?](https://www.docker.com/resources/what-container/)                                                                                                      |
+| Fragment         | A fragment is a building block of the Application. It is a Directed Acyclic Graph (DAG) of operators. For details, please refer to the MONAI Deploy App SDK or Holoscan App SDK. |
+| Gigibytes (GiB)  | A gibibyte (GiB) is a unit of measurement used in computer data storage that equals to 1,073,741,824 bytes.                                                                      |
+| Hosting Service  | A service that hosts and orchestrates MAP containers.                                                                                                                            |
+| MAP              | MONAI Application Package. A containerized application or service which is self-descriptive.                                                                                     |
+| Mebibytes (MiB)  | A mebibyte (MiB) is a unit of measurement used in computer data storage that equals to 1,048,576 bytes.                                                                          |
+| MONAI            | Medical Open Network for Artificial Intelligence.                                                                                                                                |
+| SDK              | Software Development Kit.                                                                                                                                                        |
+| Semantic Version | See [Semantic Versioning 2.0](https://semver.org/).                                                                                                                              |
+| x64              | Or, x86-64 or AMD64. See [Wikipedia](https://en.wikipedia.org/wiki/X86-64) for details.                                                                                          |
+
 ## Requirements
 
-The following requirements MUST be met by the MAP specification to be considered complete and approved:
+The following requirements MUST be met by the MAP specification to be considered complete and approved.
+All requirements marked as `MUST` or `SHALL` MUST be implemented in order to be supported by a MAP-ready hosting service.
 
 ### Single Artifact
 
@@ -208,8 +226,6 @@ The Application Manifest file provides information about the MAP's Application.
 
 - The Application Manifest MUST define the command used to run the Application (`/etc/holoscan/app.json#command`).
 
-  - When not provided, the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner and hosting services that comply to MAP specification.
-
 - The Application Manifest SHOULD define the version of the manifest file schema (`/etc/holoscan/app.json#apiVersion`).
 
   - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
@@ -240,7 +256,7 @@ The Application Manifest file provides information about the MAP's Application.
 
 - The Application Manifest SHOULD define the data input path, relative to the working directory, used by the Application (`/etc/holoscan/app.json#input.path`).
 
-  - The input path SHOULD be a relative file-system path to a directory or folder.
+  - The input path SHOULD be a relative to the working directory or an absolute file-system path to a directory.
 
     - When the value is a relative file-system path (the first character is not `/`), it is relative to the application's working directory.
 
@@ -254,7 +270,7 @@ The Application Manifest file provides information about the MAP's Application.
 
 - The Application Manifest SHOULD define the output path relative to the working directory used by the Application (`/etc/holoscan/app.json#output.path`).
 
-  - The output path SHOULD be a relative file-system path to a directory or folder.
+  - The output path SHOULD be relative to the working directory or an absolute file-system path to a directory.
 
     - When the value is a relative file-system path (the first character is not `/`), it is relative to the application's working directory.
 
@@ -278,7 +294,7 @@ The Application Manifest file provides information about the MAP's Application.
 
   - The Application Manifest SHALL define the port to perform the readiness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#readiness.port`)
 
-    - The value provided must be a valid port number ranging from 1 through 65535.
+    - The value provided must be a valid port number ranging from 1 through 65535. (Please note that port numbers below 1024 are root-only priviliged ports.)
 
   - The Application Manifest SHALL define the path to perform the readiness probe when the type is `http-get` (`/etc/holoscan/app.json#readiness.path`).
 
@@ -312,7 +328,7 @@ The Application Manifest file provides information about the MAP's Application.
 
   - The Application Manifest SHALL define the port to perform the liveness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#liveness.port`)
 
-    - The value provided must be a valid port number ranging from 1 through 65535.
+    - The value provided must be a valid port number ranging from 1 through 65535. (Please note that port numbers below 1024 are root-only priviliged ports.)
 
   - The Application Manifest SHALL define the path to perform the liveness probe when the type is `http-get` (`/etc/holoscan/app.json#liveness.path`).
 
@@ -445,37 +461,37 @@ The Package Manifest file provides information about the MAP's package layout. I
 
   - Memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memory`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Optional memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memoryLimit`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - GPU memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpuMemory`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Optional GPU memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpuMemoryLimit`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Shared memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.sharedMemory`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Optional shared memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.sharedMemoryLimit`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
@@ -511,37 +527,37 @@ The Package Manifest file provides information about the MAP's package layout. I
 
   - Memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.memory`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Optional memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.memoryLimit`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - GPU memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.gpuMemory`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Optional GPU memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.gpuMemoryLimit`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Shared memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.sharedMemory`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
   - Optional shared memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.sharedMemoryLimit`).
 
-    - Supported units SHALL be mebibytes (`Mi`) and gibibytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
       - Example: `1.5Gi`, `2048Mi`
 
