@@ -53,17 +53,17 @@ The following assumptions relate to MAP execution, inspection and general usage:
 
 - Developers expect the local execution of their applications to behave identically to the execution of the containerized version.
 
-- Developers expect the local execution of their containerized applications to behave identically to execution in deployment.
+- Developers expect the local execution of their containerized applications to behave identically to the execution in deployment.
 
 - Developers and operations engineers want the application packages to be self-describing.
 
-- Applications might not be developed using the Holoscan SDK or the MONAI Deploy App SDK.
+- Applications may be created using tool other than that provided in the Holoscan SDK or the MONAI Deploy App SDK.
 
 - MONAI Application Package may be created using a tool other than that provided in the Holoscan SDK or the MONAI Deploy App SDK.
 
 - Pre-existing, containerized applications must be "converted" into MONAI Application Packages.
 
-- A MONAI Application Package may contain a classical application (non-fragment based), a single-fragment application, or a multi-fragment application. (Please refer to Holoscan documentation for more information on multi-fragment applications.)
+- A MONAI Application Package may contain a classical application (non-fragment based), a single-fragment application, or a multi-fragment application. (Please see the definition of fragment in [Definitions, Acronyms, Abbreviations](#definitions-acronyms-abbreviations))
 
 - The scalability of a multi-fragment application based on Holoscan SDK is outside the scope of this document.
 
@@ -138,7 +138,7 @@ The containerized portion of a MAP SHALL comply with [Open Container Initiative]
 All annotations for the containerized portion of a MAP MUST adhere to the specifications laid out by [The OpenContainers Annotations Spec](https://specs.opencontainers.org/image-spec/annotations/?v=v1.0.1)
 
 - `org.opencontainers.image.title`: A MAP container image SHALL provide a human-readable title (string).
-- `org.opencontainers.image.version`: A MAP container image SHALL provide a version of the packaged application using the semantic versioning format. This value is the same as the value defined in `/etc/holoscan/app.json#version`.
+- `org.opencontainers.image.version`: A MAP container image SHALL provide a version of the packaged application using the semantic versioning format. This value is the same as the value defined in `/etc/holoscan/app.json#version` in the [Table of Application Manifest Fields](#table-of-application-manifest-fields).
 - All other OpenContainers predefined keys SHOULD be provided when available.
 
 ### Hosting Environment
@@ -454,7 +454,7 @@ The Package Manifest file provides information about the MAP's package layout. I
 
 - A classic Application or a single Fragment Application SHALL define its resources in the `/etc/holoscan/pkg.json#resource` object.
 
-  - The `/etc/holoscan/pkg.json#resource` object CAN be used as a catchall for all fragments.
+  - The `/etc/holoscan/pkg.json#resource` object is for the whole application. It CAN also be used as a catchall for all fragments in a multi-fragment application where applicable.
 
   - CPU requirements SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.cpu`).
 
@@ -610,11 +610,11 @@ When a MAP is started from the CLI or other means without any parameters, the MA
 
 #### Manifest Export
 
-A MAP SHALL provide at least one method to access the _embedded application_, _models_, _licenses_, _README_, or _manifest files_, namely, `app.json` and `package.json`.
+A MAP SHOULD provide at least one method to access the _embedded application_, _models_, _licenses_, _README_, or _manifest files_, namely, `app.json` and `package.json`.
 
-- The Method SHALL have the option to print one or more manifest files to the console.
+- The Method SHOULD provide a container command, _`show`_, to print one or more manifest files to the console.
 
-- The Method SHALL have the option to copy one or more manifest files to a mounted volume path.
+- The Method SHOULD provide a container command, _`export`_, to copy one or more manifest files to a mounted volume path, as described below
 
   - `/var/run/holoscan/export/app/`: when detected, the Method copies the contents of `/opt/holoscan/app/` to the folder.
 
@@ -625,6 +625,7 @@ A MAP SHALL provide at least one method to access the _embedded application_, _m
   - `/var/run/holoscan/export/docs/`: when detected, the Method copies the contents of `/opt/holoscan/docs/` to the folder.
 
   - `/var/run/holoscan/export/`: when detected without any of the above being detected, the Method SHALL copy all of the above.
+
 
 ### Table of Important Paths
 
