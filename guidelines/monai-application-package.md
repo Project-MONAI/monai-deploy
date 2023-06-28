@@ -626,6 +626,7 @@ A MAP SHOULD provide at least one method to access the _embedded application_, _
 
   - `/var/run/holoscan/export/`: when detected without any of the above being detected, the Method SHALL copy all of the above.
 
+Since a MAP is an OCI compliant container, a user can also run a MAP and log in to an interactive shell, using a method supported by the container engine and its command line interface, e.g. Docker supports this by setting the entrypoint option. The files in the MAP can then be opened or copied to the mapped volumes with shell commands or scripts. A specific implementation of a MAP may choose to streamline such a process with scripts and applicable user documentation.
 
 ### Table of Important Paths
 
