@@ -1,325 +1,504 @@
 # MONAI Application Package
 
-## Description
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=3 orderedList=false} -->
 
-This is a proposal for the MONAI Deploy Working Group.
+<!-- code_chunk_output -->
 
-- [Overview](#overview)
-  - [Goal](#goal)
-  - [Assumptions](#assumptions)
-- [Requirements](#requirements)
-  - [Contains an Application](#contains-an-application)
-  - [Single Artifact](#single-artifact)
-  - [Self-Describing](#self-describing)
-  - [IO Specification](#io-specification)
-  - [Local Execution](#local-execution)
-  - [Containerization](#containerization)
-  - [Compatible with Kubernetes](#compatible-with-kubernetes)
-  - [OCI Compliance](#oci-compliance)
-  - [Facilitate GPU Acceleration](#facilitate-gpu-acceleration)
-- [Architecture & Design](#architecture--design)
-- [Description](#description)
-- [Application](#application)
-- [Manifests](#manifests)
-  - [Application Manifest](#application-manifest)
-  - [Package Manifest](#package-manifest)
-- [Executor](#executor)
-  - [Initial Conditions / Environment Variables](#initial-conditions)
-  - [Manifest Export](#manifest-export)
-  - [Table of Important Paths](#table-of-important-paths)
-- [Package Layout Diagram](#layout-diagram)
+1. [MONAI Application Package](#monai-application-package)
+    1. [Overview](#overview)
+        1. [Goal](#goal)
+        2. [Assumptions, Constraints, Dependencies](#assumptions-constraints-dependencies)
+    2. [Definitions, Acronyms, Abbreviations](#definitions-acronyms-abbreviations)
+    3. [Requirements](#requirements)
+        1. [Single Artifact](#single-artifact)
+        2. [Self-Describing](#self-describing)
+        3. [Runtime Characteristics of the MAP](#runtime-characteristics-of-the-map)
+        4. [IO Specification](#io-specification)
+        5. [Local Execution](#local-execution)
+        6. [Compatible with Kubernetes](#compatible-with-kubernetes)
+        7. [OCI Compliance](#oci-compliance)
+        8. [Hosting Environment](#hosting-environment)
+2. [Architecture & Design](#architecture--design)
+    1. [Description](#description)
+    2. [Application](#application)
+    3. [Manifests](#manifests)
+        1. [Application Manifest](#application-manifest)
+        2. [Package Manifest](#package-manifest)
+    4. [Supplemental Application Files](#supplemental-application-files)
+        1. [Container Behavior and Interaction](#container-behavior-and-interaction)
+        2. [Table of Important Paths](#table-of-important-paths)
+    5. [Package Layout Diagram](#package-layout-diagram)
+    6. [Release Notes](#release-notes)
+        1. [1.0.0](#100)
+        2. [0.1.0](#010)
 
+<!-- /code_chunk_output -->
 
 ## Overview
 
-This proposal documents the specification of the initial version of the MONAI Application Package (MAP).
-
+This document includes the specification of the MONAI Application Package (MAP). A MAP is a containerized application
+or service which is self-descriptive, as defined by this document.
 
 ### Goal
 
-The goal of this proposal is to provide the structure of a MAP, define the purpose of a MAP and how it can be
-interacted with, and the required and optional components of a MAP.
+This document aims to define the structure and purpose of a MAP, including which parts are optional and which are required so that developers can easily create conformant MAPs.
 
+### Assumptions, Constraints, Dependencies
 
-### Assumptions
+The following assumptions relate to MAP execution, inspection and general usage:
 
-The following are a set of assumptions related to MAP execution, inspection, and general usage.
+- Containerized applications will be based on Linux x64 (AMD64) and/or ARM64 (aarch64).
 
-- Containerized applications will be based on Linux x86_64 (AMD64).
+- Containerized applications' host environment will be based on Linux x64 (AMD64) and/or ARM64 (aarch64) with container support.
 
-- Containerized application's host environment will be based on Linux x86_64 (AMD64) with container support.
+- Developers expect the local execution of their applications to behave identically to the execution of the containerized version.
 
-- Developers expect local execution of their applications to behave identically to execution of the containerized version.
-
-- Developers expect local execution of their containerized applications to behave identically to execution in deployment.
+- Developers expect the local execution of their containerized applications to behave identically to the execution in deployment.
 
 - Developers and operations engineers want the application packages to be self-describing.
 
-- Application packages might not be developed using the MONAI Application SDK.
+- Applications may be created using tool other than that provided in the Holoscan SDK or the MONAI Deploy App SDK.
 
-- Pre-existing, containerized applications will need to be "converted" into MONAI Application Packages.
+- MONAI Application Package may be created using a tool other than that provided in the Holoscan SDK or the MONAI Deploy App SDK.
 
-- Application packages will be deployed in a variety of environments.
+- Pre-existing, containerized applications must be "converted" into MONAI Application Packages.
 
-  > [Note]
-  > See [MONAI Operating Environments](monai-operating-environments.md) for additional information about supported environments.
+- A MONAI Application Package may contain a classical application (non-fragment based), a single-fragment application, or a multi-fragment application. (Please see the definition of fragment in [Definitions, Acronyms, Abbreviations](#definitions-acronyms-abbreviations))
 
+- The scalability of a multi-fragment application based on Holoscan SDK is outside the scope of this document.
 
-##  Requirements
+- Application packages are expected to be deployed in one of the supported environments. For additional information, see [MONAI Operating Environments](monai-operating-environments.md).
 
-The following are requirements which need to be met by the MAP specification to be considered complete and approved.
+## Definitions, Acronyms, Abbreviations
 
+| Term             | Definition                                                                                                                                                                       |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ARM64            | Or, AARCH64. See [Wikipedia](https://en.wikipedia.org/wiki/AArch64) for details.                                                                                                 |
+| Container        | See [What's a container?](https://www.docker.com/resources/what-container/)                                                                                                      |
+| Fragment         | A fragment is a building block of the Application. It is a Directed Acyclic Graph (DAG) of operators. For details, please refer to the MONAI Deploy App SDK or Holoscan App SDK. |
+| Gigibytes (GiB)  | A gibibyte (GiB) is a unit of measurement used in computer data storage that equals to 1,073,741,824 bytes.                                                                      |
+| Hosting Service  | A service that hosts and orchestrates MAP containers.                                                                                                                            |
+| MAP              | MONAI Application Package. A containerized application or service which is self-descriptive.                                                                                     |
+| Mebibytes (MiB)  | A mebibyte (MiB) is a unit of measurement used in computer data storage that equals to 1,048,576 bytes.                                                                          |
+| MONAI            | Medical Open Network for Artificial Intelligence.                                                                                                                                |
+| SDK              | Software Development Kit.                                                                                                                                                        |
+| Semantic Version | See [Semantic Versioning 2.0](https://semver.org/).                                                                                                                              |
+| x64              | Or, x86-64 or AMD64. See [Wikipedia](https://en.wikipedia.org/wiki/X86-64) for details.                                                                                          |
 
-### Contains an Application
+## Requirements
 
-A MAP SHALL contain an executable application which supports the primary function of the MAP, and provide sufficient information to execute the application as intended.
-
+The following requirements MUST be met by the MAP specification to be considered complete and approved.
+All requirements marked as `MUST` or `SHALL` MUST be implemented in order to be supported by a MAP-ready hosting service.
 
 ### Single Artifact
 
-A MAP SHALL be comprised of a single container which meets the minimum requirements set forth by this document.
-
+- A MAP SHALL comprise a single container, meeting the minimum requirements set forth by this document.
+- A MAP SHALL be a containerized application to maximize the portability of its application.
 
 ### Self-Describing
 
-A MAP MUST be self-describing and provide a mechanism for extracting the its description.
+- A MAP MUST be self-describing and provide a mechanism for extracting its description.
+  - A MAP SHALL provide a method to print the metadata files to the console.
+  - A MAP SHALL provide a method to copy the metadata files to a user-specified directory.
+- The method of description SHALL be in a machine-readable and writable format.
+- The method of description SHALL be in a human-readable format.
+- The method of description SHOULD be a human writable format.
+- The method of description SHALL be declarative and immutable.
+- The method of description SHALL provide the following information about the MAP:
+  - Execution requirements such as dependencies and restrictions.
+  - Resource requirements include CPU cores, system memory, shared memory, GPU, and GPU memory.
 
-The method of description SHALL be a machine readable and writable format.
+### Runtime Characteristics of the MAP
 
-The method of description SHALL be a human readable format.
-
-The method of description SHOULD be a human writable format.
-
-The method of description SHALL be declarative and immutable.
-
-The method of description SHALL provide the following information about the MAP:
-
-- Execution requirements such as dependencies, restrictions, etc.
-
-- Resource requirements such as CPU cores, available system memory, GPU availability, etc.
-
+- A MAP SHALL start the packaged Application when it is executed by the users when arguments are specified.
+- A MAP SHALL describe the packaged Application as a long-running service or an application so an external agent can manage its lifecycle.
 
 ### IO Specification
 
-A MAP SHALL provide information about its expected inputs such that an external agent is able to determine if the MAP is capable of receiving a workload.
-
-A MAP SHALL provide information about the protocols and study types it supports such that an external agent is able to determine if the MAP is capable of receiving a workload.
-
-A MAP SHALL provide sufficient information about its outputs that an external agent is able to determine if it is capable of receiving the results.
-
+- A MAP SHALL provide information about its expected inputs such that an external agent can determine if the MAP can receive a workload.
+- A MAP SHALL provide sufficient information about its outputs so that an external agent knows how to handle the results.
 
 ### Local Execution
 
-A MAP MUST be in a format which supports local execution in a development environment.
+A MAP MUST be in a format that supports local execution in a development environment.
 
 > [Note]
 > See [MONAI Operating Environments](monai-operating-environments.md) for additional information about supported environments.
 
-
-### Containerization
-
-A MAP SHALL be a containerized application to maximize portability of its application.
-
-
 ### Compatible with Kubernetes
 
-A MAP SHALL NOT be in a format which inhibits or hampers the ability to deploy it using Kubernetes.
-
+- A MAP SHALL support deployment using Kubernetes.
 
 ### OCI Compliance
 
 The containerized portion of a MAP SHALL comply with [Open Container Initiative](https://opencontainers.org/) format standards.
 
+#### Image Annotations
 
-### Facilitate GPU Acceleration
+All annotations for the containerized portion of a MAP MUST adhere to the specifications laid out by [The OpenContainers Annotations Spec](https://specs.opencontainers.org/image-spec/annotations/?v=v1.0.1)
 
-A MAP SHALL enable applications to be developed with GPU acceleration.
+- `org.opencontainers.image.title`: A MAP container image SHALL provide a human-readable title (string).
+- `org.opencontainers.image.version`: A MAP container image SHALL provide a version of the packaged application using the semantic versioning format. This value is the same as the value defined in `/etc/holoscan/app.json#version` in the [Table of Application Manifest Fields](#table-of-application-manifest-fields).
+- All other OpenContainers predefined keys SHOULD be provided when available.
 
-A MAP SHALL NOT impede the adoption or utilization of accelerator (GPU) technology.
+### Hosting Environment
 
+The MAP Hosting Environment executes the MAP and provides the application with a customized set of environment variables and command line options as part of the invocation.
+
+- The Hosting Service MUST, by default, execute the application as defined by `/etc/holoscan/app.json#command` and then exit when the application or the service completes.
+- The Hosting Service MUST provide any environment variables specified by `/etc/holoscan/app.json#environment`.
+- The Hosting Service SHOULD monitor the Application process and record its CPU, system memory, and GPU utilization metrics.
+- The Hosting Service SHOULD monitor the Application process and enforce any timeout value specified in `/etc/holoscan/app.json#timeout`.
+
+#### Table of Environment Variables
+
+A MAP SHALL contain the following environment variables and their default values, if not specified by the user, in the Application Manifest `/etc/holoscan/app.json#environment`.
+
+| Variable                     | Default                    | Format      | Description                                                           |
+| ---------------------------- | -------------------------- | ----------- | --------------------------------------------------------------------- |
+| `HOLOSCAN_INPUT_PATH`        | `/var/holoscan/input/`     | Folder Path | Path to the input folder for the Application.                         |
+| `HOLOSCAN_OUTPUT_PATH`       | `/var/holoscan/output/`    | Folder Path | Path to the output folder for the Application.                        |
+| `HOLOSCAN_WORKDIR`           | `/var/holoscan/ `          | Folder Path | Path to the Application's working directory.                          |
+| `HOLOSCAN_MODEL_PATH`        | `/opt/holoscan/models/`    | Folder Path | Path to the Application's models directory.                           |
+| `HOLOSCAN_CONFIG_PATH`       | `/var/holoscan/app.yaml`   | File Path   | Path to the Application’s configuration file.                         |
+| `HOLOSCAN_APP_MANIFEST_PATH` | `/etc/holoscan/app.config` | File Path   | Path to the Application’s configuration file.                         |
+| `HOLOSCAN_PKG_MANIFEST_PATH` | `/etc/holoscan/pkg.config` | File Path   | Path to the Application’s configuration file.                         |
+| `HOLOSCAN_DOCS`              | `/opt/holoscan/docs`       | Folder Path | Path to the folder containing application documentation and licenses. |
+| `HOLOSCAN_LOGS`              | `/var/holoscan/logs`       | Folder Path | Path to the Application's logs.                                       |
 
 # Architecture & Design
 
-##  Description
+## Description
 
-The MONAI Application Package (MAP) is a functional package designed to perform an action on datasets of a prescribed format. A MAP is a container image which adheres the specification provided in this document.
-
+The MONAI Application Package (MAP) is a functional package designed to act on datasets of a prescribed format. A MAP is a container image that adheres to the specification provided in this document.
 
 ## Application
 
-The primary component of a MAP is the Application. The Application is provided by an application developer and incorporated into the MAP using the MONAI Package Builder (Builder).
+The primary component of a MAP is the application. The application is provided by an application developer and incorporated into the MAP using the MONAI Deploy Application Packager.
 
-All application code and binaries SHALL be in the `/opt/monai/app/` folder, with the exception of any dependencies which are installed by the MONAI Application Package Builder during the creation of the MAP.
+All application code and binaries SHALL be in the `/opt/holoscan/app/` folder, except for any dependencies installed by the MONAI Deploy Packager during the creation of the MAP.
 
-All AI models (PyTorch, TensorFlow, TensorRT, etc.) SHOULD be in separate sub-folders of the `/opt/monai/models/` folder.
-
+All AI models (PyTorch, TensorFlow, TensorRT, etc.) SHOULD be in separate sub-folders of the `/opt/holoscan/models/` folder. In specific use cases where the app package developer is prevented from enclosing the model files in the package/container due to intellectual property concerns, the models can be supplied from the host system when the app package is run, e.g., via the volume mount mappings and the use of container env variables.
 
 ## Manifests
 
-A MAP SHALL contain two manifests: the application manifest and the package manifest. The package manifest shall be stored in `/etc/monai/pkg.json` and the application manifest shall be stored in `/etc/monai/app.json`. Once a MAP is created, it's manifests are expected to be immutable.
-
+A MAP SHALL contain two manifests: the Application Manifest and the Package Manifest. The Package Manifest shall be stored in `/etc/holoscan/pkg.json`, and the Application Manifest shall be stored in `/etc/holoscan/app.json`. Once a MAP is created, its manifests are expected to be immutable.
 
 ### Application Manifest
 
-Provides information about the MAP's Application.
+#### Table of Application Manifest Fields
 
-> [!IMPORTANT]
-> The format and schema of the Application Manifest has not been defined as part of this document.
-> These items are suggested, but not part of any specification yet.
+| Name                            | Required                                            | Default        | Type    | Format                     | Description                                                                                                                                                        |
+| ------------------------------- | --------------------------------------------------- | -------------- | ------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apiVersion`                    | No                                                  | 0.0.0          | string  | semantic version           | Version of the manifest file schema.                                                                                                                               |
+| `command`                       | **Yes**                                             | N/A            | string  | shell command              | Shell command used to run the Application.                                                                                                                         |
+| `environment`                   | **No**                                              | N/A            | object  | object w/ name-value pairs | An object of name-value pairs that will be passed to the application during execution.                                                                             |
+| `input`                         | **Yes**                                             | N/A            | object  | object                     | Data structure which provides information about Application inputs.                                                                                                |
+| `input.formats`                 | **Yes**                                             | N/A            | array   | array of objects           | List of input data formats accepted by the Application.                                                                                                            |
+| `input.path`                    | No                                                  | input/         | string  | relative file-system path  | Folder path relative to the working directory from which the application will read inputs.                                                                         |
+| `readiness`                     | No                                                  | N/A            | object  | object                     | An object of name-value pairs that defines the readiness probe.                                                                                                    |
+| `readiness.type`                | **Yes**                                             | N/A            | string  | string                     | Type of the probe: `tcp`, `grpc`, `http-get` or `command`.                                                                                                         |
+| `readiness.command`             | **Yes** (when type is `command`)                    | N/A            | array   | shell command              | Shell command and arguments in string array form.                                                                                                                  |
+| `readiness.port`                | **Yes** (when type is `tcp`, `grpc`, or `http-get`) | N/A            | integer | number                     | The port number of readiness probe.                                                                                                                                |
+| `readiness.path`                | **Yes** (when type is `http-get`)                   | N/A            | string  | string                     | HTTP path and query to access the readiness probe.                                                                                                                 |
+| `readiness.initialDelaySeconds` | No                                                  | 1              | integer | number                     | Number of seconds after the container has started before the readiness probe is initialized and performed.                                                         |
+| `readiness.periodSeconds`       | No                                                  | 10             | integer | number                     | Number of seconds between performing the readiness probe.                                                                                                          |
+| `readiness.timeoutSeconds`      | No                                                  | 1              | integer | number                     | Number of seconds after which the probe times out.                                                                                                                 |
+| `readiness.failureThreshold`    | No                                                  | 3              | integer | number                     | Number of retries to be performed before considering the application is unhealthy.                                                                                 |
+| `liveness`                      | No                                                  | N/A            | object  | object                     | An object of name-value pairs that defines the liveness probe. Recommended for service applications.                                                               |
+| `liveness.type`                 | **Yes**                                             | N/A            | string  | string                     | Type of the probe: `tcp`, `grpc`, `http-get` or `command`.                                                                                                         |
+| `liveness.command`              | **Yes** (when type is `command`)                    | N/A            | array   | shell command              | Shell command and arguments in string array form.                                                                                                                  |
+| `liveness.port`                 | **Yes** (when type is `tcp`, `grpc`, or `http-get`) | N/A            | integer | number                     | The port number of the liveness probe.                                                                                                                             |
+| `liveness.path`                 | **Yes** (when type is `http-get`)                   | N/A            | string  | string                     | HTTP path and query to access the liveness probe.                                                                                                                  |
+| `liveness.initialDelaySeconds`  | No                                                  | 1              | integer | number                     | Number of seconds after the container has started before the liveness probe is initialized and performed.                                                          |
+| `liveness.periodSeconds`        | No                                                  | 10             | integer | number                     | Number of seconds between performing the liveness probe.                                                                                                           |
+| `liveness.timeoutSeconds`       | No                                                  | 1              | integer | number                     | Number of seconds after which the probe times out.                                                                                                                 |
+| `liveness.failureThreshold`     | No                                                  | 3              | integer | number                     | Number of retries to be performed before considering the application is unhealthy.                                                                                 |
+| `output`                        | **Yes**                                             | N/A            | object  | object                     | Data structure which provides information about Application output.                                                                                                |
+| `output.format`                 | **Yes**                                             | N/A            | object  | object                     | Details about the format of the outputs produced by the application.                                                                                               |
+| `output.path`                   | No                                                  | output/        | string  | relative file-system path  | Folder path relative to the working directory to which the application will write outputs.                                                                         |
+| `sdk`                           | No                                                  | N/A            | string  | string                     | SDK used for the Application.                                                                                                                                      |
+| `sdkVersion`                    | No                                                  | 0.0.0          | string  | semantic version           | Version of the SDK used the Application.                                                                                                                           |
+| `timeout`                       | No                                                  | 0              | integer | number                     | The maximum number of seconds the application should execute before being timed out and terminated. Recommended for a single batch/execution type of applications. |
+| `version`                       | No                                                  | 0.0.0          | string  | semantic version           | Version of the Application.                                                                                                                                        |
+| `workingDirectory`              | No                                                  | /var/holoscan/ | string  | absolute file-system path  | Folder, or directory, in which the application will be executed.                                                                                                   |
 
-- Application Manifest MUST define the command used to run the Application (`/etc/monai/app.json#command`).
+The Application Manifest file provides information about the MAP's Application.
 
-  - When not provided the MAP will be considered invalid and not runnable by MONAI Deploy Application Runner and Server.
+- The Application Manifest MUST define the type of the containerized application (`/etc/holoscan/app.json#type`).
 
-- Application Manifest SHOULD define the version of the manifest file schema (`/etc/monai/app.json#api-version`).
+  - Type SHALL have the value of either `service` or `application.`
 
-  - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
+- The Application Manifest MUST define the command used to run the Application (`/etc/holoscan/app.json#command`).
 
-  - When not provided the default value `0.0.0` SHALL be assumed.
+- The Application Manifest SHOULD define the version of the manifest file schema (`/etc/holoscan/app.json#apiVersion`).
 
-- Application Manifest SHOULD define the version of the MONAI Deploy SDK used to create the Application (`/etc/monai/app.json#sdk-version`).
+  - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
+
+  - When not provided, the default value `0.0.0` SHALL be assumed.
+
+- The Application Manifest SHOULD define the SDK used to create the Application (`/etc/holoscan/app.json#sdk`).
+
+- The Application Manifest SHOULD define the version of the SDK used to create the Application (`/etc/holoscan/app.json#sdkVersion`).
 
   - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-  - When not provided the default value `0.0.0` SHALL be assumed.
+  - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- Application Manifest SHOULD define the version of the Application itself (`/etc/monai/app.json#version`).
+- The Application Manifest SHOULD define the version of the application itself (`/etc/holoscan/app.json#version`).
 
-  - Application version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Application version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-  - When not provided the default value `0.0.0` SHALL be assumed.
+  - When not provided, the default value `0.0.0` SHALL be assumed.
 
-- Application Manifest SHOULD define the Application's working directory (`/etc/monai/app.json#working-directory`).
+- The Application Manifest SHOULD define the application's working directory (`/etc/holoscan/app.json#workingDirectory`).
 
   - The Application will execute with its current directory set to this value.
 
-  - The value provided must be an absolute path (first character is `/`).
+  - The value provided must be an absolute path (the first character is `/`).
 
-  - When not provided the default path `/var/monai/` SHALL be assumed.
+  - The default path `/var/holoscan/` SHALL be assumed when not provided.
 
-- Application Manifest SHOULD define input path, relative to the working directory, used by the Application (`/etc/monai/app.json#input.path`).
+- The Application Manifest SHOULD define the data input path, relative to the working directory, used by the Application (`/etc/holoscan/app.json#input.path`).
 
-  - The input path SHOULD be a relative file-system path to a directory or folder.
+  - The input path SHOULD be a relative to the working directory or an absolute file-system path to a directory.
 
-    - When the value is a relative file-system path (first character is not `/`), it is relative to the Application's working directory.
+    - When the value is a relative file-system path (the first character is not `/`), it is relative to the application's working directory.
 
-    - When the value is an absolute file-system path (first character is `/`), the file-system path is used as-is.
+    - When the value is an absolute file-system path (the first character is `/`), the file-system path is used as-is.
 
-  - When not provided the default value `input/` SHALL be assumed.
+  - When not provided, the default value `input/` SHALL be assumed.
 
-- Application Manifest SHOULD define input data formats supported by the Application (`/etc/monai/app.json#input.formats`).
+- The Application Manifest SHOULD define input data formats supported by the Application (`/etc/holoscan/app.json#input.formats`).
 
-- Application Manifest SHOULD define output path, relative to the working directory used by the Application (`/etc/monai/app.json#output.path`).
+  - Possible values include, but are not limited to, `none`, `network`, `file`.
 
-  - The input path SHOULD be a relative file-system path to a directory or folder.
+- The Application Manifest SHOULD define the output path relative to the working directory used by the Application (`/etc/holoscan/app.json#output.path`).
 
-    - When the value is a relative file-system path (first character is not `/`), it is relative to the Application's working directory.
+  - The output path SHOULD be relative to the working directory or an absolute file-system path to a directory.
 
-    - When the value is an absolute file-system path (first character is `/`), the file-system path is used as-is.
+    - When the value is a relative file-system path (the first character is not `/`), it is relative to the application's working directory.
 
-  - When not provided the default value `output/` SHALL be assumed.
+    - When the value is an absolute file-system path (the first character is `/`), the file-system path is used as-is.
 
-- Application Manifest SHOULD define output data format produces by the Application (`/etc/monai/app.json#output.format`).
+  - When not provided, the default value `output/` SHALL be assumed.
 
-- Application Manifest SHOULD define any timeout applied to the Application (`/etc/monai/app.json#timeout`).
+- The Application Manifest SHOULD define the output data format produced by the Application (`/etc/holoscan/app.json#output.format`).
 
-  - When not provided the default value `0` SHALL be assumed.
+  - Possible values include, but are not limited to, `none`, `screen`, `file`, `network`.
 
-  - This value can be overridden by the top level executor, such as MONAI Deploy Application Server.
+- The Application Manifest SHOULD configure a check to determine whether or not the application is "ready."
 
-- Application Manifest MUST enable the specification of environment variables for the Application (`/etc/monai/app.json#environment`)
+  - The Application Manifest SHALL define the probe type to be performed (`/etc/holoscan/app.json#readiness.type`).
 
-  - The structure of the data is expected to be in `"name": "value"` members of the object.
+    - Possible values include `tcp`, `grpc`, `http-get`, and `command`.
 
-  - The name of the field will be the name of the environment variable verbatim, and must conform all requirements for environment variables and JSON field names.
+  - The Application Manifest SHALL define the probe commands to execute when the type is `command` (`/etc/holoscan/app.json#readiness.command`).
 
-  - The value of the field will be the value of the environment variable and must confirm to all requirements for environment variables.
+    - The data structure is expected to be an array of strings.
 
+  - The Application Manifest SHALL define the port to perform the readiness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#readiness.port`)
 
-#### Table of Application Manifest Fields
+    - The value provided must be a valid port number ranging from 1 through 65535. (Please note that port numbers below 1024 are root-only priviliged ports.)
 
-| Name                | Required | Default     | Type    | Format                     | Description                                                                                             |
-| ------------------- | -------- | ----------- | ------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `api-version`       | No       | 0.0.0       | string  | semantic version           | Version of the manifest file schema.                                                                    |
-| `command`           | **Yes**  | N/A         | string  | shell command              | Shell command used to run the Application.                                                              |
-| `environment`       | No       | N/A         | object  | object w/ name-value pairs | An object of name-value pairs which will be passed to the Application during execution.                 |
-| `input`             | **Yes**  | N/A         | object  | object                     | Data structure which provides information about Application inputs.                                     |
-| `input.formats`     | No       | N/A         | array   | array of objects           | List of input data formats accepted by the Application.                                                 |
-| `input.path`        | **Yes**  | input/      | string  | relative file-system path  | Folder path relative to the working directory from which application will read inputs.                  |
-| `output`            | **Yes**  | N/A         | object  | object                     | Data structure which provides information about Application output.                                     |
-| `output.format`     | No       | N/A         | object  | object                     | Details about the format of the outputs produced by the Application.                                    |
-| `output.path`       | **Yes**  | output/     | string  | relative file-system path  | Folder path relative to the working directory to which application will write outputs.                  |
-| `sdk-version`       | No       | 0.0.0       | string  | semantic version           | Version of the SDK used to generate the manifest.                                                       |
-| `timeout`           | No       | 0           | integer | number                     | The maximum number of seconds the Application should execute for before being timed out and terminated. |
-| `version`           | No       | 0.0.0       | string  | semantic version           | Version of the Application.                                                                             |
-| `working-directory` | No       | /var/monai/ | string  | absolute file-system path  | Folder, or directory, in which the Application wil be executed from.                                    |
+  - The Application Manifest SHALL define the path to perform the readiness probe when the type is `http-get` (`/etc/holoscan/app.json#readiness.path`).
 
+    - The value provided must be an absolute path (the first character is `/`).
+
+  - The Application Manifest SHALL define the number of seconds after the container has started before the readiness probe is initiated. (`/etc/holoscan/app.json#readiness.initialDelaySeconds`).
+
+    - The default value `0` SHALL be assumed when not provided.
+
+  - The Application Manifest SHALL define how often to perform the readiness probe (`/etc/holoscan/app.json#readiness.periodSeconds`).
+
+    - When not provided, the default value `10` SHALL be assumed.
+
+  - The Application Manifest SHALL define the number of seconds after which the probe times out (`/etc/holoscan/app.json#readiness.timeoutSeconds`)
+
+    - When not provided, the default value `1` SHALL be assumed.
+
+  - The Application Manifest SHALL define the number of times to perform the probe before considering the service is not ready (`/etc/holoscan/app.json#readiness.failureThreshold`)
+
+    - The default value `3` SHALL be assumed when not provided.
+
+- The Application Manifest SHOULD configure a check to determine whether or not the application is "live" or not.
+
+  - The Application Manifest SHALL define the type of probe to be performed (`/etc/holoscan/app.json#liveness.type`).
+
+    - Possible values include `tcp`, `grpc`, `http-get`, and `command`.
+
+  - The Application Manifest SHALL define the probe commands to execute when the type is `command` (`/etc/holoscan/app.json#liveness.command`).
+
+    - The data structure is expected to be an array of strings.
+
+  - The Application Manifest SHALL define the port to perform the liveness probe when the type is `grpc`, `tcp`, or `http-get`. (`/etc/holoscan/app.json#liveness.port`)
+
+    - The value provided must be a valid port number ranging from 1 through 65535. (Please note that port numbers below 1024 are root-only priviliged ports.)
+
+  - The Application Manifest SHALL define the path to perform the liveness probe when the type is `http-get` (`/etc/holoscan/app.json#liveness.path`).
+
+    - The value provided must be an absolute path (the first character is `/`).
+
+  - The Application Manifest SHALL define the number of seconds after the container has started before the liveness probe is initiated. (`/etc/holoscan/app.json#liveness.initialDelaySeconds`).
+
+    - The default value `0` SHALL be assumed when not provided.
+
+  - The Application Manifest SHALL define how often to perform the liveness probe (`/etc/holoscan/app.json#liveness.periodSeconds`).
+
+    - When not provided, the default value `10` SHALL be assumed.
+
+  - The Application Manifest SHALL define the number of seconds after which the probe times out (`/etc/holoscan/app.json#liveness.timeoutSeconds`)
+
+    - The default value `1` SHALL be assumed when not provided.
+
+  - The Application Manifest SHALL define the number of times to perform the probe before considering the service is not alive (`/etc/holoscan/app.json#liveness.failureThreshold`)
+
+    - When not provided, the default value `3` SHALL be assumed.
+
+- The Application Manifest SHOULD define any timeout applied to the Application (`/etc/holoscan/app.json#timeout`).
+
+  - When the value is `0`, timeout SHALL be disabled.
+
+  - When not provided, the default value `0` SHALL be assumed.
+
+- The Application Manifest MUST enable the specification of environment variables for the Application (`/etc/holoscan/app.json#environment`)
+
+  - The data structure is expected to be in `"name": "value" ` members of the object.
+
+  - The field's name will be the name of the environment variable verbatim and must conform to all requirements for environment variables and JSON field names.
+
+  - The field's value will be the value of the environment variable and must conform to all requirements for environment variables.
 
 ### Package Manifest
 
-Provides information about the MAP's package layout. Not intended as a mechanism for controlling how the MAP is used or how the MAP's application is executed.
+#### Table of Package Manifest Fields
 
-> [!IMPORTANT]
-> The format and schema of the Package Manifest has not been defined as part of this document.
-> These items are suggested, but not part of any specification yet.
+| Name                                                 | Required | Default                 | Type        | Format                    | Description                                                                                                   |
+| ---------------------------------------------------- | -------- | ----------------------- | ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `apiVersion`                                         | No       | `0.0.0`                 | string      | semantic version          | Version of the manifest file schema.                                                                          |
+| `applicationRoot`                                    | **Yes**  | `/opt/holoscan/app/`    | string      | absolute file-system path | Absolute file-system path to the folder which contains the Application                                        |
+| `modelRoot`                                          | No       | `/opt/holoscan/models/` | string      | absolute file-system path | Absolute file-system path to the folder which contains the model(s).                                          |
+| `models`                                             | No       | N/A                     | array       | array of objects          | Array of objects which describe models in the package.                                                        |
+| `models[*].name`                                     | **Yes**  | N/A                     | string      | string                    | Name of the model.                                                                                            |
+| `models[*].path`                                     | No       | N/A                     | string      | Relative file-system path | File-system path to the folder which contains the model that is relative to the value defined in `modelRoot`. |
+| `resources`                                          | No       | N/A                     | object      | object                    | Object describing resource requirements for the Application.                                                  |
+| `resources.cpu`                                      | No       | `1`                     | decimal (2) | number                    | Number of CPU cores required by the Application or the Fragment.                                              |
+| `resources.cpuLimit`                                 | No       | N/A                     | decimal (2) | number                    | The CPU core limit for the Application or the Fragment. (1)                                                   |
+| `resources.gpu`                                      | No       | `0`                     | decimal (2) | number                    | Number of GPU devices required by the Application or the Fragment.                                            |
+| `resources.gpuLimit`                                 | No       | N/A                     | decimal (2) | number                    | The GPU device limit for the Application or the Fragment. (1)                                                 |
+| `resources.memory`                                   | No       | `1Gi`                   | string      | memory size               | The memory required by the Application or the Fragment.                                                       |
+| `resources.memoryLimit`                              | No       | N/A                     | string      | memory size               | The memory limit for the Application or the Fragment. (1)                                                     |
+| `resources.gpuMemory`                                | No       | N/A                     | string      | memory size               | The GPU memory required by the Application or the Fragment.                                                   |
+| `resources.gpuMemoryLimit`                           | No       | N/A                     | string      | memory size               | The GPU memory limit for the Application or the Fragment. (1)                                                 |
+| `resources.sharedMemory`                             | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Application or the Fragment.                                                |
+| `resources.fragments`                                | No       | N/A                     | object      | objects                   | Nested objects which describe resources for a Multi-Fragment Application.                                     |
+| `resources.fragments.<fragment-name>`                | **Yes**  | N/A                     | string      | string                    | Name of the fragment.                                                                                         |
+| `resources.fragments.<fragment-name>.cpu`            | No       | `1`                     | decimal (2) | number                    | Number of CPU cores required by the Fragment.                                                                 |
+| `resources.fragments.<fragment-name>.cpuLimit`       | No       | N/A                     | decimal (2) | number                    | The CPU core limit for the Fragment. (1)                                                                      |
+| `resources.fragments.<fragment-name>.gpu`            | No       | `0`                     | decimal (2) | number                    | Number of GPU devices required by the Fragment.                                                               |
+| `resources.fragments.<fragment-name>.gpuLimit`       | No       | N/A                     | decimal (2) | number                    | The GPU device limit for the Fragment. (1)                                                                    |
+| `resources.fragments.<fragment-name>.memory`         | No       | `1Gi`                   | string      | memory size               | The memory required by the Fragment.                                                                          |
+| `resources.fragments.<fragment-name>.memoryLimit`    | No       | N/A                     | string      | memory size               | The memory limit for the Fragment. (1)                                                                        |
+| `resources.fragments.<fragment-name>.gpuMemory`      | No       | N/A                     | string      | memory size               | The GPU memory required by the Fragment.                                                                      |
+| `resources.fragments.<fragment-name>.gpuMemoryLimit` | No       | N/A                     | string      | memory size               | The GPU memory limit for the Fragment. (1)                                                                    |
+| `resources.fragments.<fragment-name>.sharedMemory`   | No       | `64Mi`                  | string      | memory size               | The shared memory required by the Fragment.                                                                   |
+| `version`                                            | No       | 0.0.0                   | string      | semantic version          | Version of the package.                                                                                       |
 
-- Package Manifest MUST be UTF-8 encoded and use the JavaScript Object Notation (JSON) format.
+> [Notes]
+> (1) Use of resource limits depend on the orchestration service or the hosting environement's configuration and implementation.
+> (2) Consider rounding up to a whole number as decimal values may not be supported by all orchestration/hosting services.
 
-- Package Manifest SHOULD support either CRLF and LF style line endings.
+The Package Manifest file provides information about the MAP's package layout. It is not intended as a mechanism for controlling how the MAP is used or how the MAP's Application is executed.
 
-- Package Manifest SHOULD specify the folder which contains the Application (`/etc/monai/pkg.json#application-root`).
+- The Package Manifest MUST be UTF-8 encoded and use the JavaScript Object Notation (JSON) format.
 
-  - When not provided the default path `/opt/monai/app/` will be assumed.
+- The Package Manifest SHOULD support either CRLF or LF style line endings.
 
-- Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/monai/pkg.json#api-version`).
+- The Package Manifest SHOULD specify the folder which contains the application (`/etc/holoscan/pkg.json#applicationRoot`).
 
-  - Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - When not provided, the default path `/opt/holoscan/app/` will be assumed.
 
-- Package Manifest SHOULD provide the version of the tools used to build the package (`/etc/monai/pkg.json#sdk-version`).
+- The Package Manifest SHOULD provide the version of the package file manifest schema (`/etc/holoscan/pkg.json#apiVersion`).
 
-  - SDK version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Manifest schema version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- Package Manifest SHOULD provide the version of the package itself (`/etc/monai/pkg.json#version`).
+- The Package Manifest SHOULD provide the package version of itself (`/etc/holoscan/pkg.json#version`).
 
-  - Package version SHALL be provided as a [semantic version](https://semver.org/) string.
+  - The Package version SHALL be provided as a [semantic version](https://semver.org/) string.
 
-- Package Manifest SHOULD list the models used by the application (`/etc/monai/pkg.json#models`).
+- The Package Manifest SHOULD provide the directory path to the user-provided models. (`/etc/holoscan/pkg.json#modelRoot`).
 
-  - Models SHALL be defined by name (`/etc/monai/pkg.json#models[*].name`).
+  - The value provided must be an absolute path (the first character is `/`).
+
+  - When not provided, the default path `/opt/holoscan/models/` SHALL be assumed.
+
+- The Package Manifest SHOULD list the models used by the application (`/etc/holoscan/pkg.json#models`).
+
+  - Models SHALL be defined by name (`/etc/holoscan/pkg.json#models[*].name`).
 
     - Model names SHALL NOT contain any Unicode whitespace or control characters.
 
     - Model names SHALL NOT exceed 128 bytes in length.
 
-  - Models SHOULD provide a file-system path if they're included in the MAP itself (`/etc/monai/pkg.json#models[*].path`).
+  - Models SHOULD provide a file-system path if they're included in the MAP itself (`/etc/holoscan/pkg.json#models[*].path`).
 
-    - Model path SHOULD be relative to the folder containing the model.
+    - When the value is a relative file-system path (the first character is not `/`), it is relative to the model root directory defined in `/etc/holoscan/pkg.json#modelRoot`.
 
-    - When the model path is a relative file-system path (first character is not `/`), it is relative to the `/opt/monai/models/` folder.
+    - When the value is an absolute file-system path (the first character is `/`), the file-system path is used as-is.
 
-    - When the model path is an absolute file-system path (first character is `/`), the file-system path is used as-is.
+    - Whe no value is provided, the name is assumed as the name of the directory relative to the model root directory defined in `/etc/holoscan/pkg.json#modelRoot`.
 
-  - Models SHOULD be in sub-folders of the `/opt/monai/models/` folder.
+- The Package Manifest SHOULD specify the resources required to execute the Application and the fragments for a Multi-Fragment Application.
 
-- Package Manifest SHOULD specify the resources required to execute the application.
+  This information is used to provision resources when running the containerized application using a compatible application deployment service.
 
-  This information is used to provision resources when running the application using the MONAI Application Server.
+- A classic Application or a single Fragment Application SHALL define its resources in the `/etc/holoscan/pkg.json#resource` object.
 
-  - CPU requirements SHALL be denoted using decimal count of CPU cores (`/etc/monai/pkg.json#resources.cpu`).
+  - The `/etc/holoscan/pkg.json#resource` object is for the whole application. It CAN also be used as a catchall for all fragments in a multi-fragment application where applicable.
 
-  - GPU requirements SHALL be denoted using integer count of GPUs (`/etc/monai/pkg.json#resources.gpu`).
+  - CPU requirements SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.cpu`).
 
-  - Memory requirements SHALL be denoted using decimal values followed by units (`/etc/monai/pkg.json#resources.memory`).
+  - Optional CPU limits SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.cpuLimit`)
 
-    - Supported units SHALL be megabytes (`Mi`) and gigabytes (`Gi`).
+  - GPU requirements SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.gpu`).
 
-    - Example: `1.5Gi`, `2048Mi`
+  - Optional GPU limits SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.gpuLimit`)
 
-  - Shared memory requirements SHALL be denoted using decimal values followed by units (`/etc/monai/pkg.json#resources.shared-memory`).
+  - Memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memory`).
 
-    - Supported units SHALL be megabytes (`Mi`) and gigabytes (`Gi`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
-    - Example: `1.5Gi`, `2048Mi`
+      - Example: `1.5Gi`, `2048Mi`
+
+  - Optional memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.memoryLimit`).
+
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
+
+      - Example: `1.5Gi`, `2048Mi`
+
+  - GPU memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpuMemory`).
+
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
+
+      - Example: `1.5Gi`, `2048Mi`
+
+  - Optional GPU memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.gpuMemoryLimit`).
+
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
+
+      - Example: `1.5Gi`, `2048Mi`
+
+  - Shared memory requirements SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.sharedMemory`).
+
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
+
+      - Example: `1.5Gi`, `2048Mi`
+
+  - Optional shared memory limits SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.sharedMemoryLimit`).
+
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
+
+      - Example: `1.5Gi`, `2048Mi`
 
   - Integer values MUST be positive and not contain any position separators.
 
@@ -327,172 +506,168 @@ Provides information about the MAP's package layout. Not intended as a mechanism
 
     - Example illegal values: `-1`, `1.5`, `2,048`
 
-  - Decimal values MUST be positive, rounded to nearest tenth, use the `.` character to separate whole and fractional values, and not contain any positional separators.
+  - Decimal values MUST be positive, rounded to the nearest tenth, use the dot (`.`) character to separate whole and fractional values, and not contain any positional separators.
 
     - Example legal values: `1`, `1.0`, `0.5`, `2.5`, `1024`
 
     - Example illegal values: `1,024`, `-1.0`, `3.14`
 
-  - When not provided the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `shared-memory="64Mi"` will be assumed.
+  - When not provided, the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `sharedMemory="64Mi"` will be assumed.
 
+- A Multi-Fragment Application SHOULD define its resources in the `/etc/holoscan/pkg.json#resource.fragments.<fragment-name>` object.
 
-#### Table of Package Manifest Fields
+  - When a matching `fragment-name` cannot be found, the `/etc/holoscan/pkg.json#resource` definition is used.
 
-| Name                     | Required | Default | Type    | Format                    | Description                                                                  |
-| ------------------------ | -------- | ------- | ------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `api-version`            | No       | 0.0.0   | string  | semantic version          | Version of the manifest file schema.                                         |
-| `application-root`       | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder older which contains the Application |
-| `models`                 | No       | N/A     | array   | array of objects          | Array of objects which describe models in the package.                       |
-| `models[*].name`         | No       | N/A     | string  | map reference name        | Name of the map which conforms to the map naming rules.                      |
-| `models[*].path`         | **Yes**  | N/A     | string  | absolute file-system path | Absolute file-system path to the folder which contains the model.            |
-| `resources`              | No       | N/A     | object  | object                    | Object describing resource requirements for the Application.                 |
-| `resources.cpu`          | No       | 1       | integer | number                    | Number of CPU cores required by the Application.                             |
-| `resources.gpu`          | No       | 0       | integer | number                    | Number of GPU devices required by the Application.                           |
-| `resource.memory`        | No       | 1Gi     | string  | memory size               | The maximum memory required by the Application.                              |
-| `resource.shared-memory` | No       | 64Mi    | string  | memory size               | The maximum shared memory required by the Application.                       |
-| `sdk-version`            | No       | 0.0.0   | string  | semantic version          | Version of the SDK used to generate the manifest.                            |
-| `version`                | No       | 0.0.0   | string  | semantic version          | Version of the package.                                                      |
+  - Fragment names (`fragment-name`) SHALL NOT contain any Unicode whitespace or control characters.
 
+  - Fragment names (`fragment-name`) SHALL NOT exceed 128 bytes in length.
 
-## Executor
+  - CPU requirements for fragments SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.cpu`).
 
-The MAP Executor (Executor) provides a shim between the runner of a MAP and the MAP's application. Due to the Executor's shim nature, it can be extended beyond its original intent to provide additional functionality.
+  - Optional CPU limits for fragments SHALL be denoted using the decimal count of CPU cores (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.cpuLimit`).
 
-The Executor MUST be provided as part of the MONAI Application SDK.
+  - GPU requirements for fragments SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.gpu`).
 
-The Executor SHALL be stored in the `/opt/monai/executor/` folder.
+  - Optional GPU limits for fragments SHALL be denoted using the decimal count of GPUs (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.gpuLimit`).
 
-The Executor SHALL be the entry-point (or initial process) of a MAP's container.
+  - Memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.memory`).
 
-The Executor SHALL, by default, execute the Application as defined by the Package Manifest and then exit.
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
-The Executor SHALL set initial conditions for the Application when invoking it.
+      - Example: `1.5Gi`, `2048Mi`
 
-The Executor SHALL monitor the Application process and record its CPU, system memory, and GPU utilization metrics.
+  - Optional memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.memoryLimit`).
 
-The Executor SHALL monitor the Application process and enforce any timeout value specified in `/etc/monai/app.json#timeout`.
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
+      - Example: `1.5Gi`, `2048Mi`
 
-### Initial Conditions
+  - GPU memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.gpuMemory`).
 
-The Executor SHOULD provide a customized set of environment variables and command line options to the Application as part of invocation.
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
-- The Executor MUST provide any environment variables specified by `/etc/monai/app.json#environment`.
+      - Example: `1.5Gi`, `2048Mi`
 
-- The Executor MUST provide the command line options specified by `/etc/monai/app.json#command`.
+  - Optional GPU memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.gpuMemoryLimit`).
 
-- The Executor MUST provide the following environment variables to the Application:
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
-  - `MONAI_APPLICATION`: The path to the root of the Application.
+      - Example: `1.5Gi`, `2048Mi`
 
-    - The value is read from the Application Manifest (`/etc/monai/pkg.json#application.location`) by default.
+  - Shared memory requirements for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.sharedMemory`).
 
-  - `MONAI_HOSTNAME`: The name of the host running the MAP (default: `"none"`)
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
-    - The value is expected to be a string.
+      - Example: `1.5Gi`, `2048Mi`
 
-    - Common values are `MONAI Application Runner` and `MONAI Application Server`.
+  - Optional shared memory limits for fragments SHALL be denoted using decimal values followed by units (`/etc/holoscan/pkg.json#resources.fragments.<fragment-name>.sharedMemoryLimit`).
 
-  - `MONAI_HOSTVERSION`: The version of the host running the map (default: `0.0.`).
+    - Supported units SHALL be mebibytes (`MiB`) and gibibytes (`GiB`).
 
-    - Host version SHALL be a [semantic 2.0 formatted](https://semver.org) string.
+      - Example: `1.5Gi`, `2048Mi`
 
-  - `MONAI_INPUTPATH`: The path to the folder where inputs can be expected to be read from (default: `/var/monai/input/`).
+  - Integer values MUST be positive and not contain any position separators.
 
-    - Input path SHALL be an absolute file-system path to a readable folder.
+    - Example legal values: `1`, `42`, `2048`
 
-  - `MONAI_JOBID`: The unique identity of the job the MAP is being executed by (default: `"00000000000000000000000000000000`).
+    - Example illegal values: `-1`, `1.5`, `2,048`
 
-    - Job identifier SHALL be a string matching `/[A-F0-9a-f]{32}/`.
+  - Decimal values MUST be positive, rounded to the nearest tenth, use the dot (`.`) character to separate whole and fractional values, and not contain any positional separators.
 
-  - `MONAI_OUTPUTPATH`: The path to the folder where outputs are expected to written to (default: `/var/monai/output/`).
+    - Example legal values: `1`, `1.0`, `0.5`, `2.5`, `1024`
 
-    - Output path SHALL be an absolute file-system path to a writable folder.
+    - Example illegal values: `1,024`, `-1.0`, `3.14`
 
-  - `MONAI_TIMEOUT`: The timeout, in seconds, being applied to the MAP (default: `0`).
+  - When not provided, the default values of `cpu=1`, `gpu=0`, `memory="1Gi"`, and `sharedMemory="64Mi"` will be assumed.
 
-    - Timeout SHALL be an integer number in the range of [`0`, `65536`].
+## Supplemental Application Files
 
-    - A value of `0` SHALL indicate that no timeout is being applied to the Application.
+- A MAP SHOULD package supplemental application files provided by the user.
 
-  - `MONAI_WORKDIR`: The Application's working directory (default: `/var/monai/`).
+  - Supplemental files SHOULD be in sub-folders of the `/opt/holoscan/docs/` folder.
 
-    - The value provided must be an absolute path (first character is `/`).
+  - Supplemental files include, but are not limited to, the following:
 
-    - When not provided the default path `/var/monai/` SHALL be assumed.
+    - README.md
 
-  - `MONAI_MODELPATH`: The Application's working directory (default: `/opt/monai/models/`).
+    - License.txt
 
-    - The value provided must be an absolute path (first character is `/`).
+    - Changelog.txt
 
-    - When not provided the default path `/opt/monai/models/` SHALL be assumed.
+    - EULA
 
-#### Table of Environment Variables
+    - Documentation
 
-| Variable            | Default                                    | Format              | Description                                      |
-| ------------------- | ------------------------------------------ | ------------------- | ------------------------------------------------ |
-| `MONAI_APPLICATION` | `/etc/monai/pkg.json#application.location` | Folder Path         | Path to the Application.                         |
-| `MONAI_HOSTNAME`    | `None`                                     | String              | Name of the host running the MAP.                |
-| `MONAI_HOSTVERSION` | `0.0.0`                                    | Semantic Version    | Version of the host running the MAP.             |
-| `MONAI_INPUTPATH`   | `/var/monai/input/`                        | Folder Path         | Path to the input folder for the Application.    |
-| `MONAI_JOBID`       | `00000000000000000000000000000000`         | `/[A-F0-9a-f]{32}/` | Unique identity of the job the MAP is executing. |
-| `MONAI_OUTPUTPATH`  | `/var/monai/output/`                       | Folder Path         | Path to the output folder for the Application.   |
-| `MONAI_TIMEOUT`     | `/etc/monai/app.json#timeout`              | Integer             | Timeout, in seconds, applied to the Application. |
-| `MONAI_WORKDIR`     | `/var/monai/`                              | Folder Path         | Path to the Application's working directory.     |
-| `MONAI_MODELPATH`   | `/opt/monai/models/`                       | Folder Path         | Path to the Application's models directory.     |
+    - Third-party licenses
 
+### Container Behavior and Interaction
 
-### Manifest Export
+A MAP is a single container supporting the following defined behaviors when started.
 
-The Executor is able to function in a special mode in which it will export the MAP's manifest files to a mounted folder.
-This enables external tooling and services to read the manifest without any special tooling beyond the ability to run the MAP correctly.
+#### Default Behavior
 
-The Executor MUST detect when the following folders have been mounted.
+When a MAP is started from the CLI or other means without any parameters, the MAP shall execute the contained application. The MAP internally may use `Entrypoint`, `CMD`, or a combination of both.
 
-- `/var/run/monai/export/app/`: when detected, the Executor will copy the contents of `/opt/monai/app/` to the folder.
+#### Manifest Export
 
-- `/var/run/monai/export/config/`: when detected, the Executor will copy `/etc/monai/app.json` and `/etc/monai/pkg.json` to the folder.
+A MAP SHOULD provide at least one method to access the _embedded application_, _models_, _licenses_, _README_, or _manifest files_, namely, `app.json` and `package.json`.
 
-- `/var/run/monai/export/models/`: when detected, the Executor will copy the contents of `/opt/monai/models/` to the folder.
+- The Method SHOULD provide a container command, _`show`_, to print one or more manifest files to the console.
 
-- `/var/run/monai/export/`: when detected without any of the above being detected, the Executor SHALL:
+- The Method SHOULD provide a container command, _`export`_, to copy one or more manifest files to a mounted volume path, as described below
 
-  - copy the contents of `/opt/monai/app/` to `/var/run/monai/export/app/`.
+  - `/var/run/holoscan/export/app/`: when detected, the Method copies the contents of `/opt/holoscan/app/` to the folder.
 
-  - copy `/etc/monai/app.json` and `/etc/monai/pkg.json` to `/var/run/monai/export/config/`.
+  - `/var/run/holoscan/export/config/`: when detected, the Method copies `/var/holoscan/app.yaml`, `/etc/holoscan/app.json` and `/etc/holoscan/pkg.json` to the folder.
 
-  - copy the contents of `/opt/monai/models/` to `/var/run/monai/export/models/`.
+  - `/var/run/holoscan/export/models/`: when detected, the Method copies the contents of `/opt/holoscan/models/` to the folder.
 
-When the Executor performs an export operation, it SHALL NOT invoke the Application.
+  - `/var/run/holoscan/export/docs/`: when detected, the Method copies the contents of `/opt/holoscan/docs/` to the folder.
 
+  - `/var/run/holoscan/export/`: when detected without any of the above being detected, the Method SHALL copy all of the above.
+
+Since a MAP is an OCI compliant container, a user can also run a MAP and log in to an interactive shell, using a method supported by the container engine and its command line interface, e.g. Docker supports this by setting the entrypoint option. The files in the MAP can then be opened or copied to the mapped volumes with shell commands or scripts. A specific implementation of a MAP may choose to streamline such a process with scripts and applicable user documentation.
 
 ### Table of Important Paths
 
-| Path                            | Purpose                                                                                                           |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `/etc/monai/`                   | MAP manifests and immutable configuration files.                                                                  |
-| `/etc/monai/app.json`           | Application Manifest file.                                                                                        |
-| `/etc/monai/pkg.json`           | Package Manifest file.                                                                                            |
-| `/opt/monai/app/`               | Application code, scripts, and other files.                                                                       |
-| `/opt/monai/executor/`          | Executor binaries.                                                                                                |
-| `/opt/monai/models/`            | AI models. Each model should be in a separate sub-folder.                                                         |
-| `/var/monai/`                   | Default working directory.                                                                                        |
-| `/var/monai/input/`             | Default input directory.                                                                                          |
-| `/var/monai/output/`            | Default output directory.                                                                                         |
-| `/var/run/monai/export/`        | Special case folder, causes the Executor to export contents related to the app. (see: [export](#manifest-export)) |
-| `/var/run/monai/export/app/`    | Special case folder, causes the Executor to export the contents of `/opt/monai/app/` to the folder.               |
-| `/var/run/monai/export/config/` | Special case folder, causes the Executor to export `/etc/monai/app.json` and `/etc/monai/pkg.json` to the folder. |
-| `/var/run/monai/export/models/` | Special case folder, causes the Executor to export the contents of `/opt/monai/models/` to the folder.            |
-
+| Path                               | Purpose                                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `/etc/holoscan/`                   | MAP manifests and immutable configuration files.                                                                         |
+| `/etc/holoscan/app.json`           | Application Manifest file.                                                                                               |
+| `/etc/holoscan/pkg.json`           | Package Manifest file.                                                                                                   |
+| `/opt/holoscan/app/`               | Application code, scripts, and other files.                                                                              |
+| `/opt/holoscan/models/`            | AI models. Each model should be in a separate sub-folder.                                                                |
+| `/opt/holoscan/docs/`              | Documentation, licenses, EULA, changelog, etc…                                                                           |
+| `/var/holoscan/`                   | Default working directory.                                                                                               |
+| `/var/holoscan/input/`             | Default input directory.                                                                                                 |
+| `/var/holoscan/output/`            | Default output directory.                                                                                                |
+| `/var/run/holoscan/export/`        | Special case folder, causes the Script to export contents related to the app. (see: [Manifest Export](#manifest-export)) |
+| `/var/run/holoscan/export/app/`    | Special case folder, causes the Script to export the contents of `/opt/holoscan/app/` to the folder.                     |
+| `/var/run/holoscan/export/config/` | Special case folder, causes the Script to export `/etc/holoscan/app.json` and `/etc/holoscan/pkg.json` to the folder.    |
+| `/var/run/holoscan/export/models/` | Special case folder, causes the Script to export the contents of `/opt/holoscan/models/` to the folder.                  |
 
 ## Package Layout Diagram
 
 ```
-                        ╔═══════════════════════════════╗
-  Added by Builder ---> ║ Executor │                    ║ <-- Developer code,
-                        ╟──────────┤    Application     ║     probably Python,
-  Created by Builder -> ║ Manifest │                    ║     using MONAI API.
-                        ╟──────────┴────────────────────╢
-                        ║            Model(s)           ║ <-- Optional pre-trained models.
-                        ╚═══════════════════════════════╝
+                             ╔═════════════════════════════════════════════════╗
+  Added by Builder --->      ║ Method of accessing │                           ║ <-- Developer code in
+                             ║ packaged data       │                           ║     Python, C++ using
+                             ╟─────────-----------─┤        Application        ║     Holoscan SDK, MONAI DeployApp SDK
+  Created by App Packager -> ║ Manifest            │                           ║
+                             ╟─────────────────────┤                           ║
+  Provided by the user ->    ║ Docs                │                           ║
+                             ╟─────────────────────┴───────────────────────────╢
+                             ║            Model(s)                             ║ <-- Optional pre-trained models.
+                             ╚═════════════════════════════════════════════════╝
 ```
+
+## Release Notes
+
+### 1.0.0
+
+- Add support for Holoscan applications.
+- Change all manifest key names from `kebab-case` to `camelCase` .
+
+### 0.1.0
+
+- The first release of MONAI Application Package specification
