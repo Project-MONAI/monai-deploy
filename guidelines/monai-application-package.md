@@ -608,13 +608,13 @@ A MAP is a single container supporting the following defined behaviors when star
 
 When a MAP is started from the CLI or other means without any parameters, the MAP shall execute the contained application. The MAP internally may use `Entrypoint`, `CMD`, or a combination of both.
 
-#### Manifest Export
+#### Manifest Extraction
 
 A MAP SHOULD provide at least one method to access the _embedded application_, _models_, _licenses_, _README_, or _manifest files_, namely, `app.json` and `package.json`.
 
 - The Method SHOULD provide a container command, _`show`_, to print one or more manifest files to the console.
 
-- The Method SHOULD provide a container command, _`export`_, to copy one or more manifest files to a mounted volume path, as described below
+- The Method SHOULD provide a container command, _`extract`_, to copy one or more manifest files to a mounted volume path, as described below
 
   - `/var/run/holoscan/export/app/`: when detected, the Method copies the contents of `/opt/holoscan/app/` to the folder.
 
@@ -641,10 +641,10 @@ Since a MAP is an OCI compliant container, a user can also run a MAP and log in 
 | `/var/holoscan/`                   | Default working directory.                                                                                               |
 | `/var/holoscan/input/`             | Default input directory.                                                                                                 |
 | `/var/holoscan/output/`            | Default output directory.                                                                                                |
-| `/var/run/holoscan/export/`        | Special case folder, causes the Script to export contents related to the app. (see: [Manifest Export](#manifest-export)) |
-| `/var/run/holoscan/export/app/`    | Special case folder, causes the Script to export the contents of `/opt/holoscan/app/` to the folder.                     |
-| `/var/run/holoscan/export/config/` | Special case folder, causes the Script to export `/etc/holoscan/app.json` and `/etc/holoscan/pkg.json` to the folder.    |
-| `/var/run/holoscan/export/models/` | Special case folder, causes the Script to export the contents of `/opt/holoscan/models/` to the folder.                  |
+| `/var/run/holoscan/export/`        | Special case folder, causes the Script to extract contents related to the app. (see: [Manifest Extraction](#manifest-extraction)) |
+| `/var/run/holoscan/export/app/`    | Special case folder, causes the Script to extract the contents of `/opt/holoscan/app/` to the folder.                     |
+| `/var/run/holoscan/export/config/` | Special case folder, causes the Script to extract `/etc/holoscan/app.json` and `/etc/holoscan/pkg.json` to the folder.    |
+| `/var/run/holoscan/export/models/` | Special case folder, causes the Script to extract the contents of `/opt/holoscan/models/` to the folder.                  |
 
 ## Package Layout Diagram
 
