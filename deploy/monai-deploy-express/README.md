@@ -110,6 +110,21 @@ The first time calling `docker compose up` may take longer as it needs to pull a
   Failed to create CoreCLR, HRESULT: 0x80070008
   ```
   
+  - If you start Monai Deploy Express from within a container, you are likely to have problems when starting the system with 'docker compose up', such as:
+    ```
+    ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
+    ```
+   
+- If you start Monai Deploy Express from within a container, you are likely to have problems when starting the system with 'docker compose up', such as:
+  ```
+  Error response from daemon: failed to create shim: runc create failed: unable to start container process: error during init: 
+  error mounting "/workspace/monai-deploy-express/configs/informatics-gateway.json:/opt/monai/ig.appsettings.json" 
+  (via /proc/self/fd/6), flags: 0x5000: not a directory: unknown: are you trying to mount a directory onto a file (or vice-versa)?
+  ```
+  _CAUSE - Docker Compose has some problems resolving files and directories, which only seem to happen inside a container. When launching the hosting container, if you mount a volume to the original host directory using the same path internally, this should work e.g._
+  ```
+  -v /home/myuser/monai-deploy-express:/home/myuser/monai-deploy-express
+  ```
 ## Running a MONAI Deploy Workflow
 
 This package includes Orthanc running and connected to the Informatics Gateway, with all required AE Titles pre-configured.
