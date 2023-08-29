@@ -27,7 +27,7 @@ MONAI Deploy was released at **MICCAI 2021** and was part of the [**MONAI 2021 B
     and distributed amongst MONAI Working Group member organizations.
 - [**MONAI Deploy App SDK**](https://github.com/Project-MONAI/monai-deploy-app-sdk) - set of development tools to create MAPs out of MONAI / Pytorch models.
 - [**MONAI Deploy Informatics Gateway**](https://github.com/Project-MONAI/monai-deploy-informatics-gateway) - I/0 for DICOM and FHIR.
-- [**MONAI Deploy Workflow Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on the [**clinical workflow specification**](https://github.com/Project-MONAI/monai-deploy-workflow-manager/blob/main/guidelines/mwm-workflow-spec.md) and incoming requests.
+- [**MONAI Deploy Workflow Manager**](https://github.com/Project-MONAI/monai-deploy-workload-manager) - Orchestrates what has to be executed based on the [**clinical workflow specification**](https://github.com/Project-MONAI/monai-deploy-workflow-manager/blob/main/docs/setup/mwm-workflow-spec.md) and incoming requests.
 - [**MONAI Deploy Express**](https://github.com/Project-MONAI/monai-deploy/tree/main/deploy/monai-deploy-express) - End-to-end pipeline for testing and validation of MONAI Applications (MAPs).
 
 
