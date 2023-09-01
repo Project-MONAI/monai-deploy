@@ -1,0 +1,243 @@
+# Default values for local.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+mig:
+  name: informatics-gateway
+  serviceName: mig
+  repository: ghcr.io/project-monai/monai-deploy-informatics-gateway
+  tag: 0.4.0-rc.1
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  serviceType: NodePort
+  dimsePort: 104
+  apiPort: 5000
+  databaseSize: 1Gi
+  logsSize: 1Gi
+  payloadSize: 10Gi
+  appSettings:
+    storageWatermark: 90
+    rejectUnknownSources: true
+    scuAeTItle: MONAISCU
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+mwm:
+  name: workflow-manager
+  serviceName: mwm
+  repository: ghcr.io/project-monai/monai-deploy-workflow-manager
+  tag: develop-latest
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  serviceType: NodePort
+  apiPort: 5000
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+mtm:
+  name: task-manager
+  serviceName: mtm
+  repository: ghcr.io/project-monai/monai-deploy-task-manager
+  tag: develop-latest
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  serviceType: NodePort
+  apiPort: 5000
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+minio:
+  name: minio
+  serviceName: minio
+  repository: minio/minio
+  tag: latest
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  username: monai
+  password: minioadmin
+  serviceType: NodePort
+  size: 50Gi
+  port: 9000
+  consolePort: 9001
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+mongo:
+  name: mongodb
+  serviceName: mongo
+  repository: mongo
+  tag: 6.0
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  username: monai
+  password: monai
+  serviceType: NodePort
+  size: 1Gi
+  port: 27017
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+orthanc:
+  name: orthanc
+  serviceName: orthanc
+  repository: osimis/orthanc
+  tag: latest-full
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  username: monai
+  password: monai
+  size: 50Gi
+  serviceType: NodePort
+  port: 8042
+  dimsePort: 4242
+  appSettings:
+    dicomAet: ORTHANC
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+rabbitmq:
+  name: rabbitmq
+  serviceName: rabbitmq
+  repository: rabbitmq
+  tag: 3.12.4-management
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  username: monai
+  password: monai
+  erlangCookie: SWQOKODSQALRPCLNMEQG
+  vhost: monaideploy
+  serviceType: NodePort
+  size: 1Gi
+  port: 5672
+  mgtPort: 15672
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "monai-deploy-service-account"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+### Argo Workflow ###
+argo-workflows:
+  workflow:
+    serviceAccount:
+      create: true
+      name: "argo-workflow"
+    rbac:
+      create: true
+  controller:
+    workflowNamespaces:
+      - default
+  server:
+    extraArgs:
+      - --auth-mode=server

@@ -1,0 +1,9 @@
+dependencies:
+- name: argo-workflows
+  repository: https://argoproj.github.io/argo-helm
+  version: 0.33.1
+- name: local-path-provisioner
+  repository: https://charts.containeroo.ch
+  version: 0.0.24
+digest: sha256:6c6f22833d7b04577238156ef04787025ff112a3fce93e1b7aef4664cf483b4b
+generated: "2023-09-01T14:33:33.804030468-07:00"

@@ -1,0 +1,98 @@
+{
+  "MonaiDeployAuthentication": {
+    "BypassAuthentication": true
+  },
+  "WorkloadManagerDatabase": {
+    "DatabaseName": "WorkloadManager"
+  },
+  "WorkflowManager": {
+    "taskTimeoutMinutes": 60,
+    "argoTtlStrategySuccessSeconds": 60,
+    "argoTtlStrategyFailureSeconds": 60,
+    "minArgoTtlStrategySeconds": 30,
+    "endpointSettings": {
+      "defaultPageSize": 10,
+      "maxPageSize": 1000000
+    },
+    "TaskManager": {
+      "concurrency": 1,
+      "plug-ins": {
+        "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.ArgoPlugin, Monai.Deploy.WorkflowManager.TaskManager.Argo",
+      },
+      "meta-data": {
+        "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.Repositories.ArgoMetadataRepository, Monai.Deploy.WorkflowManager.TaskManager.Argo",
+      },
+      "argoPluginArguments": {
+        "server_url": "http://monai-deploy-argo-workflows-server:2746",
+        "initContainerCpuLimit": "1",
+        "initContainerMemoryLimit": "500Mi",
+        "waitContainerCpuLimit": "1",
+        "waitContainerMemoryLimit": "500Mi",
+        "messageGeneratorContainerCpuLimit": "1",
+        "messageGeneratorContainerMemoryLimit": "500Mi",
+        "messageSenderContainerCpuLimit": "1",
+        "messageSenderContainerMemoryLimit": "500Mi"
+      },
+      "argoExitHookSendMessageContainerImage": "ghcr.io/project-monai/monai-deploy-task-manager-callback:0.1.27"
+    },
+    "messaging": {
+      "retries": {
+        "retryDelays": "3"
+      },
+      "topics": {
+        "workflowRequest": "md.workflow.request",
+        "exportComplete": "md.export.complete",
+        "exportRequestPrefix": "md.export.request",
+        "taskCallback": "md.tasks.callback",
+        "aideClinicalReviewRequest": "aide.clinical_review.request",
+        "aideClinicalReviewCancelation": "aide.clinical_review.cancellation",
+        "notificationEmailRequest": "aide.notification_email.request",
+        "notificationEmailCancelation": "aide.notification_email.cancellation",
+      },
+      "dicomAgents": {
+        "dicomWebAgentName": "monaidicomweb",
+        "scuAgentName": "monaiscu"
+      },
+      "argoCallback": {
+        "argoRabbitOverrideEnabled": false,
+        "argoRabbitOverrideEndpoint": "monai-deploy-argo-workflows-server"
+      },
+      "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
+      "publisherSettings": {
+        "exchange": "monaideploy",
+        "deadLetterExchange": "deadLetterExchange",
+        "deliveryLimit": "5",
+        "requeueDelay": "0"
+      },
+      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+      "subscriberSettings": {
+        "exchange": "monaideploy",
+        "deadLetterExchange": "monaideploy-dead-letter",
+        "exportRequestQueue": "export_tasks",
+        "deliveryLimit": 3,
+        "requeueDelay": 30
+      }
+    },
+    "storage": {
+      "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
+      "settings": {
+        "region": "eu-west-2",
+        "bucket": "monaideploy",
+        "securedConnection": false,
+        "executableLocation": "mc",
+        "serviceName": "test"
+      }
+    }
+  },
+  "Kestrel": {
+    "EndPoints": {
+      "Http": {
+        "Url": "http://+:5000"
+      }
+    },
+    "LogHttpRequestQuery": false,
+    "LogHttpRequestBody": false,
+    "LogHttpResponseBody": true
+  },
+  "AllowedHosts": "*"
+}

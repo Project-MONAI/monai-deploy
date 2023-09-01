@@ -1,0 +1,75 @@
+# MONAI Deploy Helm Charts
+
+
+## Install Tools
+```bash
+# Install kubernetes tools
+sudo apt-get install -y -q kubelet kubectl kubeadm
+sudo apt-mark hold kubelet kubeadm kubectl
+
+# Install Helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
+## Installing Kubernetes
+Select one of the following Kubernetes distribution:
+- [k3s](https://k3s.io/)
+  ```bash
+  curl -sfL https://get.k3s.io | sh -s - --flannel-backend host-gw --flannel-external-i     
+  # Copy default configuration
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  ```
+
+- [K8s](https://kubernetes.io/)
+  ```bash
+  kubeadm init --pod-network-cidr=192.168.0.0/16
+  # Copy default configuration
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+  ```
+
+# Install MONAI Deploy
+
+Build & download dependencies
+
+```bash
+helm dependency build
+```
+
+If you are reinstalling, run the following to remove existing `local-path-provisioner` Storage Class:
+
+```bash
+kubectl delete StorageClass local-path
+```
+
+Install:
+
+```bash
+helm upgrade -i monai-deploy .
+```
+
+Upon successfully installation, optinally follow the on screen instructions to initialize Informatics Gateway & Orthanc.
+
+Uninstall:
+```
+helm uninstall  monai-deploy
+```
+
+
+## Advanced Configuration
+
+Most of the configurations may be found in the following files:
+
+- `values.yaml`: contains container image repo, application secrets, ports, etc...
+- `files/informatics-gateway.json`: Informatics Gateway specific configurations...
+- `files/workflow-manager.json`: Workflow Manager specific configurations...
+- `files/task-manager.json`: Task Manager specific configurations...
+- `files/orthanc.json`: Orthanc specific configurations...
+
+# 

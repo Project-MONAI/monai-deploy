@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mig.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: external-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: mig
+        role: external-svcs
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      {{ include "init.mongo" . }}
+      {{ include "init.rabbitmq" . }}
+      {{ include "init.minio" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.mig.repository }}:{{ .Values.mig.tag }}"
+          imagePullPolicy: {{ .Values.mig.pullPolicy }}
+          ports:
+            - name: dimse-port
+              containerPort: 104
+              protocol: TCP
+            - name: mig-api-port
+              containerPort: 5000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health/
+              port: 5000
+          readinessProbe:
+            httpGet:
+              path: /health/
+              port: 5000
+          volumeMounts:
+          - name: {{ .Release.Name }}-logs
+            mountPath: /opt/monai/ig/logs
+            subPath: logs
+          - name: {{ .Release.Name }}-payloads
+            mountPath: /payloads
+            subPath: payloads
+          - name: {{ .Release.Name }}-mig-config
+            mountPath: "/opt/monai/ig/appsettings.json"
+            subPath: "appsettings.json"
+          resources:
+            {{- toYaml .Values.mig.resources | nindent 12 }}
+          env:
+            - name: InformaticsGateway__dicom__scu__aeTitle
+              value: {{ .Values.mig.appSettings.scuAeTItle}}
+            - name: InformaticsGateway__dicom__scp__rejectUnknownSources
+              value: {{ .Values.mig.appSettings.rejectUnknownSources | quote }}
+            - name: InformaticsGateway__storage__watermarkPercent
+              value: {{ .Values.mig.appSettings.storageWatermark | quote }}
+            - name: InformaticsGateway__messaging__publisherSettings__endpoint
+              value: {{ .Values.rabbitmq.serviceName }}
+            - name: InformaticsGateway__messaging__publisherSettings__virtualHost
+              value: {{ .Values.rabbitmq.vhost }}
+            - name: InformaticsGateway__messaging__subscriberSettings__endpoint
+              value: {{ .Values.rabbitmq.serviceName }}
+            - name: InformaticsGateway__messaging__subscriberSettings__virtualHost
+              value: {{ .Values.rabbitmq.vhost }}
+            - name: InformaticsGateway__storage__settings__endpoint
+              value: {{ .Values.minio.serviceName }}:{{ .Values.minio.port }}
+            - name: InformaticsGateway__storage__settings__accessKey
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.name }}-secret
+                  key: username
+            - name: InformaticsGateway__storage__settings__accessToken
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.name }}-secret
+                  key: password
+            - name: InformaticsGateway__messaging__subscriberSettings__username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: username
+            - name: InformaticsGateway__messaging__subscriberSettings__password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: password
+            - name: InformaticsGateway__messaging__publisherSettings__username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: username
+            - name: InformaticsGateway__messaging__publisherSettings__password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: password
+            - name: ConnectionStrings__InformaticsGatewayDatabase
+              value: mongodb://{{ .Values.mongo.username}}:{{ .Values.mongo.password}}@{{ .Values.mongo.serviceName}}:{{ .Values.mongo.port}}
+      volumes:
+        - name: {{ .Release.Name }}-logs
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.mig.name }}-logs-volume-claim
+        - name: {{ .Release.Name }}-payloads
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.mig.name }}-payloads-volume-claim
+        - name: {{ .Release.Name }}-mig-config
+          configMap:
+            name: {{ .Release.Name }}-mig-configmap
+            items:
+            - key: appsettings.json
+              path: "appsettings.json"
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

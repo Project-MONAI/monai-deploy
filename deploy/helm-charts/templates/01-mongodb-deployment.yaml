@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mongo.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: internal-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: mongodb
+        role: internal-svcs
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.mongo.repository }}:{{ .Values.mongo.tag }}"
+          imagePullPolicy: {{ .Values.mongo.pullPolicy }}
+          ports:
+            - name: mongo-port
+              containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+          - name: {{ .Release.Name }}-mongodb
+            mountPath: /data/db
+            subPath: db
+          resources:
+            {{- toYaml .Values.mongo.resources | nindent 12 }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: {{ .Values.mongo.username }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: {{ .Values.mongo.password }}
+          livenessProbe:
+            exec:
+              command: 
+              - /bin/bash 
+              - -c
+              - "echo 'db.runCommand(\"ping\").ok' | /usr/bin/mongosh localhost:{{ .Values.mongo.port }}/productiondb --quiet"
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+          readinessProbe:
+            exec:
+              command: 
+              - /bin/bash 
+              - -c
+              - "echo 'db.runCommand(\"ping\").ok' | /usr/bin/mongosh localhost:{{ .Values.mongo.port }}/productiondb --quiet"
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+      volumes:
+        - name: {{ .Release.Name }}-mongodb
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.mongo.name }}-volume-claim
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

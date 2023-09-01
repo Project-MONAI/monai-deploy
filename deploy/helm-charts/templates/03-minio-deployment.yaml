@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.minio.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: internal-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: minio
+        role: internal-svcs 
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          args: 
+            - server
+            - /data
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.minio.repository }}:{{ .Values.minio.tag }}"
+          imagePullPolicy: {{ .Values.minio.pullPolicy }}
+          ports:
+            - name: minio-port
+              containerPort: 9000
+              protocol: TCP
+            - name: minio-cport
+              containerPort: 9001
+              protocol: TCP
+          volumeMounts:
+          - name: {{ .Release.Name }}-minio-data
+            mountPath: /data
+            subPath: data
+          - name: {{ .Release.Name }}-minio-config
+            mountPath: /root/.minio
+            subPath: .minio
+          resources:
+            {{- toYaml .Values.minio.resources | nindent 12 }}
+          env:
+            - name: MINIO_ROOT_USER
+              value: {{ .Values.minio.username }}
+            - name: MINIO_ROOT_PASSWORD
+              value: {{ .Values.minio.password }}
+            - name: MINIO_ADDRESS
+              value: ":{{ .Values.minio.port }}"
+            - name: MINIO_CONSOLE_ADDRESS
+              value: ":{{ .Values.minio.consolePort }}"
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: {{ .Values.minio.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: {{ .Values.minio.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+      volumes:
+        - name: {{ .Release.Name }}-minio-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.minio.name }}-data-volume-claim
+        - name: {{ .Release.Name }}-minio-config
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.minio.name }}-config-volume-claim
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

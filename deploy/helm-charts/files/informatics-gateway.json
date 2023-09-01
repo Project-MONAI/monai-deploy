@@ -1,0 +1,85 @@
+{
+    "MonaiDeployAuthentication": {
+      "bypassAuthentication": true
+    },
+    "ConnectionStrings": {
+        "Type": "mongodb",
+        "DatabaseName": "InformaticsGateway"
+    },
+    "InformaticsGateway": {
+      "dicom": {
+        "scp": {
+          "port": 104,
+          "logDimseDatasets": false,
+          "rejectUnknownSources": true
+        },
+        "scu": {
+          "aeTitle": "MONAISCU",
+          "logDimseDatasets": false,
+          "logDataPDUs": false
+        }
+      },
+      "messaging": {
+        "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
+        "publisherSettings": {
+          "exchange": "monaideploy"
+        },
+        "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+        "subscriberSettings": {
+          "exchange": "monaideploy",
+          "exportRequestQueue": "export_tasks",
+          "deadLetterExchange": "monaideploy-dead-letter",
+          "deliveryLimit": 3,
+          "requeueDelay": 30
+        }
+      },
+      "storage": {
+        "localTemporaryStoragePath": "/payloads",
+        "remoteTemporaryStoragePath": "/incoming",
+        "bucketName": "monaideploy",
+        "storageRootPath": "/payloads",
+        "temporaryBucketName": "monaideploy",
+        "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
+        "watermarkPercent": 75,
+        "reserveSpaceGB": 5,
+        "settings": {
+          "securedConnection": false,
+          "region": "local",
+          "executableLocation": "/bin/mc",
+          "serviceName": "MinIO",
+          "createBuckets": "monaideploy"
+        }
+      },
+      "hl7": {
+        "port": 2575,
+        "maximumNumberOfConnections": 10,
+        "clientTimeout": 60000,
+        "sendAck": true
+      },
+      "dicomWeb": {
+        "plugins": []
+      },
+      "plugins": {
+        "remoteApp": {
+          "ReplaceTags": "AccessionNumber"
+        }
+      }
+    },
+    "Kestrel": {
+      "EndPoints": {
+        "Http": {
+          "Url": "http://+:5000"
+        }
+      }
+    },
+    "AllowedHosts": "*",
+    "Cli": {
+      "Runner": "Docker",
+      "HostDataStorageMount": "~/.mig/data",
+      "HostPlugInsStorageMount": "~/.mig/plug-ins",
+      "HostDatabaseStorageMount": "~/.mig/database",
+      "HostLogsStorageMount": "~/.mig/logs",
+      "InformaticsGatewayServerEndpoint": "http://localhost:5000",
+      "DockerImagePrefix": "ghcr.io/project-monai/monai-deploy-informatics-gateway"
+    }
+  }

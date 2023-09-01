@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mwm.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mwm.serviceType }}
+  ports:
+    - port: {{ .Values.mwm.apiPort }}
+      targetPort: mwm-api-port
+      protocol: TCP
+      name: mwm-api
+  selector:
+    role: external-svcs
+    {{- include "local.selectorLabels" . | nindent 4 }}
