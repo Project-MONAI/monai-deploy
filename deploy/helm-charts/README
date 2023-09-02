@@ -1,7 +1,10 @@
 # MONAI Deploy Helm Charts
 
 
-## Install Tools
+## Prerequisites
+
+### Install Tools
+
 ```bash
 # Install kubernetes tools
 sudo apt-get install -y -q kubelet kubectl kubeadm
@@ -11,11 +14,12 @@ sudo apt-mark hold kubelet kubeadm kubectl
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
-## Installing Kubernetes
+### Install Kubernetes
 Select one of the following Kubernetes distribution:
-- [k3s](https://k3s.io/)
+- [k3s](https://k3s.io/) [[Requirements](https://docs.k3s.io/installation/requirements)]
   ```bash
-  curl -sfL https://get.k3s.io | sh -s - --flannel-backend host-gw --flannel-external-i     
+  curl -sfL https://get.k3s.io | sh -s - --flannel-backend host-gw --service-node-port-range 104-32767 --flannel-external-ip
+
   # Copy default configuration
   mkdir -p $HOME/.kube
   sudo cp -i /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
@@ -23,6 +27,8 @@ Select one of the following Kubernetes distribution:
   ```
 
 - [K8s](https://kubernetes.io/)
+  For detail installation instructions with GPU support, see [cloud-native-stack](https://github.com/NVIDIA/cloud-native-stack/tree/master/install-guides).
+
   ```bash
   kubeadm init --pod-network-cidr=192.168.0.0/16
   # Copy default configuration
@@ -31,12 +37,19 @@ Select one of the following Kubernetes distribution:
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
   kubectl taint nodes --all node-role.kubernetes.io/control-plane-
-
   ```
 
-# Install MONAI Deploy
+  Note: in order to use the default DIMSE port 104, you must update `/etc/kubernetes/manifests/kube-apiserver.yaml`:
 
-Build & download dependencies
+  ```bash
+  sudo nano /etc/kubernetes/manifests/kube-apiserver.yaml  
+  ```
+
+  Insert, `--service-node-port-range=104-32767` under `spec.containers.command`.
+
+## Install MONAI Deploy
+
+### Build & download dependencies
 
 ```bash
 helm dependency build
@@ -48,7 +61,7 @@ If you are reinstalling, run the following to remove existing `local-path-provis
 kubectl delete StorageClass local-path
 ```
 
-Install:
+### Install MONAI Deploy:
 
 ```bash
 helm upgrade -i monai-deploy .
@@ -56,13 +69,13 @@ helm upgrade -i monai-deploy .
 
 Upon successfully installation, optinally follow the on screen instructions to initialize Informatics Gateway & Orthanc.
 
-Uninstall:
+### Uninstall MONAI Deploy:
 ```
-helm uninstall  monai-deploy
+helm uninstall monai-deploy
 ```
 
 
-## Advanced Configuration
+### Advanced Configuration
 
 Most of the configurations may be found in the following files:
 
@@ -72,4 +85,26 @@ Most of the configurations may be found in the following files:
 - `files/task-manager.json`: Task Manager specific configurations...
 - `files/orthanc.json`: Orthanc specific configurations...
 
-# 
+## Uninstall
+
+### Uninstall Kubernetes
+
+- [k3s](https://k3s.io/)
+  ```bash
+  kubectl delete StorageClass local-path
+  /usr/local/bin/k3s-uninstall.sh
+  ```
+
+- [K8s](https://kubernetes.io/)
+  ```bash
+  kubectl delete StorageClass local-path
+  sudo kubeadm reset
+  ```
+
+### Uninstall Tools
+
+```bash
+sudo apt-get purge -y kubeadm kubectl kubelet kubernetes-cni kube* helm
+sudo apt-get autoremove   -y
+sudo rm -rf ~/.kube
+```

@@ -14,7 +14,7 @@
 # limitations under the License.
 
 echo Waiting for MONAI Deploy service to be ready...
-kubectl wait --for=condition=Ready po -l 'app in (mig,mwm,mtm)' >/dev/null
+kubectl wait --timeout=180s --for=condition=Ready po -l 'app in (mig,mwm,mtm)' >/dev/null
 sleep 3
 echo ""
 
