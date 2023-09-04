@@ -53,15 +53,6 @@ Uplift of peak load by 25%
 
 # Throughput #
 
-## Peak 1 Hour ##
-
-| Modality   | Transactions | Model executions |
-| ---------- | ------------ | ---------------- |
-| X-ray      | 120          | 120              |
-| Ultrasound | 50           | 5                |
-| CT         | 30           | 21               |
-| MRI        | 25           | 17.5             |
-
 ## Avg 1 Hour ##
 
 | Modality   | Transactions | Model executions |
@@ -70,6 +61,14 @@ Uplift of peak load by 25%
 | Ultrasound | 28           | 2.8                |
 | CT         | 10           | 7               |
 | MRI        | 13           | 9.1             |
+## Peak 1 Hour ##
+
+| Modality   | Transactions | Model executions |
+| ---------- | ------------ | ---------------- |
+| X-ray      | 120          | 120              |
+| Ultrasound | 50           | 5                |
+| CT         | 30           | 21               |
+| MRI        | 25           | 17.5             |
 
 ## Stress 1 Hour ##
 
@@ -135,7 +134,9 @@ Send through the same study 5 times, with a 90 second gap to get average metric 
 
 ### Baseline 2 ###
 #### Description ####
-Retest of the MIG following a change to how it was saving data to MinIO.
+Retest of the MIG following a change to how it saved data to MinIO which resulted in ~ 50% reduction in time.
+
+#### Metrics ####
 
 |          | DICOM Payload Processed | DICOM Payload Processed |
 | -------- | ----------------------- | ----------------------- |
@@ -143,8 +144,30 @@ Retest of the MIG following a change to how it was saving data to MinIO.
 | CT       | 14                      | 16.2                    |
 
 ### Load (Avg) ###
+
 #### Description ####
+To evaluate the performance of MONAI Deploy under typical or average usage conditions for a large Trust. Please see [Avg 1 Hour](#avg-1-hour) for details of volumetrics
 #### Metrics ####
+| DICOM Payload Processed | DICOM Payload Processed | Task Dispatched | Task Dispatched | Task Created  | Task Created | Task Updated  | Task Updated |
+| ----------------------- | ----------------------- | --------------- | --------------- | ------------- | ------------ | ------------- | ------------ |
+| Average (sec)           | Max (sec)               | Average (sec)   | Max (sec)       | Average (sec) | Max (sec)    | Average (sec) | Max (sec)    |
+| 5.8                     | 8.8                     | 0.8             | 1.3             | 1.9           | 26.4         | \-            | \-           |
+
+** DICOM Payload Processed was only tested with low instance studies. Bug to be raised which ensures that the async nature of the sending of DICOMs doesn't timeout after 60 seconds.
+
+** Task updated metrics were not useful at high load as systems are very chatty, work needs to be done to differentiate useful messages better.
+
+#### Failure/ Successful transactions ####
+
+|                   | Transactions | Errors | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------- | ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Payload processed | 101          | 0      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Task Dispatched   | 88           | 52     | WorkflowRequestRequeuePayloadProcessError was thrown 52 times for 14 payloads, this was due to the way the WorkflowManager was processing "Unable to locate a matching workflow for the given workflow request". It would seem that the WorkflowManager requeues WorkflowRequetEvents that do not match a Workflow AET and then throws an exception because that payload is already received and saved in Mongo. This does not affect functionality or performance |
+| Task Created      | 88           | 0      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Task Updated      | \-           | \-     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Small-app         | 62           | 0      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Medium-app        | 14           | 0      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Large-app         | 12           | 0      |
 
 ### Load (Peak) ###
 #### Description ####
