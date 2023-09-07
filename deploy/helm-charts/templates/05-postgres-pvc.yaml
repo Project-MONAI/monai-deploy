@@ -1,0 +1,13 @@
+{{- if index .Values "argo-workflows" "controller" "persistence" "archive" -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.postgres.name }}-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: {{ .Values.postgres.size }}
+{{- end }}

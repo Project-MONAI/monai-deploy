@@ -1,0 +1,18 @@
+{{- if index .Values "argo-workflows" "controller" "persistence" "archive" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgres.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.postgres.serviceType }}
+  ports:
+    - port: {{ .Values.postgres.port }}
+      targetPort: postgres-port
+      protocol: TCP
+      name: postgres
+  selector:
+    role: internal-svcs
+    {{- include "local.selectorLabels" . | nindent 4 }}
+{{- end }}

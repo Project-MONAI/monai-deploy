@@ -1,0 +1,98 @@
+{{- if index .Values "argo-workflows" "controller" "persistence" "archive" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: internal-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: postgres
+        role: internal-svcs
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.postgres.repository }}:{{ .Values.postgres.tag }}"
+          imagePullPolicy: {{ .Values.postgres.pullPolicy }}
+          ports:
+            - name: postgres-port
+              containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+          - name: {{ .Release.Name }}-postgresdb
+            mountPath: /var/lib/postgresql/data
+            subPath: data
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.name }}-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.name }}-secret
+                  key: password
+          livenessProbe:
+            exec:
+              command: 
+              - /bin/bash 
+              - -c
+              - pg_isready -U postgres
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+          readinessProbe:
+            exec:
+              command: 
+              - /bin/bash 
+              - -c
+              - pg_isready -U postgres
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+      volumes:
+        - name: {{ .Release.Name }}-postgresdb
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.postgres.name }}-volume-claim
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

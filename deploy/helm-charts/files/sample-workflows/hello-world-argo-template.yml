@@ -7,8 +7,6 @@ spec:
   entrypoint: hello-world-pipeline
   podGC:
     strategy: OnWorkflowSuccess
-    # Uncomment for Argo 3.5
-    # deleteDelayDuration: 300s
   arguments: {}
   templates:
     - name: hello-world-pipeline
@@ -62,4 +60,4 @@ spec:
           - /bin/sh
         args:
           - '-c'
-          - date && cp -r /var/monai/input/* /var/monai/output && date
+          - date && cp -vr /var/monai/input/* /var/monai/output && date

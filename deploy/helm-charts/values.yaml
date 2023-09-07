@@ -190,6 +190,32 @@ rabbitmq:
     #   cpu: 100m
     #   memory: 128Mi
 
+postgres:
+  name: postgres
+  serviceName: postgres
+  repository: postgres
+  tag: 15.4
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  username: monai
+  password: monai
+  erlangCookie: SWQOKODSQALRPCLNMEQG
+  vhost: monaideploy
+  serviceType: NodePort
+  size: 1Gi
+  port: 5432
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -239,6 +265,73 @@ argo-workflows:
     workflowNamespaces:
       # include your namespace here
       - default
+    persistence:
+      archive: true
+      postgresql:
+        host: postgres
+        port: 5432
+        database: postgres
+        tableName: argo_workflows
+        userNameSecret:
+          name: postgres-secret
+          key: username
+        passwordSecret:
+          name: postgres-secret
+          key: password
+    extraInitContainers:
+      # change the servicename and namespace below if needed <serviceName>.<namespace>.svc.cluster.local
+      - name: init-postgres
+        image: docker.io/postgres:14
+        env:
+        - name: PGHOST
+          value: postgres
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: PGDATABASE
+          value: postgres
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while ! psql -c 'select 1' > /dev/null 2>&1; do
+            echo "waiting for Postgres"
+            sleep 1
+          done
   server:
     extraArgs:
       - --auth-mode=server
+    extraInitContainers:
+      # change the servicename and namespace below if needed <serviceName>.<namespace>.svc.cluster.local
+      - name: init-postgres
+        image: docker.io/postgres:14
+        env:
+        - name: PGHOST
+          value: postgres
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: PGDATABASE
+          value: postgres
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while ! psql -c 'select 1' > /dev/null 2>&1; do
+            echo "waiting for Postgres"
+            sleep 1
+          done
