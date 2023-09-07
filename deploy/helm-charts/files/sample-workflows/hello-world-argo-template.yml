@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: hello-world-template
+  generateName: hello-world-
+spec:
+  entrypoint: hello-world-pipeline
+  podGC:
+    strategy: OnWorkflowSuccess
+    # Uncomment for Argo 3.5
+    # deleteDelayDuration: 300s
+  arguments: {}
+  templates:
+    - name: hello-world-pipeline
+      inputs: {}
+      outputs: {}
+      metadata: {}
+      steps:
+        - - name: hello-world-step
+            template: hello-world
+            arguments:
+              artifacts:
+                - name: input
+                  s3:
+                    accessKeySecret:
+                      name: hello-world-minio-secrets
+                      key: accesskey
+                    secretKeySecret:
+                      name: hello-world-minio-secrets
+                      key: secretkey
+                    key: argo/inputs/artifacts/input
+    - name: hello-world
+      inputs:
+        artifacts:
+          - name: input
+            path: /var/monai/input
+            s3:
+              accessKeySecret:
+                name: hello-world-minio-secrets
+                key: accesskey
+              secretKeySecret:
+                name: hello-world-minio-secrets
+                key: secretkey
+              key: argo/inputs/artifacts/input
+      outputs:
+        artifacts:
+          - name: output
+            path: /var/monai/output
+            s3:
+              bucket: hello-world-bucket
+              accessKeySecret:
+                name: hello-world-minio-secrets
+                key: accesskey
+              secretKeySecret:
+                name: hello-world-minio-secrets
+                key: secretkey
+      metadata: {}
+      container:
+        name: ''
+        image: alpine:latest
+        command:
+          - /bin/sh
+        args:
+          - '-c'
+          - date && cp -r /var/monai/input/* /var/monai/output && date

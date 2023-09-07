@@ -13,7 +13,7 @@ mig:
   imagePullSecrets: []
   serviceType: NodePort
   dimsePort: 104
-  apiPort: 5000
+  apiPort: 6000
   databaseSize: 1Gi
   logsSize: 1Gi
   payloadSize: 10Gi
@@ -37,11 +37,11 @@ mwm:
   name: workflow-manager
   serviceName: mwm
   repository: ghcr.io/project-monai/monai-deploy-workflow-manager
-  tag: develop-latest
+  tag: 2023.5.0-beta.161
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   serviceType: NodePort
-  apiPort: 5000
+  apiPort: 6000
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -58,11 +58,11 @@ mtm:
   name: task-manager
   serviceName: mtm
   repository: ghcr.io/project-monai/monai-deploy-task-manager
-  tag: develop-latest
+  tag: 2023.5.0-beta.161
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   serviceType: NodePort
-  apiPort: 5000
+  apiPort: 6000
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -237,6 +237,7 @@ argo-workflows:
       create: true
   controller:
     workflowNamespaces:
+      # include your namespace here
       - default
   server:
     extraArgs:

@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo Waiting for MONAI Deploy service to be ready...
-kubectl wait --timeout=180s --for=condition=Ready po -l 'app in (mig,mwm,mtm)' >/dev/null
+echo Waiting for MONAI Deploy services to be ready...
+kubectl wait --timeout=180s --for=condition=Ready po -l 'role in (external-svcs,internal-svcs)' >/dev/null
 sleep 3
 echo ""
 
@@ -86,11 +86,11 @@ echo - POD:         $(kubectl get po --namespace $1 -l app=rabbitmq -o jsonpath=
 echo - API:         http://$NODE_IP:$RABBITMQ_API_PORT
 echo - Console:     http://$NODE_IP:$RABBITMQ_CONSOLE_PORT
 echo ====================================
-echo MongoDB:       
+echo MongoDB:
 echo - POD:         $(kubectl get po --namespace $1 -l app=mongodb -o jsonpath={..metadata.name})
 echo - POrt:         $MONGO_PORT
 echo ====================================
-echo Argo Workflow:       
+echo Argo Workflow:
 echo - POD:         $(kubectl get po --namespace $1 -l app=mongodb -o jsonpath={..metadata.name})
 echo - Console:         http://$ARGO_IP:$ARGO_PORT
 echo - Commands:
