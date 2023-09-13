@@ -1,0 +1,30 @@
+{{- if index .Values "argo-workflows" "controller" "persistence" "archive" -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.postgres.name }}-volume
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.postgres.name }}-volume-class
+  capacity:
+    storage: {{ .Values.postgres.size }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.postgres.storagePath }}
+    type: "DirectoryOrCreate"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.postgres.name }}-volume-claim
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.postgres.name }}-volume-class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.postgres.size }}
+{{- end }}

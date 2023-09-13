@@ -11,7 +11,7 @@
         "scp": {
           "port": 104,
           "logDimseDatasets": false,
-          "rejectUnknownSources": true
+          "rejectUnknownSources": false
         },
         "scu": {
           "aeTitle": "MONAISCU",
@@ -47,7 +47,7 @@
           "region": "local",
           "executableLocation": "/bin/mc",
           "serviceName": "MinIO",
-          "createBuckets": "monaideploy"
+          "createBuckets": "monaideploy,argologs"
         }
       },
       "hl7": {

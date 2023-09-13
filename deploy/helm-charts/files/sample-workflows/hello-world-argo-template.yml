@@ -55,9 +55,9 @@ spec:
       metadata: {}
       container:
         name: ''
-        image: alpine:latest
+        image: ubuntu:latest
         command:
           - /bin/sh
         args:
           - '-c'
-          - date && cp -vr /var/monai/input/* /var/monai/output && date
+          - date -Ins && cp -r /var/monai/input/* /var/monai/output && date -Ins

@@ -102,13 +102,18 @@ printf "\nDeleting existing MONAI Deploy AE Title..."
 curl -s --request DELETE "http://$NODE_IP:$MIG_API_PORT/config/ae/MONAI-DEPLOY" >/dev/null
 printf "\nDeleting existing DICOM Source..."
 curl -s --request DELETE "http://$NODE_IP:$MIG_API_PORT/config/source/ORTHANC" >/dev/null
+curl -s --request DELETE "http://$NODE_IP:$MIG_API_PORT/config/source/STORESCU" >/dev/null
 printf "\nDeleting existing DICOM Destination..."
 curl -s --request DELETE "http://$NODE_IP:$MIG_API_PORT/config/destination/ORTHANC" >/dev/null
 
-printf "\nAdding MONAI Deploy AE Title..."
-curl -s --request POST "http://$NODE_IP:$MIG_API_PORT/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\"}" >/dev/null
-printf "\nAdding DICOM Source..."
+printf "\nAdding MONAI Deploy AE Title (MONAI-DEPLOY)..."
+curl -s --request POST "http://$NODE_IP:$MIG_API_PORT/config/ae" --header "Content-Type: application/json" --data-raw "{\"name\": \"MONAI-DEPLOY\",\"aeTitle\": \"MONAI-DEPLOY\", \"timeout\": 3}" >/dev/null
+printf "\nAdding DICOM Source (ORTHANC)..."
 curl -s --request POST "http://$NODE_IP:$MIG_API_PORT/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$ORTHANC_IP\",\"aeTitle\": \"ORTHANC\"}" >/dev/null
+
+HOST_IP=$(hostname -I | awk '{print $1}')
+printf "\nAdding DICOM Source (STORESCU @ $HOST_IP)..."
+curl -s --request POST "http://$NODE_IP:$MIG_API_PORT/config/source" --header "Content-Type: application/json" --data-raw "{\"name\": \"STORESCU\",\"hostIp\": \"$HOST_IP\",\"aeTitle\": \"STORESCU\"}" >/dev/null
 printf "\nAdding DICOM Destination..."
 curl -s --request POST "http://$NODE_IP:$MIG_API_PORT/config/destination" --header "Content-Type: application/json" --data-raw "{\"name\": \"ORTHANC\",\"hostIp\": \"$NODE_IP\",\"port\": $ORTHANC_DIMSE_PORT,\"aeTitle\": \"ORTHANC\"}" >/dev/null
 

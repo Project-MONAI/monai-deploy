@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.mongo.name }}-volume
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.mongo.name }}-volume-class
+  capacity:
+    storage: {{ .Values.mongo.size }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.mongo.storagePath }}
+    type: "DirectoryOrCreate"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.mongo.name }}-volume-claim
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.mongo.name }}-volume-class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongo.size }}

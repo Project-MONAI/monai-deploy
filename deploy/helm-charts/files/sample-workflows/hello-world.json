@@ -5,7 +5,7 @@
 	"informatics_gateway": {
 		"ae_title": "MONAI-DEPLOY",
 		"data_origins": [
-			"ORTHANC"
+			"ORTHANC", "STORESCU"
 		],
 		"export_destinations": [
 			"ORTHANC"

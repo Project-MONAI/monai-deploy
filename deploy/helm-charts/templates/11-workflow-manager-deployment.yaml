@@ -53,6 +53,9 @@ spec:
               path: /health
               port: 5000
           volumeMounts:
+          - name: {{ .Release.Name }}-logs
+            mountPath: /opt/monai/wm/logs
+            subPath: logs
           - name: {{ .Release.Name }}-mwm-config
             mountPath: "/opt/monai/wm/appsettings.json"
             subPath: "appsettings.json"
@@ -102,6 +105,9 @@ spec:
                   name: {{ .Values.rabbitmq.name }}-secret
                   key: password
       volumes:
+        - name: {{ .Release.Name }}-logs
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.mwm.name }}-logs-volume-claim
         - name: {{ .Release.Name }}-mwm-config
           configMap:
             name: {{ .Release.Name }}-mwm-configmap

@@ -31,8 +31,5 @@ sources:
   - https://github.com/Project-MONAI/monai-deploy-workflow-manager/
 dependencies:
   - name: argo-workflows
-    version: 0.33.1
+    version: 0.33.3
     repository: https://argoproj.github.io/argo-helm
-  - name: local-path-provisioner
-    version: 0.0.24
-    repository: https://charts.containeroo.ch

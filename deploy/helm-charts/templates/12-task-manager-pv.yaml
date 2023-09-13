@@ -1,0 +1,29 @@
+# mtm log volume and volume claim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.mtm.name }}-log-volume
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.mtm.name }}-log-volume-class
+  capacity:
+    storage: {{ .Values.mtm.logsSize }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.mtm.storagePath }}
+    type: "DirectoryOrCreate"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.mtm.name }}-logs-volume-claim
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.mtm.name }}-log-volume-class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mtm.logsSize }}
