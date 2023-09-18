@@ -1,0 +1,59 @@
+# MinIO data volume and volume claim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.minio.name }}-data-volume
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.minio.name }}-data-volume-class
+  capacity:
+    storage: {{ .Values.minio.dataSize }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.minio.storagePath }}
+    type: "DirectoryOrCreate"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.minio.name }}-data-volume-claim
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.minio.name }}-data-volume-class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.minio.dataSize }}
+---
+# MinIO config volume and volume claim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.minio.name }}-config-volume
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.minio.name }}-config-volume-class
+  capacity:
+    storage: {{ .Values.minio.configSize }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.minio.storagePath }}
+    type: "DirectoryOrCreate"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.minio.name }}-config-volume-claim
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.minio.name }}-config-volume-class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.minio.configSize }}

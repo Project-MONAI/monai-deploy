@@ -1,0 +1,29 @@
+# mwm log volume and volume claim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.mwm.name }}-log-volume
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.mwm.name }}-log-volume-class
+  capacity:
+    storage: {{ .Values.mwm.logsSize }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.mwm.storagePath }}
+    type: "DirectoryOrCreate"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.mwm.name }}-logs-volume-claim
+spec:
+  storageClassName: {{ .Release.Name }}-{{ .Values.mwm.name }}-log-volume-class
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mwm.logsSize }}

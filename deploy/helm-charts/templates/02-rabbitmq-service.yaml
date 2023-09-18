@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.rabbitmq.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.rabbitmq.serviceType }}
+  ports:
+    - port: {{ .Values.rabbitmq.port }}
+      targetPort: rabbitmq-port
+      protocol: TCP
+      name: rabbitmq
+    - port: {{ .Values.rabbitmq.mgtPort }}
+      targetPort: rabbitmq-mport
+      protocol: TCP
+      name: rabbitmq-management
+  selector:
+    role: internal-svcs
+    {{- include "local.selectorLabels" . | nindent 4 }}

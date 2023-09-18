@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.orthanc.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.orthanc.serviceType }}
+  ports:
+    - port: {{ .Values.orthanc.port }}
+      targetPort: orthanc-port
+      protocol: TCP
+      name: orthanc
+    - port: {{ .Values.orthanc.dimsePort }}
+      targetPort: orthanc-dimse
+      protocol: TCP
+      name: orthanc-dimse
+  selector:
+    role: internal-svcs
+    {{- include "local.selectorLabels" . | nindent 4 }}

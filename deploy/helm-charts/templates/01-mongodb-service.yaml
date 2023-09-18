@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mongo.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mongo.serviceType }}
+  ports:
+    - port: {{ .Values.mongo.port }}
+      targetPort: mongo-port
+      protocol: TCP
+      name: mongo
+  selector:
+    role: internal-svcs
+    {{- include "local.selectorLabels" . | nindent 4 }}

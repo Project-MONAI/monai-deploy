@@ -1,0 +1,65 @@
+{
+	"name": "hello-world",
+	"version": "1.0.0",
+	"description": "Hello MONAI Deploy!",
+	"informatics_gateway": {
+		"ae_title": "MONAI-DEPLOY",
+		"data_origins": [
+			"ORTHANC", "STORESCU"
+		],
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "copy-file-list",
+			"description": "Copes files from input directory",
+			"type": "argo",
+			"args": {
+                "namespace": "default",
+                "workflow_template_name": "hello-world-template",
+                "server_url": "http://monai-deploy-argo-workflows-server:2746",
+                "allow_insecure": "true"
+			},
+            "task_destinations": [
+                {
+                    "name": "export-data"
+                }
+            ],
+			"artifacts": {
+				"input": [
+					{
+                        "name": "input",
+                        "value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+                "output": [
+                    {
+                        "name": "output"
+                    }
+                ]
+			}
+		},
+        {
+            "id": "export-data",
+            "description": "Export data back to Orthanc",
+            "type": "export",
+            "export_destinations": [
+                {
+                    "name": "ORTHANC"
+                }
+            ],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "output",
+                        "value": "{{ context.executions.copy-file-list.artifacts.output }}",
+                        "mandatory": true
+                    }
+                ]
+            }
+        }
+	]
+}

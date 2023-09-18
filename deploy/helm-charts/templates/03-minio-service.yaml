@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.minio.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.minio.serviceType }}
+  ports:
+    - port: {{ .Values.minio.port }}
+      targetPort: minio-port
+      protocol: TCP
+      name: minio
+    - port: {{ .Values.minio.consolePort }}
+      targetPort: minio-cport
+      protocol: TCP
+      name: minio-console
+  selector:
+    role: internal-svcs
+    {{- include "local.selectorLabels" . | nindent 4 }}

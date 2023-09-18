@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mtm.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: external-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: mtm
+        role: external-svcs
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      {{ include "init.mongo" . }}
+      {{ include "init.rabbitmq" . }}
+      {{ include "init.minio" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.mtm.repository }}:{{ .Values.mtm.tag }}"
+          imagePullPolicy: {{ .Values.mtm.pullPolicy }}
+          ports:
+            - name: mtm-api-port
+              containerPort: 5000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+          volumeMounts:
+          - name: {{ .Release.Name }}-logs
+            mountPath: /opt/monai/wm/logs
+            subPath: logs
+          - name: {{ .Release.Name }}-mtm-config
+            mountPath: "/opt/monai/wm/appsettings.json"
+            subPath: "appsettings.json"
+          resources:
+            {{- toYaml .Values.mtm.resources | nindent 12 }}
+          env:
+            - name: WorkloadManagerDatabase__ConnectionString
+              value: mongodb://{{ .Values.mongo.username}}:{{ .Values.mongo.password}}@{{ .Values.mongo.serviceName}}:{{ .Values.mongo.port}}
+            - name: WorkflowManager__messaging__publisherSettings__endpoint
+              value: {{ .Values.rabbitmq.serviceName }}
+            - name: WorkflowManager__messaging__publisherSettings__virtualHost
+              value: {{ .Values.rabbitmq.vhost }}
+            - name: WorkflowManager__messaging__subscriberSettings__endpoint
+              value: {{ .Values.rabbitmq.serviceName }}
+            - name: WorkflowManager__messaging__subscriberSettings__virtualHost
+              value: {{ .Values.rabbitmq.vhost }}
+            - name: WorkflowManager__storage__settings__endpoint
+              value: {{ .Values.minio.serviceName }}:{{ .Values.minio.port }}
+            - name: WorkflowManager__storage__settings__accessKey
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.name }}-secret
+                  key: username
+            - name: WorkflowManager__storage__settings__accessToken
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.name }}-secret
+                  key: password
+            - name: WorkflowManager__messaging__subscriberSettings__username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: username
+            - name: WorkflowManager__messaging__subscriberSettings__password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: password
+            - name: WorkflowManager__messaging__publisherSettings__username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: username
+            - name: WorkflowManager__messaging__publisherSettings__password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.name }}-secret
+                  key: password
+      volumes:
+        - name: {{ .Release.Name }}-logs
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.mtm.name }}-logs-volume-claim
+        - name: {{ .Release.Name }}-mtm-config
+          configMap:
+            name: {{ .Release.Name }}-mtm-configmap
+            items:
+            - key: appsettings.json
+              path: "appsettings.json"
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

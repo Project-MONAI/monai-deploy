@@ -1,0 +1,71 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: liver-seg-template
+  generateName: liver-seg-
+spec:
+  entrypoint: liver-seg-pipeline
+  podGC:
+    strategy: OnWorkflowSuccess
+  arguments: {}
+  templates:
+    - name: liver-seg-pipeline
+      inputs: {}
+      outputs: {}
+      metadata: {}
+      steps:
+        - - name: liver-seg-step
+            template: liver-seg
+            arguments:
+              artifacts:
+                - name: input
+                  s3:
+                    accessKeySecret:
+                      name: liver-seg-minio-secrets
+                      key: accesskey
+                    secretKeySecret:
+                      name: liver-seg-minio-secrets
+                      key: secretkey
+                    key: argo/inputs/artifacts/input
+    - name: liver-seg
+      inputs:
+        artifacts:
+          - name: input
+            path: /var/monai/input
+            s3:
+              accessKeySecret:
+                name: liver-seg-minio-secrets
+                key: accesskey
+              secretKeySecret:
+                name: liver-seg-minio-secrets
+                key: secretkey
+              key: argo/inputs/artifacts/input
+      outputs:
+        artifacts:
+          - name: output
+            path: /var/monai/output
+            s3:
+              accessKeySecret:
+                name: liver-seg-minio-secrets
+                key: accesskey
+              secretKeySecret:
+                name: liver-seg-minio-secrets
+                key: secretkey
+      metadata: {}
+      container:
+        name: ""
+        image: ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0
+        command:
+          - /bin/sh
+        args:
+          - '-c'
+          - date -Ins && python3 -u /opt/monai/app/app.py && date -Ins
+        env:
+          - name: "MONAI_INPUTPATH"
+            value: "/var/monai/input/"
+          - name: "MONAI_OUTPUTPATH"
+            value: "/var/monai/output/"
+          - name: "MONAI_MODELPATH"
+            value: "/opt/monai/models/"
+          - name: "MONAI_WORKDIR"
+            value: "/var/monai/"

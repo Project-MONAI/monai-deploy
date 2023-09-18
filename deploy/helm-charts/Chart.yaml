@@ -1,0 +1,35 @@
+apiVersion: v2
+name: monai-deploy
+description: MONAI Deploy for local deployment
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "0.1.0"
+keywords:
+  - ai
+  - dicom
+  - dicomweb
+  - ehr
+  - emr
+  - fhir
+  - healthcare
+  - hl7
+  - monai-deploy
+  - medical-imaging
+  - radiology
+home: https://github.com/Project-MONAI/monai-deploy
+sources:
+  - https://github.com/Project-MONAI/monai-deploy-informatics-gateway
+  - https://github.com/Project-MONAI/monai-deploy-workflow-manager/
+dependencies:
+  - name: argo-workflows
+    version: 0.33.3
+    repository: https://argoproj.github.io/argo-helm

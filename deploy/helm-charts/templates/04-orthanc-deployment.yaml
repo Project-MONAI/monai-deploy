@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.orthanc.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: internal-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: orthanc
+        role: internal-svcs
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.orthanc.repository }}:{{ .Values.orthanc.tag }}"
+          imagePullPolicy: {{ .Values.orthanc.pullPolicy }}
+          ports:
+            - name: orthanc-port
+              containerPort: 8042
+              protocol: TCP
+            - name: orthanc-dimse
+              containerPort: 4242
+              protocol: TCP
+          volumeMounts:
+          - name: {{ .Release.Name }}-orthancdb
+            mountPath: /var/lib/orthanc/db
+            subPath: db
+          - name: {{ .Release.Name }}-orthanc-config
+            mountPath: "/etc/orthanc/orthanc.json"
+            subPath: "orthanc.json"
+          resources:
+            {{- toYaml .Values.orthanc.resources | nindent 12 }}
+          env:
+            - name: VERBOSE_ENABLED
+              value: "true"
+            - name: DICOM_WEB_PLUGIN_ENABLED
+              value: "true"
+            - name: CONNECTIVITY_CHECKS_PLUGIN_ENABLED
+              value: "true"
+            - name: ORTHANC__DICOM_AET
+              value: {{ .Values.orthanc.appSettings.dicomAet }}
+            - name: ORTHANC__REGISTERED_USERS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.orthanc.name }}-secret
+                  key: users
+            - name: ORTHANC__DICOM_MODALITIES
+              value: |
+                {
+                  "MONAI-DEPLOY": ["MONAI-DEPLOY", "{{ .Values.mig.serviceName }}", {{ .Values.mig.dimsePort }}]
+                }
+          livenessProbe:
+            exec:
+              command: 
+              - /bin/bash 
+              - -c
+              - "/probes/test-aliveness.py"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+          readinessProbe:
+            exec:
+              command: 
+              - /bin/bash 
+              - -c
+              - "/probes/test-aliveness.py"
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+      volumes:
+        - name: {{ .Release.Name }}-orthancdb
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.orthanc.name }}-volume-claim
+        - name: {{ .Release.Name }}-orthanc-config
+          configMap:
+            name: {{ .Release.Name }}-orthanc-configmap
+            items:
+            - key: orthanc.json
+              path: "orthanc.json"
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

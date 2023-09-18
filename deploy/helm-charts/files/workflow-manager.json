@@ -1,0 +1,86 @@
+{
+  "WorkloadManagerDatabase": {
+    "DatabaseName": "WorkloadManager"
+  },
+  "MonaiDeployAuthentication": {
+    "BypassAuthentication": true
+  },
+  "WorkflowManager": {
+    "endpointSettings": {
+      "defaultPageSize": 10,
+      "maxPageSize": 1000000
+    },
+    "TaskManager": {
+      "concurrency": 1,
+      "taskTimeoutMinutes": 60,
+      "perTaskTypeTimeoutMinutes": {
+      },
+      "plug-ins": {
+        "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.ArgoPlugin, Monai.Deploy.WorkflowManager.TaskManager.Argo",
+        "test": "Monai.Deploy.WorkflowManager.TaskManager.TestPlugin.TestPlugin, Monai.Deploy.WorkflowManager.TaskManager.TestPlugin"
+      },
+      "meta-data": {
+        "argo": "Monai.Deploy.WorkflowManager.TaskManager.Argo.Repositories.ArgoMetadataRepository, Monai.Deploy.WorkflowManager.TaskManager.Argo",
+        "test": "Monai.Deploy.WorkflowManager.TaskManager.TestPlugin.Repositories.TestPluginRepository, Monai.Deploy.WorkflowManager.TaskManager.TestPlugin"
+      }
+    },
+    "messaging": {
+      "retries": {
+        "retryDelays": "3"
+      },
+      "topics": {
+        "workflowRequest": "md.workflow.request",
+        "exportComplete": "md.export.complete",
+        "exportRequestPrefix": "md.export.request",
+        "callbackRequest": "md.tasks.callback",
+        "aideClinicalReviewRequest": "aide.clinical_review.request"
+      },
+      "dicomAgents": {
+        "dicomWebAgentName": "monaidicomweb",
+        "scuAgentName": "monaiscu"
+      },
+      "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
+      "publisherSettings": {
+        "exchange": "monaideploy",
+        "deadLetterExchange": "deadLetterExchange",
+        "deliveryLimit": "5",
+        "requeueDelay": "0"
+      },
+      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+      "subscriberSettings": {
+        "exchange": "monaideploy",
+        "deadLetterExchange": "monaideploy-dead-letter",
+        "exportRequestQueue": "export_tasks",
+        "deliveryLimit": 3,
+        "requeueDelay": 30
+      }
+    },
+    "storage": {
+      "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
+      "settings": {
+        "region": "eu-west-2",
+        "bucket": "monaideploy",
+        "securedConnection": false,
+        "executableLocation": "mc",
+        "serviceName": "monaideploy"
+      }
+    },
+    "dicomTagsDisallowed": "PatientName,PatientID,IssuerOfPatientID,TypeOfPatientID,IssuerOfPatientIDQualifiersSequence,SourcePatientGroupIdentificationSequence,GroupOfPatientsIdentificationSequence,SubjectRelativePositionInImage,PatientBirthDate,PatientBirthTime,PatientBirthDateInAlternativeCalendar,PatientDeathDateInAlternativeCalendar,PatientAlternativeCalendar,PatientSex,PatientInsurancePlanCodeSequence,PatientPrimaryLanguageCodeSequence,PatientPrimaryLanguageModifierCodeSequence,QualityControlSubject,QualityControlSubjectTypeCodeSequence,StrainDescription,StrainNomenclature,StrainStockNumber,StrainSourceRegistryCodeSequence,StrainStockSequence,StrainSource,StrainAdditionalInformation,StrainCodeSequence,GeneticModificationsSequence,GeneticModificationsDescription,GeneticModificationsNomenclature,GeneticModificationsCodeSequence,OtherPatientIDsRETIRED,OtherPatientNames,OtherPatientIDsSequence,PatientBirthName,PatientAge,PatientSize,PatientSizeCodeSequence,PatientBodyMassIndex,MeasuredAPDimension,MeasuredLateralDimension,PatientWeight,PatientAddress,InsurancePlanIdentificationRETIRED,PatientMotherBirthName,MilitaryRank,BranchOfService,MedicalRecordLocatorRETIRED,ReferencedPatientPhotoSequence,MedicalAlerts,Allergies,CountryOfResidence,RegionOfResidence,PatientTelephoneNumbers,PatientTelecomInformation,EthnicGroup,Occupation,SmokingStatus,AdditionalPatientHistory,PregnancyStatus,LastMenstrualDate,PatientReligiousPreference,PatientSpeciesDescription,PatientSpeciesCodeSequence,PatientSexNeutered,AnatomicalOrientationType,PatientBreedDescription,PatientBreedCodeSequence,BreedRegistrationSequence,BreedRegistrationNumber,BreedRegistryCodeSequence,ResponsiblePerson,ResponsiblePersonRole,ResponsibleOrganization,PatientComments,ExaminedBodyThickness"
+  },
+  "InformaticsGateway": {
+    "apiHost": "http://mig:5000",
+    "username": "",
+    "password": ""
+  },
+  "Kestrel": {
+    "EndPoints": {
+      "Http": {
+        "Url": "http://+:5000"
+      }
+    },
+    "LogHttpRequestQuery": false,
+    "LogHttpRequestBody": true,
+    "LogHttpResponseBody": true
+  },
+  "AllowedHosts": "*"
+}

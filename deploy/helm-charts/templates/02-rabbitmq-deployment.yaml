@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.rabbitmq.serviceName }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      role: internal-svcs
+      {{- include "local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: rabbitmq
+        role: internal-svcs
+        {{- include "local.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "local.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.rabbitmq.repository }}:{{ .Values.rabbitmq.tag }}"
+          imagePullPolicy: {{ .Values.rabbitmq.pullPolicy }}
+          ports:
+            - name: rabbitmq-port
+              containerPort: 5672
+              protocol: TCP
+            - name: rabbitmq-mport
+              containerPort: 15672
+              protocol: TCP
+          volumeMounts:
+          - name: {{ .Release.Name }}-rabbitmqdb
+            mountPath: /var/lib/rabbitmq/mnesia/
+            subPath: mnesia
+          resources:
+            {{- toYaml .Values.rabbitmq.resources | nindent 12 }}
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: {{ .Values.rabbitmq.username }}
+            - name: RABBITMQ_DEFAULT_PASS
+              value: {{ .Values.rabbitmq.password }}
+            - name: RABBITMQ_DEFAULT_VHOST
+              value: {{ .Values.rabbitmq.vhost }}
+            - name: RABBITMQ_ERLANG_COOKIE
+              value: {{ .Values.rabbitmq.erlangCookie }}
+          livenessProbe:
+            exec:
+              command: 
+                - rabbitmq-diagnostics 
+                - -q 
+                - ping
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+          readinessProbe:
+            exec:
+              command: 
+                - rabbitmq-diagnostics 
+                - -q 
+                - ping
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 300
+      volumes:
+        - name: {{ .Release.Name }}-rabbitmqdb
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Values.rabbitmq.name }}-volume-claim
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

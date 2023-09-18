@@ -1,0 +1,5 @@
+Thank for installing MONAI Deploy.
+
+Run the following script to initialize Informatics Gateway and Orthanc:
+
+./files/welcome.sh {{ .Release.Namespace }}

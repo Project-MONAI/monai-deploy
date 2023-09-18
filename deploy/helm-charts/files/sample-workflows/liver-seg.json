@@ -1,0 +1,65 @@
+{
+	"name": "liver-seg",
+	"version": "1.0.0",
+	"description": "Liver segmentation",
+	"informatics_gateway": {
+		"ae_title": "MONAI-DEPLOY",
+		"data_origins": [
+			"ORTHANC", "STORESCU"
+		],
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "liver-seg",
+			"description": "Copes files from input directory",
+			"type": "argo",
+			"args": {
+                "namespace": "default",
+                "workflow_template_name": "liver-seg-template",
+                "server_url": "http://monai-deploy-argo-workflows-server:2746",
+                "allow_insecure": "true"
+			},
+            "task_destinations": [
+                {
+                    "name": "export-data"
+                }
+            ],
+			"artifacts": {
+				"input": [
+					{
+                        "name": "input",
+                        "value": "{{ context.input.dicom }}",
+                        "mandatory": true
+					}
+				],
+                "output": [
+                    {
+                        "name": "output"
+                    }
+                ]
+			}
+		},
+        {
+            "id": "export-data",
+            "description": "Export data back to Orthanc",
+            "type": "export",
+            "export_destinations": [
+                {
+                    "name": "ORTHANC"
+                }
+            ],
+            "artifacts": {
+                "input": [
+                    {
+                        "name": "output",
+                        "value": "{{ context.executions.liver-seg.artifacts.output }}",
+                        "mandatory": true
+                    }
+                ]
+            }
+        }
+	]
+}
