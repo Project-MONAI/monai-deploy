@@ -56,10 +56,10 @@ spec:
         name: ""
         image: ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0
         command:
-          - python3
+          - /bin/sh
         args:
-          - "-u"
-          - /opt/monai/app/app.py
+          - '-c'
+          - date -Ins && python3 -u /opt/monai/app/app.py && date -Ins
         env:
           - name: "MONAI_INPUTPATH"
             value: "/var/monai/input/"

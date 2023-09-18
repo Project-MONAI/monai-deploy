@@ -15,10 +15,11 @@
 
 COUNT=${2:-1}
 FILES=$(ls -1 $1 | wc -l)
+SLEEP=180
 for (( c=1; c<=${COUNT}; c++ ))
 do 
     echo Sending $FILES from $1 to MONAI-DEPLOY
     storescu -v +sd +II +IR $FILES -aec MONAI-DEPLOY localhost 104 $1
-    echo "Sleeping for 20s"
-    sleep 20
+    echo "Sleeping for ${SLEEP}s"
+    sleep $SLEEP
 done

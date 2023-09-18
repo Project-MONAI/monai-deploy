@@ -123,16 +123,13 @@ TIME_END=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_J
 print_time "PERF.07" "$TIME_START" "$TIME_END" $(time_diff "$TIME_START" "$TIME_END")
 
 # ====== PERF.08 ================================================================
-
-TIME_START=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_JOB_ID} | jq -r '.status.nodes | map(select(.displayName=="hello-world-step")) | .[].startedAt')
-TIME_END=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_JOB_ID} | jq -r '.status.nodes | map(select(.displayName=="hello-world-step")) | .[].finishedAt')
+TIME_START=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_JOB_ID} | jq -r '.status.nodes | map(select(.displayName | contains("-step"))) | .[].startedAt')
+TIME_END=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_JOB_ID} | jq -r '.status.nodes | map(select(.displayName | contains("-step"))) | .[].finishedAt')
 print_time "PERF.08" "$TIME_START" "$TIME_END" $(time_diff "$TIME_START" "$TIME_END")
 
 # ====== PERF.09 ================================================================
-
-LOG_FILE=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_JOB_ID} | jq -r '.status.nodes | map(select(.displayName=="hello-world-step")) | .[].outputs.artifacts | map (select(.name=="main-logs")) | .[].s3.key')
+LOG_FILE=$(curl -s http://$ARGO_IP:$ARGO_PORT/api/v1/archived-workflows/${ARGO_JOB_ID} | jq -r '.status.nodes | map(select(.displayName | contains("-step"))) | .[].outputs.artifacts | map (select(.name=="main-logs")) | .[].s3.key')
 LOG_CONTENT=$(mc cat $MC_ALIAS/$MC_LOGS_BUCKET/$LOG_FILE)
-
 TIME_START=$(mc cat $MC_ALIAS/$MC_LOGS_BUCKET/$LOG_FILE | head -n 1)
 TIME_END=$(mc cat $MC_ALIAS/$MC_LOGS_BUCKET/$LOG_FILE | tail -n 1)
 print_time "PERF.09" "$TIME_START" "$TIME_END" $(time_diff "$TIME_START" "$TIME_END")

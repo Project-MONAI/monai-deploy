@@ -8,7 +8,7 @@ mig:
   name: informatics-gateway
   serviceName: mig
   repository: ghcr.io/project-monai/monai-deploy-informatics-gateway
-  tag: 0.5.0-alpha.api-nuget.1
+  tag: 0.4.1
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   serviceType: NodePort
