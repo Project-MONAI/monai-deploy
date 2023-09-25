@@ -262,6 +262,8 @@ tolerations: []
 
 affinity: {}
 
+nvidia-device-plugin:
+  allowDefaultNamespace: true
 
 ### Argo Workflow ###
 argo-workflows:

@@ -33,3 +33,6 @@ dependencies:
   - name: argo-workflows
     version: 0.33.3
     repository: https://argoproj.github.io/argo-helm
+  - name: nvidia-device-plugin
+    version: 0.14.1
+    repository: https://nvidia.github.io/k8s-device-plugin

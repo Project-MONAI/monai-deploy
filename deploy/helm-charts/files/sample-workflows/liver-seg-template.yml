@@ -59,7 +59,7 @@ spec:
           - /bin/sh
         args:
           - '-c'
-          - date -Ins && python3 -u /opt/monai/app/app.py && date -Ins
+          - date -Ins && time python3 -u /opt/monai/app/app.py && date -Ins
         env:
           - name: "MONAI_INPUTPATH"
             value: "/var/monai/input/"
@@ -69,3 +69,6 @@ spec:
             value: "/opt/monai/models/"
           - name: "MONAI_WORKDIR"
             value: "/var/monai/"
+        resources:
+          limits:
+            nvidia.com/gpu: 1
