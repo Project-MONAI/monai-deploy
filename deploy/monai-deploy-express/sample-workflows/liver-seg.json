@@ -33,7 +33,7 @@
 				"entrypoint": "/bin/bash,-c",
 				"command": "python3 -u /opt/monai/app/app.py",
 				"task_timeout_minutes": "5",
-				"temp_storage_container_path": "/var/lib/monai/",
+				"temp_storage_container_path": "/var/lib/mde/",
 				"env_MONAI_INPUTPATH": "/var/monai/input/",
 				"env_MONAI_OUTPUTPATH": "/var/monai/output/",
 				"env_MONAI_MODELPATH": "/opt/monai/models/",
