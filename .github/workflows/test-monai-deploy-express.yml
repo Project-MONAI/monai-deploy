@@ -24,7 +24,10 @@ jobs:
       
       - name: Start MONAI Deploy Express
         working-directory: ./deploy/monai-deploy-express
-        run: docker compose up --wait
+        continue-on-error: true
+        run: |
+          ./init.sh
+          docker compose up --wait
         
       - name: Informatics Gateway Health Check
         continue-on-error: true
@@ -41,9 +44,17 @@ jobs:
         run: |
           curl http://localhost:5002/health
 
+      - name: Collect Logs
+        working-directory: ./deploy/monai-deploy-express
+        continue-on-error: true
+        run: docker compose logs > logs.txt
+
       - name: Stop MONAI Deploy Express
         working-directory: ./deploy/monai-deploy-express
+        continue-on-error: true
         run: docker compose down
         
-
-        
+      - uses: actions/upload-artifact@v3
+        with:
+          name: logs
+          path: ./deploy/monai-deploy-express/logs.txt

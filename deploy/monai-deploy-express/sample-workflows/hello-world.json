@@ -21,7 +21,7 @@
 				"server_url": "unix:///var/run/docker.sock",
 				"entrypoint": "/bin/sh,-c",
 				"command": "/usr/bin/find /var/monai/input -type f",
-				"temp_storage_container_path": "/var/lib/monai/",
+				"temp_storage_container_path": "/var/lib/mde/",
 				"MYINPUT": "/var/monai/input/"
 			},
 			"artifacts": {

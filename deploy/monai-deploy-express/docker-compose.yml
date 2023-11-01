@@ -209,7 +209,7 @@ services:
     container_name: $TASK_MANAGER_CONTAINERNAME
     volumes:
       - ./configs/task-manager.json:/opt/monai/wm/appsettings.json
-      - $TASK_MANAGER_DATA:/var/lib/monai/:rw
+      - $TASK_MANAGER_DATA:/var/lib/mde/:rw
       - /var/run/docker.sock:/var/run/docker.sock
       # - $MONAI_DEPLOY_PLUGINS:/opt/monai/wm/plug-ins/
     environment:

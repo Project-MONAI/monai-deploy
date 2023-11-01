@@ -99,7 +99,7 @@ The first time calling `docker compose up` may take longer as it needs to pull a
 
 - The following error indicates that the `docker compose` version may not be up-to-date. If the problem persists, modify the `TASK_MANAGER_DATA` variable defined in the `.env` file and change `$PWD/.md/mdtm` to a fully qualified path. E.g. `/home/monai/some/path/to/.md/mdtm/`.
     ```
-    ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
+    ERROR: Named volume "$PWD/.md/mdtm:/var/lib/mde:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
     ```
 
     *WHY? The value of `TASK_MANAGER_DATA` is exposed to the Task Manager container as an environment variable in order for Task Manager to map the volume from the host to the MAP container correctly.*
@@ -112,7 +112,7 @@ The first time calling `docker compose up` may take longer as it needs to pull a
   
   - If you start Monai Deploy Express from within a container, you are likely to have problems when starting the system with 'docker compose up', such as:
     ```
-    ERROR: Named volume "$PWD/.md/mdtm:/var/lib/monai:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
+    ERROR: Named volume "$PWD/.md/mdtm:/var/lib/mde:rw" is used in service "task-manager" but no declaration was found in the volumes section. 
     ```
    
 - If you start Monai Deploy Express from within a container, you are likely to have problems when starting the system with 'docker compose up', such as:
@@ -156,6 +156,7 @@ The **sample-workflows** directory includes the following four sample workflow d
 - `lung-seg.json`: AI Lung Segmentation MAP
 - `liver-seg.json`: AI Liver Segmentation MAP
 - `liver-lung-seg.json`: AI Lung & AI Liver Combo
+- `liver-tumor.json`: AI Liver Tumor 2.0 MAP (MONAI Deploy 0.6)
 
 *Note: in these examples, we will be using `curl` command to register MONAI Deploy workflow definitions with the Workflow Manager. To learn more about `curl`, visit the [curl Man Page](https://curl.se/docs/manpage.html).*
 
@@ -193,7 +194,7 @@ This example uses the `alpine` container image instead of a MAP to print all fil
 
 #### Description
 
-In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/main/examples/apps/ai_livertumor_seg_app) from the
+In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/0.5.1/examples/apps/ai_livertumor_seg_app) from the
 [MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
 
 
@@ -299,6 +300,45 @@ In the `liver-lung-seg.json` workflow definition, we combined the AI Lung MAP an
    9. Repeat the steps with the other dataset.
 
 In this example, the [Chest CT dataset](https://drive.google.com/file/d/1IGXUgZ7NQCwsix57cdSgr-iYErevqETO/view?usp=sharing) should only launch the AI Lung MAP, while the [Abdomen CT dataset](https://drive.google.com/file/d/1d8Scm3q-kHTqr_-KfnXH0rPnCgKld2Iy/view?usp=sharing) would launch the AI Liver MAP.
+
+### AI Liver Tumor 2.0 MAP
+
+#### Description
+
+In this section, we will download a DICOM dataset, upload it to Orthanc and then run the [Liver Segmentation MAP](https://github.com/Project-MONAI/monai-deploy-app-sdk/tree/0.6.0/examples/apps/ai_livertumor_seg_app) from the
+[MONAI Deploy App SDK](https://github.com/Project-MONAI/monai-deploy-app-sdk). Finally, we can expect the AI-generated segmentation result to appear in Orthanc.
+
+
+#### Steps
+
+1. Download the [Abdomen CT dataset](#running-a-monai-deploy-workflow) dataset
+2. Download the AI Liver Tumor 2.0 MAP
+   ```bash
+   docker pull ghcr.io/mmelqin/monai_ai_livertumor_seg_app_stl-x64-workstation-dgpu-linux-amd64:2.0
+   ```
+3. Upload the dataset as described in [Uploading Data](#upload-dicom-datasets)
+4. Deploy the workflow definition to MONAI Deploy Workflow Manager:
+5. 
+   ```bash
+   curl --request POST --header 'Content-Type: application/json'  --data "@sample-workflows/liver-tumor.json"  http://localhost:5001/workflows
+   ```
+
+   If the `curl` command runs successfully, expect a `workflow_id` to be returned and printed to the terminal:
+
+   ```
+   {"workflow_id":"811620da-381f-4daa-854d-600948e67228"}
+   ```
+   
+6. Navigate to Orthanc, select any study and then click *Send to DICOM Modality* from the menu on the left.
+   In the popup dialog, select **MONAI-DEPLOY** to start a C-STORE request to the Informatics Gateway.
+7. Wait for the workflow to complete; the entire workflow takes roughly one minute and thirty seconds to complete. To see the AI-generated segmentation object, reload the Orthanc study page.
+8. To see the output of the container, run the following commands:
+   ```bash
+   > docker container list -a | grep monai_ai_livertumor_seg_app_stl
+   # locate the container ID and run the following
+   > docker logs {CONTAINER ID}
+   ```
+
 
 ## Using Kibana
 
@@ -416,7 +456,7 @@ A MONAI Deploy [workflow definition](https://github.com/Project-MONAI/monai-depl
                 "entrypoint": "/bin/bash,-c", # entrypoint of your container image; separated by commas
                 "command": "python3 -u /opt/monai/app/app.py", # commands to execute with the container image; separated by commas
                 "task_timeout_minutes": "5", # how long this task is expected to execute; terminated after the configured value
-                "temp_storage_container_path": "/var/lib/monai/", # how thd Docker plug-in maps your data from host to container - this is mapped to `$TASK_MANAGER_DATA` in the docker-compose file 
+                "temp_storage_container_path": "/var/lib/mde/", # how thd Docker plug-in maps your data from host to container - this is mapped to `$TASK_MANAGER_DATA` in the docker-compose file 
                 "env_MONAI_INPUTPATH": "/var/monai/input/", # an environment varible provided to the container to read the input data
                 "env_MONAI_OUTPUTPATH": "/var/monai/output/", # an environment variable provided to the container to write AI-genrated results
                 "env_MONAI_MODELPATH": "/opt/monai/models/", # an environment variable provided to the container to located AI models
