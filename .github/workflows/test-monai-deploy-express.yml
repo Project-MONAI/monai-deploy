@@ -24,7 +24,6 @@ jobs:
       
       - name: Start MONAI Deploy Express
         working-directory: ./deploy/monai-deploy-express
-        continue-on-error: true
         run: |
           ./init.sh
           docker compose up --wait
