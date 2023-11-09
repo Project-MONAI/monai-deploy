@@ -41,13 +41,13 @@ class userdata(Construct):
                                         "apt upgrade -y",
                                         "touch /tmp/OS_upgraded",
                                         #install Docker 
-                                        "apt-get remove docker docker-engine docker.io containerd runc",
+                                        "apt-get remove docker docker.io containerd runc",
                                         "apt-get install ca-certificates curl gnupg lsb-release",
                                         "mkdir -p /etc/apt/keyrings",
                                         "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg"
                                         "echo deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
                                         "sudo apt-get update -y",
-                                        "apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin",
+                                        "apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin",
                                         "touch /tmp/docker_installed",
                                         #install Docker compose plugin
                                         "apt-get install docker-compose-plugin -y",
@@ -73,14 +73,14 @@ class userdata(Construct):
                                         #install the MONAI Informatic Gateway CLI
                                         "apt install unzip -y",
                                         "cd /tmp",
-                                        "curl -LO https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases/download/0.3.7/mig-cli-0.3.7-linux-x64.zip",
-                                        "unzip ./mig-cli-0.3.7-linux-x64.zip",
+                                        "curl -LO https://github.com/Project-MONAI/monai-deploy-informatics-gateway/releases/download/0.4.1/mig-cli-0.4.1-linux-x64.zip",
+                                        "unzip ./mig-cli-0.4.1-linux-x64.zip",
                                         "mv mig-cli /usr/local/bin",
                                         "touch /tmp/MIG_installed",
                                         #install MONAI Deploy Express
                                         "cd /tmp",
-                                        "curl -LO https://github.com/Project-MONAI/monai-deploy/releases/download/monai-deploy-express-v0.2.0/monai-deploy-express-0.2.0.zip",
-                                        "unzip ./monai-deploy-express-0.2.0.zip -d /home/monaiuser",
+                                        "curl -LO https://github.com/Project-MONAI/monai-deploy/releases/download/monai-deploy-express-v0.5.0/monai-deploy-express-0.5.0.zip",
+                                        "unzip ./monai-deploy-express-0.5.0.zip -d /home/monaiuser",
                                         "chown monaiuser:monaiuser /home/monaiuser/deploy -R",
                                         "touch /tmp/mde_installed",
                                         #iniatialize monai storage
