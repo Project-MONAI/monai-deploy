@@ -46,7 +46,9 @@ jobs:
       - name: Test Job
         continue-on-error: false
         run: |
-          curl -X POST http://localhost:8042/instances --data-binary @sample-workflows/ci-test-files/IMG0002.dcm
+          sudo apt install dcmtk
+          storescu -v +r +sd -aec ORTHANC localhost 4242 sample-workflows/ci-test-files/*
+          # curl -X POST http://localhost:8042/instances --data-binary @sample-workflows/ci-test-files/IMG0002.dcm
           curl --request POST --header 'Content-Type: application/json'  --data @sample-workflows/hello-world.json  http://localhost:5001/workflows
 
       - name: Collect Logs
