@@ -51,7 +51,7 @@ jobs:
           echo $WORKFLOW | jq '.'
           WORKFLOW_ID=$WORKFLOW | jq '.workflow_id'
           echo $WORKFLOW_ID
-          SZ = {#WORKFLOW_ID}
+          SZ={#WORKFLOW_ID}
           echo $SZ
 
       - name: Collect Logs
