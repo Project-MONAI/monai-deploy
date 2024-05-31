@@ -47,8 +47,8 @@ jobs:
         continue-on-error: true
         run: |
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
-          WORKFLOW = $(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows)
-          WORKFLOW_ID = {$WORKFLOW | jq -r '.workflow_id'}
+          WORKFLOW=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows)
+          WORKFLOW_ID={$WORKFLOW | jq -r '.workflow_id'}
           echo $WORKFLOW_ID
           SZ = {#WORKFLOW_ID}
           echo $SZ
