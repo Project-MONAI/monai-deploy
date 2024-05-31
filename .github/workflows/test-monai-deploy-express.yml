@@ -17,9 +17,6 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    env:
-       workflowID: 0
-       size: 0
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -53,6 +50,7 @@ jobs:
           WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
           SIZE=${#WORKFLOW_ID}
           echo "size=${SIZE}" >> $GITHUB_ENV
+          echo ${{ env.size }}
           if: ${{ env.size<32 }}
           uses: actions/github-script@v3
           with:
