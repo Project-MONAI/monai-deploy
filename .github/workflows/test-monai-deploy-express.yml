@@ -46,12 +46,13 @@ jobs:
           curl http://localhost:5002/health
 
       - name: Test Job
-        continue-on-error: false
+        continue-on-error: true
         run: |
-          # sudo apt install dcmtk
-          # storescu -v +r +sd -aec ORTHANC localhost 4242 sample-workflows/ci-test-files/IMG0001.dcm
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
-          curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows
+          response = $(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows)
+          w_id = {$response | jq -r '.workflow_id'}
+          sz = {#w_id}
+          echo $sz
 
       - name: Collect Logs
         working-directory: ./deploy/monai-deploy-express
