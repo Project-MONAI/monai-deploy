@@ -16,9 +16,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    env:
-      WORKFLOW_ID: 0
-      SIZE: 0
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -49,14 +47,15 @@ jobs:
         continue-on-error: true
         run: |
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
-          env.WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
-          env.SIZE=${#env.WORKFLOW_ID}
-          if: ${{ env.SIZE<32 }}
+          WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
+          echo ${{ WORKFLOW_ID }}
+          SIZE=${#WORKFLOW_ID}
+          if: ${{ ${SIZE}<32 }}
           uses: actions/github-script@v3
           with:
             script: |
                 core.setFailed('No workflow ID returned')
-          if: ${{ env.SIZE>=32 }}
+          if: ${{ ${SIZE}>=32 }}
           run: echo 'Workflow ID Returned'
 
       - name: Collect Logs
