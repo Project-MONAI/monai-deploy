@@ -48,11 +48,17 @@ jobs:
         run: |
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
           WORKFLOW=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows)
+          echo '-------------\n'
+          echo $WORKFLOW
+          echo '-------------\n'
           echo $WORKFLOW | jq '.'
+          echo '-------------\n'
           WORKFLOW_ID=$WORKFLOW | jq '.workflow_id'
           echo $WORKFLOW_ID
-          SZ={#WORKFLOW_ID}
+          echo '-------------\n'
+          SZ="${#WORKFLOW_ID}"
           echo $SZ
+          echo '-------------\n'
 
       - name: Collect Logs
         working-directory: ./deploy/monai-deploy-express
