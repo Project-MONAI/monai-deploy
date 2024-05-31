@@ -53,6 +53,8 @@ jobs:
           echo '-------------\n'
           echo $WORKFLOW | jq '.'
           echo '-------------\n'
+          echo $WORKFLOW | jq '.workflow_id'
+          echo $WORKFLOW | jq .workflow_id
           WORKFLOW_ID=$WORKFLOW | jq '.workflow_id'
           echo $WORKFLOW_ID
           echo '-------------\n'
