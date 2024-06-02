@@ -53,12 +53,12 @@ jobs:
           SIZE=${#WORKFLOW_ID}
           # echo "size=${SIZE}" >> $GITHUB_ENV
           echo $SIZE
-          - if: $SIZE < 32
+          - if: ${{ $SIZE < 32 }}
             uses: actions/github-script@v3
             with:
               script: | 
                 core.setFailed('No workflow ID returned')
-          - if: $SIZE >= 32
+          - if: ${{ $SIZE >= 32 }}
             run: echo 'Workflow ID Returned'
 
       - name: Collect Logs
