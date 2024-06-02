@@ -53,12 +53,12 @@ jobs:
           # SIZE=${#WORKFLOW_ID}
           # echo "size=${SIZE}" >> $GITHUB_ENV
           echo ${{ env.workflow_id }}
-          if: ${{ env.workflow_id!="" }}
+          if: ${{ env.workflow_id != '' }}
           uses: actions/github-script@v3
           with:
-            script: |
+            script: | 
                 core.setFailed('No workflow ID returned')
-          if: ${{ env.workflow_id=="" }}
+          if: ${{ env.workflow_id == '' }}
           run: echo 'Workflow ID Returned'
 
       - name: Collect Logs
