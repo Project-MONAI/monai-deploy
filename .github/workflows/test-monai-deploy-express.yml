@@ -47,19 +47,19 @@ jobs:
         continue-on-error: true
         run: |
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
-          echo "workflow_id=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )" >> $GITHUB_ENV 
+          #echo "workflow_id=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )" >> $GITHUB_ENV 
 
-          # WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
-          # SIZE=${#WORKFLOW_ID}
+          WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
+          SIZE=${#WORKFLOW_ID}
           # echo "size=${SIZE}" >> $GITHUB_ENV
-          echo ${{ env.workflow_id }}
-          if: ${{ env.workflow_id != '' }}
-          uses: actions/github-script@v3
-          with:
-            script: | 
+          echo $SIZE
+          - if: $SIZE < 32
+            uses: actions/github-script@v3
+            with:
+              script: | 
                 core.setFailed('No workflow ID returned')
-          if: ${{ env.workflow_id == '' }}
-          run: echo 'Workflow ID Returned'
+          - if: $SIZE >= 32
+            run: echo 'Workflow ID Returned'
 
       - name: Collect Logs
         working-directory: ./deploy/monai-deploy-express
