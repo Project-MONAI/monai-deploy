@@ -50,12 +50,16 @@ jobs:
           WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
           SIZE=${#WORKFLOW_ID}
           echo "GITHUB_SIZE=$(echo $SIZE)" >> $GITHUB_ENV
-          if: ${{ env:GITHUB_SIZE < 32 }}
+
+      - name: Test Job 2
+        continue-on-error: true
+        run: |
+          if: ${{ env.GITHUB_SIZE < 32 }}
           uses: actions/github-script@v3
           with:
             script: | 
               core.setFailed('No workflow ID returned')
-          if: ${{ env:GITHUB_SIZE >= 32 }}
+          if: ${{ env.GITHUB_SIZE >= 32 }}
           run: echo 'Workflow ID Returned'
 
       - name: Collect Logs
