@@ -62,7 +62,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "State is: '${{ env.WID }}'" # Output works
-          if: ${{ env.WID=='false' }}  
+          if ${{ env.WID=='false' }}  
           run: exit 1
           
       - name: Collect Logs
