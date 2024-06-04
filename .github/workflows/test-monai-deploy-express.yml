@@ -51,6 +51,20 @@ jobs:
           SIZE=${#WORKFLOW_ID}
           echo "GITHUB_SIZE=$(echo $SIZE)" >> $GITHUB_ENV
 
+      - name: Set env VAR
+        run: |
+          if [[ $SIZE < 32 ]]; then
+              echo "WID=true" >> "$GITHUB_ENV"
+              echo "No WorkflowID"
+          else
+              echo "WID=false" >> "$GITHUB_ENV"
+              echo "WorkflowID Present"
+          fi
+
+      - name: Test env VAR
+        if: env.WID != 'false'
+        run: echo "Yeah"
+
       - name: Test WorkflowID
         continue-on-error: true
         run: |
