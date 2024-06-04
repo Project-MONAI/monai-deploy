@@ -58,6 +58,12 @@ jobs:
               echo "WorkflowID Present"
           fi
 
+      - name: A/B Check
+        if: ${{ env.WID }} !='true'
+        run: |
+          echo "::error file={''},line={''},endLine={''},title={'Job Failed'}::{'No WorkflowID retured'}"
+          exit 1
+
       - name: Test WorkflowID
         continue-on-error: true
         run: |
