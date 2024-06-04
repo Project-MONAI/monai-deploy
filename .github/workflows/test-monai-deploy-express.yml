@@ -50,9 +50,6 @@ jobs:
           WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
           SIZE=${#WORKFLOW_ID}
           echo "GITHUB_SIZE=$(echo $SIZE)" >> $GITHUB_ENV
-
-      - name: Set env VAR
-        run: |
           if [[ $SIZE < 32 ]]; then
               echo "WID=true" >> "$GITHUB_ENV"
               echo "No WorkflowID"
