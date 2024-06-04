@@ -62,12 +62,12 @@ jobs:
         continue-on-error: true
         run: |
           echo "State is: '${{ env.WID }}'" # Output works
-          if: ${{ env.WID }} == 'false' 
+          if: ${{ env.WID=='false' }}  
           uses: actions/github-script@v3
           with:
             script: | 
               core.setFailed('No workflow ID returned')
-          if: ${{ env.WID }} =='true'
+          if: ${{ env.WID=='true' }} 
           run: echo 'Workflow ID Returned'
 
       - name: Collect Logs
