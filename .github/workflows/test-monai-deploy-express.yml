@@ -53,17 +53,18 @@ jobs:
           if [[ $SIZE < 32 ]]; then
               echo "WID=false" >> "$GITHUB_ENV"
               echo "No WorkflowID"
+              exit 1
           else
               echo "WID=true" >> "$GITHUB_ENV"
               echo "WorkflowID Present"
           fi
 
-      - name: Test WorkflowID
-        if: ${{ env.WID }} =='false'
-        run: |
-          echo ${{ env.WID }}
-          echo "::error file={''},line={''},endLine={''},title={'Job Failed'}::{'No WorkflowID retured'}"
-          exit 1
+      #- name: Test WorkflowID
+      #  if: ${{ env.WID }} =='false'
+      #  run: |
+      #    echo ${{ env.WID }}
+      #    echo "::error file={''},line={''},endLine={''},title={'Job Failed'}::{'No WorkflowID retured'}"
+      #    exit 1
 
       - name: Collect Logs
         working-directory: ./deploy/monai-deploy-express
