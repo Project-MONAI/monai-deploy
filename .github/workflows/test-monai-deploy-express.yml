@@ -44,7 +44,7 @@ jobs:
           curl http://localhost:5002/health
 
       - name: Get WorkflowID
-        continue-on-error: true
+        continue-on-error: false
         run: |
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
           WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
@@ -59,13 +59,6 @@ jobs:
               echo "WID=true" >> "$GITHUB_ENV"
               echo "WorkflowID Present"
           fi
-
-      #- name: Test WorkflowID
-      #  if: ${{ env.WID }} =='false'
-      #  run: |
-      #    echo ${{ env.WID }}
-      #    echo "::error file={''},line={''},endLine={''},title={'Job Failed'}::{'No WorkflowID retured'}"
-      #    exit 1
 
       - name: Collect Logs
         working-directory: ./deploy/monai-deploy-express
