@@ -29,17 +29,17 @@ jobs:
           docker compose up --wait
         
       - name: Informatics Gateway Health Check
-        continue-on-error: true
+        continue-on-error: false
         run: |
           curl http://localhost:5000/health
 
       - name: Workflow Manager Health Check
-        continue-on-error: true
+        continue-on-error: false
         run: |
           curl http://localhost:5001/health
 
       - name: Task Manager Health Check
-        continue-on-error: true
+        continue-on-error: false
         run: |
           curl http://localhost:5002/health
 
@@ -49,7 +49,6 @@ jobs:
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
           WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
           SIZE=${#WORKFLOW_ID}
-          SIZE=2
           echo "GITHUB_SIZE=$(echo $SIZE)" >> $GITHUB_ENV
           if [[ $SIZE < 32 ]]; then
               echo "WID=false" >> "$GITHUB_ENV"
