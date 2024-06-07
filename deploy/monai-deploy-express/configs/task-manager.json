@@ -1,4 +1,3 @@
-{
   "MonaiDeployAuthentication": {
     "BypassAuthentication": true
   },
@@ -21,43 +20,45 @@
       },
     },
     "messaging": {
+      "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
+      "publisherSettings": {
+        "endpoint": "localhost",
+        "username": "admin",
+        "password": "admin",
+        "port": "5672",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "deadLetterExchange": "monaideploy-dead-letter",
+        "deliveryLimit": 3,
+        "requeueDelay": 30
+      },
+      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+      "subscriberSettings": {
+        "endpoint": "localhost",
+        "username": "admin",
+        "password": "admin",
+        "port": "5672",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "exportRequestQueue": "export_tasks"
+      },
       "retries": {
-        "retryDelays": "5"
+        "retryDelays": "localhost"
       },
       "topics": {
         "workflowRequest": "md.workflow.request",
         "exportComplete": "md.export.complete",
         "exportRequestPrefix": "md.export.request",
-        "taskCallback": "md.tasks.callback",
-        "exportHl7": "md.export.hl7"
+        "callbackRequest": "md.tasks.callback",
+        "aideClinicalReviewRequest": "aide.clinical_review.request"
       },
       "dicomAgents": {
         "dicomWebAgentName": "monaidicomweb",
         "scuAgentName": "monaiscu"
       },
-      "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
-      "publisherSettings": {
-        "endpoint": "rabbitmq",
-        "username": "admin",
-        "password": "admin",
-        "virtualHost": "monaideploy",
-        "exchange": "monaideploy",
-        "deadLetterExchange": "deadLetterExchange",
-        "deliveryLimit": "3",
-        "requeueDelay": "0"
-      },
-      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
-      "subscriberSettings": {
-        "endpoint": "rabbitmq",
-        "username": "admin",
-        "password": "admin",
-        "virtualHost": "monaideploy",
-        "exchange": "monaideploy",
-        "deadLetterExchange": "monaideploy-dead-letter",
-        "exportRequestQueue": "export_tasks",
-        "deliveryLimit": 3,
-        "requeueDelay": 3,
-        "prefetchCount": 5
+      "argoCallback": {
+        "argoRabbitOverrideEnabled": true,
+        "argoRabbitOverrideEndpoint": "rabbit-monai"
       }
     },
     "storage": {
