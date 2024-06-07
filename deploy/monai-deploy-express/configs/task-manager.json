@@ -75,16 +75,5 @@
         "serviceName": "test"
       }
     }
-  },
-  "Kestrel": {
-    "EndPoints": {
-      "Http": {
-        "Url": "http://+:5001"
-      }
-    },
-    "LogHttpRequestQuery": false,
-    "LogHttpRequestBody": false,
-    "LogHttpResponseBody": true
-  },
-  "AllowedHosts": "*"
+  }
 }
