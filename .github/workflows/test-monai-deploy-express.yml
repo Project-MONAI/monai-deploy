@@ -40,12 +40,12 @@ jobs:
           curl http://localhost:5001/health
 
       - name: Task Manager Health Check
-        continue-on-error: true
+        continue-on-error: false
         run: |
           curl http://localhost:5002/health
 
       - name: Get WorkflowID
-        continue-on-error: true
+        continue-on-error: false
         run: |
           curl -X POST http://localhost:8042/instances --data-binary "@deploy/monai-deploy-express/sample-workflows/ci-test-files/IMG0002.dcm"
           WORKFLOW_ID=$(curl --request POST --header 'Content-Type: application/json'  --data @deploy/monai-deploy-express/sample-workflows/hello-world.json  http://localhost:5001/workflows | jq '.workflow_id' )
