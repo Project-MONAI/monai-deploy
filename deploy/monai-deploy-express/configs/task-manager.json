@@ -23,25 +23,27 @@
     "messaging": {
       "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
       "publisherSettings": {
-        "endpoint": "localhost",
+        "endpoint": "rabbitmq",
         "username": "admin",
         "password": "admin",
-        "port": "5672",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "deadLetterExchange": "deadletterExchange",
+        "deliveryLimit": 3,
+        "requeueDelay": 0
+      },
+      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+      "subscriberSettings": {
+        "endpoint": "rabbitmq",
+        "username": "admin",
+        "password": "admin",
         "virtualHost": "monaideploy",
         "exchange": "monaideploy",
         "deadLetterExchange": "monaideploy-dead-letter",
         "deliveryLimit": 3,
-        "requeueDelay": 30
-      },
-      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
-      "subscriberSettings": {
-        "endpoint": "localhost",
-        "username": "admin",
-        "password": "admin",
-        "port": "5672",
-        "virtualHost": "monaideploy",
-        "exchange": "monaideploy",
-        "exportRequestQueue": "export_tasks"
+        "requeueDelay": 3,
+        "exportRequestQueue": "export_tasks",
+        "prefetchCount": 5
       },
       "retries": {
         "retryDelays": "localhost"
@@ -50,17 +52,13 @@
         "workflowRequest": "md.workflow.request",
         "exportComplete": "md.export.complete",
         "exportRequestPrefix": "md.export.request",
-        "callbackRequest": "md.tasks.callback",
-        "aideClinicalReviewRequest": "aide.clinical_review.request"
+        "taskCallback": "md.tasks.callback",
+        "exportHl7": "md.export.hl7" 
       },
       "dicomAgents": {
         "dicomWebAgentName": "monaidicomweb",
         "scuAgentName": "monaiscu"
       },
-      "argoCallback": {
-        "argoRabbitOverrideEnabled": true,
-        "argoRabbitOverrideEndpoint": "rabbit-monai"
-      }
     },
     "storage": {
       "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
