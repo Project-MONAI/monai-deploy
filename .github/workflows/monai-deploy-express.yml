@@ -12,6 +12,9 @@ on:
         default: 'monai-deploy-express-v'
         required: true
         type: string
+# To address error 403
+permissions:
+  contents: write
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
