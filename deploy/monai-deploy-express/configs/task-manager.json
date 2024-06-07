@@ -74,24 +74,15 @@
       }
     }
   },
-   "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "System": "Warning",
-      "Microsoft": "Warning",
-      "Microsoft.EntityFrameworkCore": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information",
-      "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Error",
-      "Monai": "Debug"
-    },
-    "Console": {
-      "FormatterOptions": {
-        "ColorBehavior": "Enabled",
-        "IncludeScopes": true,
-        "SingleLine": false,
-        "TimestampFormat": " HH:mm:ss ",
-        "UseUtcTimestamp": true
+  "Kestrel": {
+    "EndPoints": {
+      "Http": {
+        "Url": "http://+:5001"
       }
-    }
-  }
+    },
+    "LogHttpRequestQuery": false,
+    "LogHttpRequestBody": false,
+    "LogHttpResponseBody": true
+  },
+  "AllowedHosts": "*"
 }
