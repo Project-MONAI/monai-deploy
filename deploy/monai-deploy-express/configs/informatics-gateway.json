@@ -5,12 +5,22 @@
   "ConnectionStrings": {
     "Type": "mongodb",
     "InformaticsGatewayDatabase": "mongodb://root:rootpassword@mongodb:27017",
-    "DatabaseName": "InformaticsGateway"
+    "DatabaseOptions": {
+      "DatabaseName": "InformaticsGateway",
+      "retries": {
+        "delays": [
+          "750",
+          "1201",
+          "2500"
+        ]
+      }
+    }
   },
   "InformaticsGateway": {
     "dicom": {
       "scp": {
         "port": 104,
+        "externalAppPort": 105,
         "logDimseDatasets": false,
         "rejectUnknownSources": false
       },
@@ -36,11 +46,17 @@
         "password": "admin",
         "virtualHost": "monaideploy",
         "exchange": "monaideploy",
-        "exportRequestQueue": "export_tasks",
         "deadLetterExchange": "monaideploy-dead-letter",
         "deliveryLimit": 3,
-        "requeueDelay": 30
+        "requeueDelay": 3,
+        "prefetchCount": "5"
+      },
+      "topics": {
+        "externalAppRequest": "md.externalapp.request",
+        "exportHl7": "md.export.hl7",
+        "exportHl7Complete": "md.export.hl7complete"
       }
+
     },
     "storage": {
       "localTemporaryStoragePath": "/payloads",
@@ -49,16 +65,15 @@
       "storageRootPath": "/payloads",
       "temporaryBucketName": "monaideploy",
       "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
-      "watermarkPercent": 75,
+      "watermarkPercent": 95,
       "reserveSpaceGB": 5,
-      "concurrentUploads": 4,
       "settings": {
         "endpoint": "minio:9000",
         "accessKey": "minioadmin",
         "accessToken": "minioadmin",
         "securedConnection": false,
         "region": "local",
-        "executableLocation": "mc",
+        "executableLocation": "/bin/mc",
         "serviceName": "MinIO",
         "createBuckets": "monaideploy"
       }
@@ -68,23 +83,27 @@
       "maximumNumberOfConnections": 10,
       "clientTimeout": 60000,
       "sendAck": true
-    }
-  },
-  "Kestrel": {
-    "EndPoints": {
-      "Http": {
-        "Url": "http://+:5000"
+    },
+    "dicomWeb": {
+      "plugins": []
+    },
+
+    "Kestrel": {
+      "EndPoints": {
+        "Http": {
+          "Url": "http://+:5000"
+        }
       }
+    },
+    "AllowedHosts": "*",
+    "Cli": {
+      "Runner": "Docker",
+      "HostDataStorageMount": "~/.mig/data",
+      "HostPlugInsStorageMount": "~/.mig/plug-ins",
+      "HostDatabaseStorageMount": "~/.mig/database",
+      "HostLogsStorageMount": "~/.mig/logs",
+      "InformaticsGatewayServerEndpoint": "http://localhost:5000",
+      "DockerImagePrefix": "ghcr.io/project-monai/monai-deploy-informatics-gateway"
     }
-  },
-  "AllowedHosts": "*",
-  "Cli": {
-    "Runner": "Docker",
-    "HostDataStorageMount": "~/.mig/data",
-    "HostPlugInsStorageMount": "~/.mig/plug-ins",
-    "HostDatabaseStorageMount": "~/.mig/database",
-    "HostLogsStorageMount": "~/.mig/logs",
-    "InformaticsGatewayServerEndpoint": "http://localhost:5000",
-    "DockerImagePrefix": "ghcr.io/project-monai/monai-deploy-informatics-gateway"
   }
 }
