@@ -14,6 +14,9 @@
     "TaskManager": {
       "concurrency": 1,
       "taskTimeoutMinutes": 60,
+      "perTaskTypeTimeoutMinutes": {
+        "aide_clinical_review": 5760
+      },
       "plug-ins": {
         "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker"
       },
@@ -28,7 +31,10 @@
         "workflowRequest": "md.workflow.request",
         "exportComplete": "md.export.complete",
         "exportRequestPrefix": "md.export.request",
-        "callbackRequest": "md.tasks.callback"
+        "callbackRequest": "md.tasks.callback",
+        "aideClinicalReviewRequest": "aide.clinical_review.request",
+        "exportHl7": "md.export.hl7",
+        "exportHl7Complete": "md.export.hl7complete"
       },
       "dicomAgents": {
         "dicomWebAgentName": "monaidicomweb",
@@ -42,7 +48,7 @@
         "virtualHost": "monaideploy",
         "exchange": "monaideploy",
         "deadLetterExchange": "deadLetterExchange",
-        "deliveryLimit": "5",
+        "deliveryLimit": "3",
         "requeueDelay": "0"
       },
       "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
@@ -55,7 +61,8 @@
         "deadLetterExchange": "monaideploy-dead-letter",
         "exportRequestQueue": "export_tasks",
         "deliveryLimit": 3,
-        "requeueDelay": 30
+        "requeueDelay": 3,
+        "prefetchCount": "5"
       }
     },
     "storage": {
@@ -72,7 +79,8 @@
       }
     },
     "dicomTagsDisallowed": "PatientName,PatientID,IssuerOfPatientID,TypeOfPatientID,IssuerOfPatientIDQualifiersSequence,SourcePatientGroupIdentificationSequence,GroupOfPatientsIdentificationSequence,SubjectRelativePositionInImage,PatientBirthDate,PatientBirthTime,PatientBirthDateInAlternativeCalendar,PatientDeathDateInAlternativeCalendar,PatientAlternativeCalendar,PatientSex,PatientInsurancePlanCodeSequence,PatientPrimaryLanguageCodeSequence,PatientPrimaryLanguageModifierCodeSequence,QualityControlSubject,QualityControlSubjectTypeCodeSequence,StrainDescription,StrainNomenclature,StrainStockNumber,StrainSourceRegistryCodeSequence,StrainStockSequence,StrainSource,StrainAdditionalInformation,StrainCodeSequence,GeneticModificationsSequence,GeneticModificationsDescription,GeneticModificationsNomenclature,GeneticModificationsCodeSequence,OtherPatientIDsRETIRED,OtherPatientNames,OtherPatientIDsSequence,PatientBirthName,PatientAge,PatientSize,PatientSizeCodeSequence,PatientBodyMassIndex,MeasuredAPDimension,MeasuredLateralDimension,PatientWeight,PatientAddress,InsurancePlanIdentificationRETIRED,PatientMotherBirthName,MilitaryRank,BranchOfService,MedicalRecordLocatorRETIRED,ReferencedPatientPhotoSequence,MedicalAlerts,Allergies,CountryOfResidence,RegionOfResidence,PatientTelephoneNumbers,PatientTelecomInformation,EthnicGroup,Occupation,SmokingStatus,AdditionalPatientHistory,PregnancyStatus,LastMenstrualDate,PatientReligiousPreference,PatientSpeciesDescription,PatientSpeciesCodeSequence,PatientSexNeutered,AnatomicalOrientationType,PatientBreedDescription,PatientBreedCodeSequence,BreedRegistrationSequence,BreedRegistrationNumber,BreedRegistryCodeSequence,ResponsiblePerson,ResponsiblePersonRole,ResponsibleOrganization,PatientComments,ExaminedBodyThickness",
-    "migExternalAppPlugins": [ "Monai.Deploy.InformaticsGateway.PlugIns.RemoteAppExecution.DicomDeidentifier, Monai.Deploy.InformaticsGateway.PlugIns.RemoteAppExecution, Version=0.0.0.0" ]
+    "migExternalAppPlugins": [ "Monai.Deploy.InformaticsGateway.PlugIns.RemoteAppExecution.DicomDeidentifier, Monai.Deploy.InformaticsGateway.PlugIns.RemoteAppExecution, Version=0.0.0.0" ],
+    "dataRetentionDays": 10 // note. -1 = never delete
   },
   "InformaticsGateway": {
     "apiHost": "http://informatics-gateway:5000",

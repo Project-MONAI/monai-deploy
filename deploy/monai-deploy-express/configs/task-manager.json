@@ -18,7 +18,7 @@
         "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker"
       },
       "meta-data": {
-      },
+      }
     },
     "messaging": {
       "retries": {
@@ -28,7 +28,8 @@
         "workflowRequest": "md.workflow.request",
         "exportComplete": "md.export.complete",
         "exportRequestPrefix": "md.export.request",
-        "taskCallback": "md.tasks.callback"
+        "taskCallback": "md.tasks.callback",
+        "exportHl7": "md.export.hl7"
       },
       "dicomAgents": {
         "dicomWebAgentName": "monaidicomweb",
@@ -42,7 +43,7 @@
         "virtualHost": "monaideploy",
         "exchange": "monaideploy",
         "deadLetterExchange": "deadLetterExchange",
-        "deliveryLimit": "5",
+        "deliveryLimit": "3",
         "requeueDelay": "0"
       },
       "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
@@ -55,7 +56,8 @@
         "deadLetterExchange": "monaideploy-dead-letter",
         "exportRequestQueue": "export_tasks",
         "deliveryLimit": 3,
-        "requeueDelay": 30
+        "requeueDelay": 3,
+        "prefetchCount": 5
       }
     },
     "storage": {
@@ -72,51 +74,15 @@
       }
     }
   },
-   "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "System": "Warning",
-      "Microsoft": "Warning",
-      "Microsoft.EntityFrameworkCore": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information",
-      "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Error",
-      "Monai": "Debug"
-    },
-    "Console": {
-      "FormatterOptions": {
-        "ColorBehavior": "Enabled",
-        "IncludeScopes": true,
-        "SingleLine": false,
-        "TimestampFormat": " HH:mm:ss ",
-        "UseUtcTimestamp": true
+  "Kestrel": {
+    "EndPoints": {
+      "Http": {
+        "Url": "http://+:5002"
       }
-    }
+    },
+    "LogHttpRequestQuery": false,
+    "LogHttpRequestBody": false,
+    "LogHttpResponseBody": true
   },
-  "Serilog": {
-    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ],
-    "Properties": {
-      "enviroment": "Production",
-      "serviceName": "MTM"
-    },
-    "WriteTo": [
-      {
-        "Name": "File",
-        "Args": {
-          "path": "logs/MTM-.log",
-          "rollingInterval": "Day",
-          "rollOnFileSizeLimit": true,
-          "fileSizeLimitBytes": "10485760",
-          "retainedFileCountLimit": 30,
-          "formatter": "Serilog.Formatting.Json.JsonFormatter, Serilog"
-        }
-      },
-      {
-        "Name": "Http",
-        "Args": {
-          "requestUri": "http://logstash:50000",
-          "queueLimitBytes": null
-        }
-      }
-    ]
-  }
+  "AllowedHosts": "*"
 }

@@ -17,7 +17,7 @@ RUNDIR=$PWD/.md
 
 echo "Initializing directories..."
 [ -d $RUNDIR ] && echo "Removing existin $RUNDIR" && sudo rm -r $RUNDIR
-mkdir -p $RUNDIR/esdata/ && echo "Created $RUNDIR/"
+mkdir -p $RUNDIR/esdata/ && echo "Created $RUNDIR/esdata/"
 mkdir -p $RUNDIR/minio/ && echo "Created $RUNDIR/minio/"
 mkdir -p $RUNDIR/rabbitmq/ && echo "Created $RUNDIR/rabbitmq/"
 mkdir -p $RUNDIR/orthanc/ && echo "Created $RUNDIR/orthanc/"
@@ -25,6 +25,6 @@ mkdir -p $RUNDIR/mongodb/ && echo "Created $RUNDIR/mongodb/"
 mkdir -p $RUNDIR/mdwm/ && echo "Created $RUNDIR/mdwm/"
 mkdir -p $RUNDIR/mdtm/ && echo "Created $RUNDIR/mdtm/"
 mkdir -p $RUNDIR/mdig/ && echo "Created $RUNDIR/mdig/"
-sudo chown $(id -u):$(id -g) -R $RUNDIR/esdata && echo "Permission updated"
+sudo chown $(id -u):$(id -g) -R $RUNDIR/ && echo "Permission updated"
 echo "Directories setup"
 echo "Ready to run docker compose up"
