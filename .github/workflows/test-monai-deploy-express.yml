@@ -53,7 +53,7 @@ jobs:
         continue-on-error: true
         run: docker compose down
         
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4.6.2
         with:
           name: logs
           path: ./deploy/monai-deploy-express/logs.txt
